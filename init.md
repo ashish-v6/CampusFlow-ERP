@@ -232,13 +232,13 @@ npm install express@5 cors helmet morgan dotenv http-errors
 ### Development Dependencies
 
 ```bash
-npm install -D typescript ts-node-dev @types/node @types/express @types/cors @types/morgan eslint prettier 
+npm install -D typescript@5.9.2 ts-node-dev @types/node @types/express @types/cors @types/morgan eslint prettier 
 ```
 
 ### Prisma Dependencies
 ```bash
-npm install prisma@6.19.2 --save-dev 
-npm install @prisma/client@6.19.2
+npm install prisma@6.19.3 --save-dev 
+npm install @prisma/client@6.19.3
 ```
 
 | Package | Why |
