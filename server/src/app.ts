@@ -2,9 +2,9 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import type {Request ,Response} from "express";
-// import { errorHandler } from "./middlewares/errorHandler.js";
-// import { notFoundHandler } from "./middlewares/notFoundHandler.js";
+import type { Request, Response } from "express";
+import globalErrorHandler from "./middlewares/globalErrorHandler.js";
+import testRoutes from "./routes/test.routes.js";
 
 const app = express();
 
@@ -16,15 +16,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // --- Health check ---
-app.get("/health", (req :Request, res : Response) => {
+app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok", uptime: process.uptime() });
 });
 
 // --- Routes go here ---
-// app.use("/api/v1/users", userRoutes);
+app.use("/test", testRoutes);
 
 // --- 404 + Global error handler (always LAST) ---
-// app.use(notFoundHandler);
-// app.use(errorHandler);
 
+app.use(globalErrorHandler);
 export default app;
