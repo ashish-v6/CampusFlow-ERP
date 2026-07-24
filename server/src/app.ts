@@ -4,7 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import type { Request, Response } from "express";
 import globalErrorHandler from "./middlewares/globalErrorHandler.js";
-import testRoutes from "./routes/test.routes.js";
+import testRoutes from "./modules/Test/test.routes.js";
 
 const app = express();
 
