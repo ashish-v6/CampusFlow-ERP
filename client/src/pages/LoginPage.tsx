@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 
 interface LoginFormData {
@@ -39,11 +39,12 @@ export default function LoginPage(): React.JSX.Element {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!formData.email.trim()) {
       newErrors.email = "Email address is required";
-    } else if (!emailRegex.test(formData.email)) {
+    }
+    if (formData.email && !emailRegex.test(formData.email)) {
       newErrors.email = "Invalid Email format";
     }
     if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long";
+      newErrors.password = "Password must be ";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -60,7 +61,7 @@ export default function LoginPage(): React.JSX.Element {
       return;
     }
 
-    navigate('/dashboard');
+    navigate("/dashboard");
   };
 
   return (

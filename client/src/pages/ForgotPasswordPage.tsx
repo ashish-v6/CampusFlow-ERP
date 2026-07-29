@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { Mail, MailSearch, Sparkles, ArrowRight, Info } from 'lucide-react';
 
 interface ForgotPasswordFormData {
