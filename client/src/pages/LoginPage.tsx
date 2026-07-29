@@ -1,6 +1,6 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 
 interface LoginFormData {
   email: string;
@@ -17,9 +17,9 @@ export default function LoginPage(): React.JSX.Element {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState<LoginFormData>({
-    email: '',
-    password: '',
-    rememberMe: false
+    email: "",
+    password: "",
+    rememberMe: false,
   });
   const [errors, setErrors] = useState<LoginFormErrors>({});
 
@@ -27,39 +27,47 @@ export default function LoginPage(): React.JSX.Element {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
     if (errors[name as keyof LoginFormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
+  const validateForm = (): boolean => {
     const newErrors: LoginFormErrors = {};
-
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!formData.email.trim()) {
-      newErrors.email = 'Email address is required';
+      newErrors.email = "Email address is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Invalid Email format";
     }
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
+    if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters long";
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+
+    if (!validateForm()) {
       return;
     }
 
-    navigate('/verify-otp');
+    navigate('/dashboard');
   };
 
   return (
     <div className="flex-1 flex flex-col lg:flex-row w-full min-h-[calc(100vh-7rem)]">
-
       {/* Form Section */}
       <section className="w-full lg:w-[45%] xl:w-[42%] flex-1 flex flex-col justify-center items-center p-6 sm:p-10 lg:p-14 bg-slate-950">
         <div className="max-w-md w-full my-auto space-y-6">
-
           {/* Title & Description */}
           <div className="space-y-2">
             <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
@@ -72,12 +80,13 @@ export default function LoginPage(): React.JSX.Element {
 
           {/* Login Card */}
           <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
-
             <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-
               {/* Email Field */}
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                <label
+                  htmlFor="email"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                >
                   Email Address
                 </label>
                 <div className="relative">
@@ -93,19 +102,24 @@ export default function LoginPage(): React.JSX.Element {
                     placeholder="name@university.edu"
                     className={`w-full bg-slate-950 border rounded-xl pl-11 pr-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.email
-                        ? 'border-red-500/80 focus:ring-red-500/40 focus:border-red-500'
-                        : 'border-slate-800 focus:ring-blue-500/50 focus:border-blue-500'
+                        ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                        : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
                     }`}
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-400 text-xs mt-1 font-medium">{errors.email}</p>
+                  <p className="text-red-400 text-xs mt-1 font-medium">
+                    {errors.email}
+                  </p>
                 )}
               </div>
 
               {/* Password Field */}
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                <label
+                  htmlFor="password"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                >
                   Password
                 </label>
                 <div className="relative">
@@ -113,7 +127,7 @@ export default function LoginPage(): React.JSX.Element {
                     <Lock className="w-5 h-5" />
                   </div>
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
                     value={formData.password}
@@ -121,8 +135,8 @@ export default function LoginPage(): React.JSX.Element {
                     placeholder="Enter your password"
                     className={`w-full bg-slate-950 border rounded-xl pl-11 pr-11 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.password
-                        ? 'border-red-500/80 focus:ring-red-500/40 focus:border-red-500'
-                        : 'border-slate-800 focus:ring-blue-500/50 focus:border-blue-500'
+                        ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                        : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
                     }`}
                   />
                   <button
@@ -131,11 +145,17 @@ export default function LoginPage(): React.JSX.Element {
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
                     aria-label="Toggle password visibility"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-400 text-xs mt-1 font-medium">{errors.password}</p>
+                  <p className="text-red-400 text-xs mt-1 font-medium">
+                    {errors.password}
+                  </p>
                 )}
               </div>
 
@@ -150,7 +170,9 @@ export default function LoginPage(): React.JSX.Element {
                     onChange={handleChange}
                     className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-blue-500/40 cursor-pointer"
                   />
-                  <span className="text-slate-300 group-hover:text-white transition-colors">Remember me</span>
+                  <span className="text-slate-300 group-hover:text-white transition-colors">
+                    Remember me
+                  </span>
                 </label>
                 <Link
                   to="/forgot-password"
@@ -168,25 +190,24 @@ export default function LoginPage(): React.JSX.Element {
                 <span>Sign In</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
-
             </form>
 
             {/* Bottom Link */}
             <div className="text-center pt-2 text-sm text-slate-400 border-t border-slate-800/80">
               <span>Don't have an account? </span>
-              <Link to="/signup" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors ml-1">
+              <Link
+                to="/signup"
+                className="font-semibold text-blue-400 hover:text-blue-300 transition-colors ml-1"
+              >
                 Create one
               </Link>
             </div>
-
           </div>
-
         </div>
       </section>
 
       {/* Hero Image Section */}
       <section className="hidden lg:flex lg:w-[55%] xl:w-[58%] relative p-12 flex-col justify-end overflow-hidden border-l border-slate-800/80">
-
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
@@ -204,12 +225,11 @@ export default function LoginPage(): React.JSX.Element {
             Next-Generation Campus Intelligence
           </h2>
           <p className="text-slate-300 text-base leading-relaxed">
-            Streamline administrative workflows, student lifecycle management, and academic analytics from a single platform.
+            Streamline administrative workflows, student lifecycle management,
+            and academic analytics from a single platform.
           </p>
         </div>
-
       </section>
-
     </div>
   );
 }

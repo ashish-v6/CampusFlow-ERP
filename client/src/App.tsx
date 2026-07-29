@@ -1,16 +1,18 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import AuthLayout from './layouts/AuthLayout.tsx';
-import LoginPage from './pages/LoginPage.tsx';
-import SignUpPage from './pages/SignUpPage.tsx';
-import VerifyOtpPage from './pages/VerifyOtpPage.tsx';
-import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx';
-import ResetPasswordPage from './pages/ResetPasswordPage.tsx';
+import AuthLayout from './layouts/AuthLayout';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import VerifyOtpPage from './pages/VerifyOtpPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import DashboardPage from './pages/DashboardPage';
 
 export default function App(): React.JSX.Element {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Auth Routes inside AuthLayout */}
         <Route path="/" element={<AuthLayout />}>
           <Route index element={<Navigate to="/login" replace />} />
           <Route path="login" element={<LoginPage />} />
@@ -18,8 +20,13 @@ export default function App(): React.JSX.Element {
           <Route path="verify-otp" element={<VerifyOtpPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
         </Route>
+
+        {/* Dashboard Route */}
+        <Route path="/dashboard" element={<DashboardPage />} />
+
+        {/* Fallback Catch-all Route */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
