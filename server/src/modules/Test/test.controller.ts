@@ -4,7 +4,7 @@ import createHttpError from "http-errors";
 
 const errorHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {name} = req.body;
+    const { name } = req.body;
     if (!name) {
       return next(createHttpError(400, "Testing error"));
     }
@@ -66,7 +66,7 @@ const showHandler = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const updateHandler =  async (req: Request, res: Response, next: NextFunction) => {
+const updateHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id, name, email } = req.body;
 
@@ -89,10 +89,4 @@ const updateHandler =  async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-export {
-  errorHandler,
-  addHandler,
-  removeHandler,
-  showHandler,
-  updateHandler
-};
+export { errorHandler, addHandler, removeHandler, showHandler, updateHandler };

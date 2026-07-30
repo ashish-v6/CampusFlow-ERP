@@ -6,7 +6,7 @@ import _config from "./config/config.js";
 import type { Request, Response } from "express";
 import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 import testRoutes from "./modules/Test/test.routes.js";
-import authRoutes from "./modules/Auth/auth.routes.js"
+import authRoutes from "./modules/Auth/auth.routes.js";
 
 const app = express();
 
