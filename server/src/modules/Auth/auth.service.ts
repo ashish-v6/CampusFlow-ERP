@@ -5,15 +5,16 @@ import authUtils from "./auth.utils.js";
 import bcrypt from "bcrypt";
 import VerificationTemplate from "../../templates/VerificationEmail.js";
 import { sendEmail } from "../../services/mail/sendMail.js";
+import type { User } from "../../generated/prisma/client.js";
 
 export class AuthService {
   constructor(private readonly authRepository: AuthRepository) {}
 
-  public async register(dto: RegisterUserDto): Promise<unknown | HttpError> {
+  public async register(dto: RegisterUserDto): Promise<User> {
     const existingUser = await this.authRepository.findUserByEmail(dto.email);
     //--validate user
     if (existingUser) {
-      return createHttpError(409, "Email is already Registered");
+      throw createHttpError(409, "Email is already Registered");
     }
 
     //--creating user
@@ -22,7 +23,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(dto.password, 11);
 
     //create db data payload
-    const data: RegisterUserDto = {
+    const data = {
       firstName: dto.firstName,
       lastName: dto.lastName,
       email: dto.email,
@@ -31,14 +32,35 @@ export class AuthService {
     //run db query
     const newUser = await this.authRepository.createUser(data);
 
-    //--Email Verification
+    return newUser;
+  }
+
+  public async sendVerificationEmail(email: string): Promise<unknown | HttpError> {
+    const existingUser = await this.authRepository.findUserByEmail(email);
+    //--validate user
+    if (!existingUser) {
+      throw createHttpError(401, "Invalid Email");
+    }
+
+    if (existingUser.isVerified) {
+      throw createHttpError(403, "Invalid Request");
+    }
+
+    // --Email Verification
     const OTP = authUtils.generateOTP();
 
-    const template = VerificationTemplate(newUser.firstName + newUser.lastName, newUser.email, OTP);
+    const template = VerificationTemplate(
+      existingUser.firstName + existingUser.lastName,
+      existingUser.email,
+      OTP,
+    );
 
-    await sendEmail(newUser.email, "Verification OTP", template);
+    await sendEmail(existingUser.email, "Verification OTP", template);
 
-    return newUser;
+    return {
+      success: true,
+      message: "OTP sent to registered email",
+    };
   }
 }
 
