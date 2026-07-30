@@ -1,6 +1,9 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, Eye, EyeOff, User, ArrowRight } from 'lucide-react';
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { Link, useNavigate } from "react-router";
+import { Mail, Lock, Eye, EyeOff, User, ArrowRight } from "lucide-react";
+import { signUp } from "../services/auth.services";
+import { AxiosError, AxiosResponse } from "axios";
+import toast from "react-hot-toast";
 
 interface SignUpFormData {
   firstName: string;
@@ -26,50 +29,51 @@ export default function SignUpPage(): React.JSX.Element {
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<SignUpFormData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    terms: false
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    terms: false,
   });
 
   const [errors, setErrors] = useState<SignUpFormErrors>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
     if (errors[name as keyof SignUpFormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const newErrors: SignUpFormErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = "First name is required";
     }
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = "Last name is required";
     }
     if (!formData.email.trim()) {
-      newErrors.email = 'Email address is required';
+      newErrors.email = "Email address is required";
     }
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     }
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Confirm password is required';
+      newErrors.confirmPassword = "Confirm password is required";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
     }
     if (!formData.terms) {
-      newErrors.terms = 'You must agree to the Terms of Service & Privacy Policy';
+      newErrors.terms = "You must agree to the Terms of Service & Privacy Policy";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -77,16 +81,34 @@ export default function SignUpPage(): React.JSX.Element {
       return;
     }
 
-    navigate('/verify-otp');
+    setLoading(true);
+    const reqData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+    };
+    try {
+      const data = await signUp(reqData);
+      console.log(data);
+
+      navigate("/verify-otp", { state: { email: data.user.email } });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message ?? "Something went wrong");
+      } else {
+        toast.error("Something unexpected happened");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="flex-1 flex flex-col lg:flex-row w-full min-h-[calc(100vh-7rem)]">
-
       {/* Form Section */}
       <section className="w-full lg:w-[45%] xl:w-[42%] flex-1 flex flex-col justify-center items-center p-6 sm:p-10 lg:p-14 bg-slate-950">
         <div className="max-w-md w-full my-auto space-y-6">
-
           {/* Title & Description */}
           <div className="space-y-2">
             <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
@@ -99,13 +121,14 @@ export default function SignUpPage(): React.JSX.Element {
 
           {/* Registration Card */}
           <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
-
             <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-
               {/* First Name & Last Name */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="firstName" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                  <label
+                    htmlFor="firstName"
+                    className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                  >
                     First Name
                   </label>
                   <div className="relative">
@@ -121,8 +144,8 @@ export default function SignUpPage(): React.JSX.Element {
                       placeholder="First Name"
                       className={`w-full bg-slate-950 border rounded-xl pl-10 pr-3 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
                         errors.firstName
-                          ? 'border-red-500/80 focus:ring-red-500/40 focus:border-red-500'
-                          : 'border-slate-800 focus:ring-blue-500/50 focus:border-blue-500'
+                          ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                          : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
                       }`}
                     />
                   </div>
@@ -132,7 +155,10 @@ export default function SignUpPage(): React.JSX.Element {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="lastName" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                  <label
+                    htmlFor="lastName"
+                    className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                  >
                     Last Name
                   </label>
                   <div className="relative">
@@ -148,8 +174,8 @@ export default function SignUpPage(): React.JSX.Element {
                       placeholder="Last Name"
                       className={`w-full bg-slate-950 border rounded-xl pl-10 pr-3 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
                         errors.lastName
-                          ? 'border-red-500/80 focus:ring-red-500/40 focus:border-red-500'
-                          : 'border-slate-800 focus:ring-blue-500/50 focus:border-blue-500'
+                          ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                          : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
                       }`}
                     />
                   </div>
@@ -161,7 +187,10 @@ export default function SignUpPage(): React.JSX.Element {
 
               {/* Email Address */}
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                <label
+                  htmlFor="email"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                >
                   Email Address
                 </label>
                 <div className="relative">
@@ -177,8 +206,8 @@ export default function SignUpPage(): React.JSX.Element {
                     placeholder="name@university.edu"
                     className={`w-full bg-slate-950 border rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.email
-                        ? 'border-red-500/80 focus:ring-red-500/40 focus:border-red-500'
-                        : 'border-slate-800 focus:ring-blue-500/50 focus:border-blue-500'
+                        ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                        : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
                     }`}
                   />
                 </div>
@@ -189,7 +218,10 @@ export default function SignUpPage(): React.JSX.Element {
 
               {/* Password */}
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                <label
+                  htmlFor="password"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                >
                   Password
                 </label>
                 <div className="relative">
@@ -197,7 +229,7 @@ export default function SignUpPage(): React.JSX.Element {
                     <Lock className="w-4 h-4" />
                   </div>
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
                     value={formData.password}
@@ -205,8 +237,8 @@ export default function SignUpPage(): React.JSX.Element {
                     placeholder="Create password"
                     className={`w-full bg-slate-950 border rounded-xl pl-10 pr-10 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.password
-                        ? 'border-red-500/80 focus:ring-red-500/40 focus:border-red-500'
-                        : 'border-slate-800 focus:ring-blue-500/50 focus:border-blue-500'
+                        ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                        : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
                     }`}
                   />
                   <button
@@ -225,7 +257,10 @@ export default function SignUpPage(): React.JSX.Element {
 
               {/* Confirm Password */}
               <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                >
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -233,7 +268,7 @@ export default function SignUpPage(): React.JSX.Element {
                     <Lock className="w-4 h-4" />
                   </div>
                   <input
-                    type={showConfirmPassword ? 'text' : 'password'}
+                    type={showConfirmPassword ? "text" : "password"}
                     id="confirmPassword"
                     name="confirmPassword"
                     value={formData.confirmPassword}
@@ -241,8 +276,8 @@ export default function SignUpPage(): React.JSX.Element {
                     placeholder="Confirm password"
                     className={`w-full bg-slate-950 border rounded-xl pl-10 pr-10 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.confirmPassword
-                        ? 'border-red-500/80 focus:ring-red-500/40 focus:border-red-500'
-                        : 'border-slate-800 focus:ring-blue-500/50 focus:border-blue-500'
+                        ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                        : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
                     }`}
                   />
                   <button
@@ -251,7 +286,11 @@ export default function SignUpPage(): React.JSX.Element {
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
                     aria-label="Toggle confirm password visibility"
                   >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
                 {errors.confirmPassword && (
@@ -271,7 +310,14 @@ export default function SignUpPage(): React.JSX.Element {
                     className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-blue-500/40 cursor-pointer mt-0.5 shrink-0"
                   />
                   <span className="text-xs text-slate-300 group-hover:text-white transition-colors leading-relaxed">
-                    I agree to the <a href="#terms" className="text-blue-400 hover:underline">Terms of Service</a> and <a href="#privacy" className="text-blue-400 hover:underline">Privacy Policy</a>
+                    I agree to the{" "}
+                    <a href="#terms" className="text-blue-400 hover:underline">
+                      Terms of Service
+                    </a>{" "}
+                    and{" "}
+                    <a href="#privacy" className="text-blue-400 hover:underline">
+                      Privacy Policy
+                    </a>
                   </span>
                 </label>
                 {errors.terms && (
@@ -282,30 +328,30 @@ export default function SignUpPage(): React.JSX.Element {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2 group text-sm mt-2 cursor-pointer"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2 group text-sm mt-2 cursor-pointer disabled:bg-blue-600/60  disabled:cursor-noy-allowed"
               >
-                <span>Create Account</span>
+                {loading ? "Creating..." : "Create Account"}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
-
             </form>
 
             {/* Bottom Link */}
             <div className="text-center pt-2 text-sm text-slate-400 border-t border-slate-800/80">
               <span>Already have an account? </span>
-              <Link to="/login" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors ml-1">
+              <Link
+                to="/login"
+                className="font-semibold text-blue-400 hover:text-blue-300 transition-colors ml-1"
+              >
                 Sign In
               </Link>
             </div>
-
           </div>
-
         </div>
       </section>
 
       {/* Hero Image Section */}
       <section className="hidden lg:flex lg:w-[55%] xl:w-[58%] relative p-12 flex-col justify-end overflow-hidden border-l border-slate-800/80">
-
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
@@ -323,12 +369,11 @@ export default function SignUpPage(): React.JSX.Element {
             Empowering Higher Education
           </h2>
           <p className="text-slate-300 text-base leading-relaxed">
-            Join hundreds of universities and institutions modernizing campus management with enterprise-grade security.
+            Join hundreds of universities and institutions modernizing campus management with
+            enterprise-grade security.
           </p>
         </div>
-
       </section>
-
     </div>
   );
 }

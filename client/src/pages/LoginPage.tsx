@@ -109,9 +109,7 @@ export default function LoginPage(): React.JSX.Element {
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-400 text-xs mt-1 font-medium">
-                    {errors.email}
-                  </p>
+                  <p className="text-red-400 text-xs mt-1 font-medium">{errors.email}</p>
                 )}
               </div>
 
@@ -146,17 +144,11 @@ export default function LoginPage(): React.JSX.Element {
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
                     aria-label="Toggle password visibility"
                   >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-400 text-xs mt-1 font-medium">
-                    {errors.password}
-                  </p>
+                  <p className="text-red-400 text-xs mt-1 font-medium">{errors.password}</p>
                 )}
               </div>
 
@@ -226,8 +218,8 @@ export default function LoginPage(): React.JSX.Element {
             Next-Generation Campus Intelligence
           </h2>
           <p className="text-slate-300 text-base leading-relaxed">
-            Streamline administrative workflows, student lifecycle management,
-            and academic analytics from a single platform.
+            Streamline administrative workflows, student lifecycle management, and academic
+            analytics from a single platform.
           </p>
         </div>
       </section>

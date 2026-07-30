@@ -1,12 +1,13 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
-import AuthLayout from './layouts/AuthLayout';
-import LoginPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
-import VerifyOtpPage from './pages/VerifyOtpPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
-import DashboardPage from './pages/DashboardPage';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import AuthLayout from "./layouts/AuthLayout";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import VerifyOtpPage from "./pages/VerifyOtpPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import DashboardPage from "./pages/DashboardPage";
+import { Toaster } from "react-hot-toast";
 
 export default function App(): React.JSX.Element {
   return (
@@ -28,6 +29,7 @@ export default function App(): React.JSX.Element {
         {/* Fallback Catch-all Route */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      <Toaster position="top-right" />
     </BrowserRouter>
   );
 }

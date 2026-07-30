@@ -1,14 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
-import {
-  Lock,
-  Eye,
-  EyeOff,
-  Sparkles,
-  ArrowRight,
-  Check,
-  ShieldCheck,
-} from "lucide-react";
+import { Lock, Eye, EyeOff, Sparkles, ArrowRight, Check, ShieldCheck } from "lucide-react";
 
 interface ResetPasswordFormData {
   newPassword: string;
@@ -23,8 +15,7 @@ interface ResetPasswordFormErrors {
 export default function ResetPasswordPage(): React.JSX.Element {
   const navigate = useNavigate();
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<ResetPasswordFormData>({
     newPassword: "",
@@ -83,18 +74,14 @@ export default function ResetPasswordPage(): React.JSX.Element {
                 Create a new password
               </h1>
               <p className="text-slate-400 text-sm leading-relaxed max-w-sm mx-auto">
-                Choose a strong password for your CampusFlow account that is
-                easy for you to remember and difficult for others to guess.
+                Choose a strong password for your CampusFlow account that is easy for you to
+                remember and difficult for others to guess.
               </p>
             </div>
           </div>
 
           {/* Form */}
-          <form
-            className="space-y-5 text-left"
-            onSubmit={handleSubmit}
-            noValidate
-          >
+          <form className="space-y-5 text-left" onSubmit={handleSubmit} noValidate>
             {/* New Password Field */}
             <div className="space-y-2">
               <label
@@ -126,17 +113,11 @@ export default function ResetPasswordPage(): React.JSX.Element {
                   className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
                   aria-label="Toggle new password visibility"
                 >
-                  {showNewPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
+                  {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
               {errors.newPassword && (
-                <p className="text-red-400 text-xs mt-1 font-medium">
-                  {errors.newPassword}
-                </p>
+                <p className="text-red-400 text-xs mt-1 font-medium">{errors.newPassword}</p>
               )}
             </div>
 
@@ -179,17 +160,13 @@ export default function ResetPasswordPage(): React.JSX.Element {
                 </button>
               </div>
               {errors.confirmNewPassword && (
-                <p className="text-red-400 text-xs mt-1 font-medium">
-                  {errors.confirmNewPassword}
-                </p>
+                <p className="text-red-400 text-xs mt-1 font-medium">{errors.confirmNewPassword}</p>
               )}
             </div>
 
             {/* Password Requirements Checklist Card */}
             <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-left text-xs space-y-2">
-              <span className="block font-semibold text-slate-300">
-                Password requirements:
-              </span>
+              <span className="block font-semibold text-slate-300">Password requirements:</span>
               <div className="grid grid-cols-2 gap-2 text-slate-400 text-xs">
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-blue-400 shrink-0" />

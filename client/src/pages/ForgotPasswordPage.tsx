@@ -1,6 +1,6 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router';
-import { Mail, MailSearch, Sparkles, ArrowRight, Info } from 'lucide-react';
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { Link, useNavigate } from "react-router";
+import { Mail, MailSearch, Sparkles, ArrowRight, Info } from "lucide-react";
 
 interface ForgotPasswordFormData {
   email: string;
@@ -13,7 +13,7 @@ interface ForgotPasswordFormErrors {
 export default function ForgotPasswordPage(): React.JSX.Element {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<ForgotPasswordFormData>({
-    email: ''
+    email: "",
   });
   const [errors, setErrors] = useState<ForgotPasswordFormErrors>({});
 
@@ -21,7 +21,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof ForgotPasswordFormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
@@ -30,7 +30,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
     const newErrors: ForgotPasswordFormErrors = {};
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email address is required';
+      newErrors.email = "Email address is required";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -38,16 +38,14 @@ export default function ForgotPasswordPage(): React.JSX.Element {
       return;
     }
 
-    navigate('/reset-password');
+    navigate("/reset-password");
   };
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12 min-h-[calc(100vh-7rem)]">
       <div className="max-w-md w-full my-auto space-y-6">
-
         {/* Forgot Password Card */}
         <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-10 shadow-2xl space-y-6 text-center">
-
           {/* Circular Icon Illustration & Badge */}
           <div className="space-y-3">
             <div className="w-14 h-14 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mx-auto shadow-md shadow-blue-500/10">
@@ -64,17 +62,20 @@ export default function ForgotPasswordPage(): React.JSX.Element {
                 Forgot your password?
               </h1>
               <p className="text-slate-400 text-sm leading-relaxed max-w-sm mx-auto">
-                Enter the email associated with your account. We'll send you a secure password reset link.
+                Enter the email associated with your account. We'll send you a secure password reset
+                link.
               </p>
             </div>
           </div>
 
           {/* Form */}
           <form className="space-y-5 text-left" onSubmit={handleSubmit} noValidate>
-
             {/* Email Field */}
             <div className="space-y-2">
-              <label htmlFor="recovery-email" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+              <label
+                htmlFor="recovery-email"
+                className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+              >
                 Email Address
               </label>
               <div className="relative">
@@ -90,8 +91,8 @@ export default function ForgotPasswordPage(): React.JSX.Element {
                   placeholder="name@university.edu"
                   className={`w-full bg-slate-950 border rounded-xl pl-11 pr-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.email
-                      ? 'border-red-500/80 focus:ring-red-500/40 focus:border-red-500'
-                      : 'border-slate-800 focus:ring-blue-500/50 focus:border-blue-500'
+                      ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                      : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
                   }`}
                 />
               </div>
@@ -108,7 +109,6 @@ export default function ForgotPasswordPage(): React.JSX.Element {
               <span>Send Reset Link</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
-
           </form>
 
           {/* Additional Information Card */}
@@ -127,13 +127,14 @@ export default function ForgotPasswordPage(): React.JSX.Element {
           {/* Bottom Link */}
           <div className="pt-2 text-sm text-slate-400 border-t border-slate-800/80">
             <span>Remember your password? </span>
-            <Link to="/login" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors ml-1">
+            <Link
+              to="/login"
+              className="font-semibold text-blue-400 hover:text-blue-300 transition-colors ml-1"
+            >
               Sign In
             </Link>
           </div>
-
         </div>
-
       </div>
     </div>
   );
