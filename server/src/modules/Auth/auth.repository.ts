@@ -1,6 +1,7 @@
 import prisma from "../../utils/prisma.js";
 import type {
   Prisma,
+  Session,
   User,
   VerificationToken,
   VerificationTokenType,
@@ -13,7 +14,6 @@ export class AuthRepository {
     });
   }
 
-  // createUser()
   public async createUser(data: Prisma.UserCreateInput): Promise<User> {
     return prisma.user.create({ data });
   }
@@ -25,7 +25,6 @@ export class AuthRepository {
     });
   }
 
-  // deleteVerificationTokens()
   public async deleteVerificationTokens(
     userId: string,
     type: VerificationTokenType,
@@ -38,7 +37,6 @@ export class AuthRepository {
     });
   }
 
-  // createVerificationToken()
   public async createVerificationToken(
     data: Prisma.VerificationTokenCreateInput,
   ): Promise<VerificationToken> {
@@ -62,6 +60,48 @@ export class AuthRepository {
             expiresAt: { gt: new Date(Date.now()) },
           },
         },
+      },
+    });
+  }
+
+  public async createSession(data: Prisma.SessionCreateInput): Promise<Session> {
+    return prisma.session.create({ data });
+  }
+
+  public async findSessionByUserId(id: string, ip: string): Promise<Session | null> {
+    return prisma.session.findFirst({
+      where: {
+        userId: id,
+        ip,
+      },
+    });
+  }
+
+  public async deleteSessionsByUserId(id: string): Promise<Prisma.BatchPayload> {
+    return prisma.session.deleteMany({
+      where: { userId: id },
+    });
+  }
+
+  public async deleteSessionById(id: string): Promise<void> {
+    await prisma.session.delete({
+      where: { id },
+    });
+    return Promise.resolve();
+  }
+
+  public async updateSessionByUserId(
+    id: string,
+    ip: string,
+    refreshTokenHash: string,
+  ): Promise<Session> {
+    return prisma.session.update({
+      where: {
+        id,
+        ip,
+      },
+      data: {
+        refreshTokenHash,
       },
     });
   }

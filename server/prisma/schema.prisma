@@ -20,16 +20,17 @@ enum VerificationTokenType {
 }
 
 model User {
-  id                 String                  @id @default(uuid())
+  id                 String              @id @default(uuid())
   firstName          String
   lastName           String
-  email              String                  @unique
+  email              String              @unique
   password           String
-  role               Roles                   @default(STUDENT)
-  isVerified         Boolean                 @default(false)
+  role               Roles               @default(STUDENT)
+  isVerified         Boolean             @default(false)
   verificationTokens VerificationToken[]
-  createdAt          DateTime                @default(now())
-  updatedAt          DateTime                @updatedAt
+  sessions           Session[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
 
 model VerificationToken {
@@ -38,6 +39,18 @@ model VerificationToken {
   user      User                  @relation(fields: [userId], references: [id])
   type      VerificationTokenType
   token     String
-  createdAt DateTime @default(now())
+  createdAt DateTime              @default(now())
   expiresAt DateTime
+}
+
+model Session {
+  id               String   @id @default(uuid())
+  ip               String
+  userAgent        String
+  refreshTokenHash String
+  revoked          Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  expiresAt        DateTime
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
 }
