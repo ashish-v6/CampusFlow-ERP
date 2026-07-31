@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Mail, MailCheck, Sparkles, ArrowRight, RefreshCw, Info } from "lucide-react";
-import { sendOTP } from "../services/auth.services";
+import { sendOTP, verifyOtp } from "../services/auth.services";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 
@@ -25,6 +25,7 @@ export default function VerifyOtpPage(): React.JSX.Element {
   });
   const [errors, setErrors] = useState<VerifyOtpFormErrors>({});
   const [emailError, setEmailError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(0);
 
   useEffect(() => {
@@ -78,7 +79,7 @@ export default function VerifyOtpPage(): React.JSX.Element {
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const newErrors: VerifyOtpFormErrors = {};
 
@@ -99,6 +100,23 @@ export default function VerifyOtpPage(): React.JSX.Element {
       email: formData.email,
       otp: formData.otp.join(""),
     };
+
+    setLoading(true);
+    try{
+      const res = await verifyOtp(data);
+
+      toast.success("User Verified");
+
+      navigate("/login");
+    }catch(error){
+        if (error instanceof AxiosError) {
+          toast.error(error.response?.data.message ?? "Something went wrong");
+        } else {
+          toast.error("Something unexpected happened");
+        }
+    }finally{
+      setLoading(false);
+    }
   };
 
   return (
@@ -203,9 +221,10 @@ export default function VerifyOtpPage(): React.JSX.Element {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-all flex items-center justify-center gap-2 group order-1 sm:order-2 cursor-pointer"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-all flex items-center justify-center gap-2 group order-1 sm:order-2 cursor-pointer disabled:bg-blue-600/60  disabled:cursor-noy-allowed"
               >
-                <span>Verify OTP</span>
+                {loading ? "Verifing..." : "Verify OTP"}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>

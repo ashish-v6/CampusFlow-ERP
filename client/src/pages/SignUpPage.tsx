@@ -90,8 +90,8 @@ export default function SignUpPage(): React.JSX.Element {
     };
     try {
       const data = await signUp(reqData);
-      console.log(data);
 
+      toast.success("User Registered Successfully")
       navigate("/verify-otp", { state: { email: data.user.email } });
     } catch (error) {
       if (error instanceof AxiosError) {
