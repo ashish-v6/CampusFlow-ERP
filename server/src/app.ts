@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import _config from "./config/config.js";
 import type { Request, Response } from "express";
 import globalErrorHandler from "./middlewares/globalErrorHandler.js";
@@ -15,6 +16,7 @@ app.use(helmet());
 app.use(cors({ origin: _config.clientUrl, credentials: true }));
 app.use(morgan(_config.environment === "production" ? "combined" : "dev"));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 // --- Health check ---
