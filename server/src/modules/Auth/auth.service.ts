@@ -1,16 +1,20 @@
-import createHttpError, { type HttpError } from "http-errors";
 import { AuthRepository } from "./auth.repository.js";
-import type { RegisterUserDto } from "./dto/register-user.dto.js";
-import authUtils from "./auth.utils.js";
-import bcrypt from "bcrypt";
+
+//utils
+import createHttpError from "http-errors";
 import VerificationTemplate from "../../templates/VerificationEmail.js";
 import { sendEmail } from "../../services/mail/sendMail.js";
-import type { User } from "../../generated/prisma/client.js";
+import authUtils from "./auth.utils.js";
+import bcrypt from "bcrypt";
+
+//types
+import type * as dtos from "./auth.dto.js";
+import { Prisma, VerificationTokenType, type User } from "../../generated/prisma/client.js";
 
 export class AuthService {
   constructor(private readonly authRepository: AuthRepository) {}
 
-  public async register(dto: RegisterUserDto): Promise<User> {
+  public async register(dto: dtos.RegisterUserDto): Promise<User> {
     const existingUser = await this.authRepository.findUserByEmail(dto.email);
     //--validate user
     if (existingUser) {
@@ -23,7 +27,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(dto.password, 11);
 
     //create db data payload
-    const data = {
+    const data: Prisma.UserCreateInput = {
       firstName: dto.firstName,
       lastName: dto.lastName,
       email: dto.email,
@@ -35,8 +39,8 @@ export class AuthService {
     return newUser;
   }
 
-  public async sendVerificationEmail(email: string): Promise<unknown | HttpError> {
-    const existingUser = await this.authRepository.findUserByEmail(email);
+  public async sendVerificationEmail(dto: dtos.SendVerificationEmailDto): Promise<void> {
+    const existingUser = await this.authRepository.findUserByEmail(dto.email);
     //--validate user
     if (!existingUser) {
       throw createHttpError(401, "Invalid Email");
@@ -46,21 +50,58 @@ export class AuthService {
       throw createHttpError(403, "Invalid Request");
     }
 
+    await this.authRepository.deleteVerificationTokens(
+      existingUser.id,
+      VerificationTokenType.EMAIL_VERIFICATION,
+    );
     // --Email Verification
-    const OTP = authUtils.generateOTP();
+    const otp = authUtils.generateOTP();
 
     const template = VerificationTemplate(
       existingUser.firstName + existingUser.lastName,
       existingUser.email,
-      OTP,
+      otp,
     );
+
+    const otpHash = authUtils.generateHash(otp);
+    const data: Prisma.VerificationTokenCreateInput = {
+      user: { connect: { id: existingUser.id } },
+      token: otpHash,
+      type: VerificationTokenType.EMAIL_VERIFICATION,
+      expiresAt: new Date(Date.now() + 1000 * 600),
+    };
+    await this.authRepository.createVerificationToken(data);
 
     await sendEmail(existingUser.email, "Verification OTP", template);
 
-    return {
-      success: true,
-      message: "OTP sent to registered email",
-    };
+    return Promise.resolve();
+  }
+
+  public async verifyEmail(dto: dtos.VerifyEmailDto): Promise<void> {
+    const user = await this.authRepository.findUserByEmail(dto.email);
+
+    if (!user) {
+      throw createHttpError(401, "Invalid Request");
+    }
+
+    const otpHash = authUtils.generateHash(dto.otp);
+    const isValidOtp = await this.authRepository.checkUserHasOtp(
+      dto.email,
+      otpHash,
+      VerificationTokenType.EMAIL_VERIFICATION,
+    );
+
+    if (!isValidOtp) {
+      throw createHttpError(401, "Invalid Otp");
+    }
+
+    await this.authRepository.markUserAsVerified(user.id);
+
+    await this.authRepository.deleteVerificationTokens(
+      user.id,
+      VerificationTokenType.EMAIL_VERIFICATION,
+    );
+    return Promise.resolve();
   }
 }
 

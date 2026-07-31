@@ -27,7 +27,7 @@ class AuthUtils {
     return jwt.sign(
       { userId: id, sessionId: seesionId, jti: crypto.randomUUID() },
       _config.refreshKey,
-      { expiresIn: "15m" },
+      { expiresIn: "7d" },
     );
   };
   public decodeAccessToken = (token: string): JwtPayload => {

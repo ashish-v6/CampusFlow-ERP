@@ -1,12 +1,12 @@
 import type { Request, Response } from "express";
 import { authService } from "./auth.service.js";
-import type { RegisterUserDto } from "./dto/register-user.dto.js";
+import type * as dtos from "./auth.dto.js";
 import createHttpError from "http-errors";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
 class AuthController {
   public SignUp = asyncHandler(async (req: Request, res: Response) => {
-    const dto: RegisterUserDto = req.body;
+    const dto: dtos.RegisterUserDto = req.body;
 
     if (!dto.firstName || !dto.lastName || !dto.email || !dto.password) {
       throw createHttpError(400, "All fields are required");
@@ -29,14 +29,29 @@ class AuthController {
   });
 
   public SendVerificationEmail = asyncHandler(async (req: Request, res: Response) => {
-    const { email } = req.body;
-    if (!email) {
+    const dto: dtos.SendVerificationEmailDto = req.body;
+    if (!dto.email) {
       throw createHttpError(400, "Email is required");
     }
 
-    const result = await authService.sendVerificationEmail(email);
+    await authService.sendVerificationEmail(dto);
 
-    res.status(200).json(result);
+    res.status(200).json({ success: true, message: "OTP is sent to registered email" });
+  });
+
+  public verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+    const dto: dtos.VerifyEmailDto = req.body;
+
+    if (!dto.email || !dto.otp) {
+      throw createHttpError(400, "All fields are required");
+    }
+
+    await authService.verifyEmail(dto);
+
+    res.status(200).json({
+      success: true,
+      message: "User Verified",
+    });
   });
 }
 const authController = new AuthController();
