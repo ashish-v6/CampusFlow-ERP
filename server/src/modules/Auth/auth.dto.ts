@@ -13,3 +13,13 @@ export interface VerifyEmailDto {
   email: string;
   otp: string;
 }
+
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
+export interface LoginContextDto {
+  ip: string;
+  userAgent: string;
+}

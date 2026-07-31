@@ -10,6 +10,7 @@ import bcrypt from "bcrypt";
 //types
 import type * as dtos from "./auth.dto.js";
 import { Prisma, VerificationTokenType, type User } from "../../generated/prisma/client.js";
+import type { UserLoginResponse } from "./auth.types.js";
 
 export class AuthService {
   constructor(private readonly authRepository: AuthRepository) {}
@@ -102,6 +103,62 @@ export class AuthService {
       VerificationTokenType.EMAIL_VERIFICATION,
     );
     return Promise.resolve();
+  }
+
+  public async login(
+    dto: dtos.LoginDto,
+    context: dtos.LoginContextDto,
+  ): Promise<UserLoginResponse> {
+    const existingUser = await this.authRepository.findUserByEmail(dto.email);
+
+    if (!existingUser) {
+      throw createHttpError(404, "Resource not found");
+    }
+
+    if (!existingUser.isVerified) {
+      throw createHttpError(401, "User isn't verified");
+    }
+
+    const existingSession = await this.authRepository.findSessionByUserId(
+      existingUser.id,
+      context.ip,
+    );
+
+    if (existingSession) {
+      await this.authRepository.deleteSessionById(existingSession.id);
+    }
+
+    const hashedPassword = await bcrypt.compare(dto.password, existingUser.password);
+    if (!hashedPassword) {
+      throw createHttpError(401, "Invalid Email or Password");
+    }
+
+    //refreshToken
+    const refreshToken = authUtils.createRefreshToken(existingUser.id);
+    const refreshTokenHash = authUtils.generateHash(refreshToken);
+    //create Session
+    const data: Prisma.SessionCreateInput = {
+      ip: context.ip,
+      userAgent: context.userAgent,
+      refreshTokenHash,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      user: { connect: { id: existingUser.id } },
+    };
+
+    const seesion = await this.authRepository.createSession(data);
+
+    //accessToken
+    const accessToken = authUtils.createAccessToken(
+      existingUser.id,
+      existingUser.email,
+      seesion.id,
+    );
+
+    return {
+      accessToken,
+      refreshToken,
+      user: existingUser,
+    };
   }
 }
 

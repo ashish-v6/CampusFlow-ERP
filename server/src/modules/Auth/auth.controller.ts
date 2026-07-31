@@ -3,6 +3,7 @@ import { authService } from "./auth.service.js";
 import type * as dtos from "./auth.dto.js";
 import createHttpError from "http-errors";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import authUtils from "./auth.utils.js";
 
 class AuthController {
   public SignUp = asyncHandler(async (req: Request, res: Response) => {
@@ -51,6 +52,40 @@ class AuthController {
     res.status(200).json({
       success: true,
       message: "User Verified",
+    });
+  });
+
+  public LoginUser = asyncHandler(async (req: Request, res: Response) => {
+    const dto: dtos.LoginDto = req.body;
+    const context: dtos.LoginContextDto = {
+      ip: req.ip as string,
+      userAgent: req.headers["user-agent"] as string,
+    };
+
+    if (req.cookies && req.cookies?.refreshToken) {
+      throw createHttpError(403, "Session is running");
+    }
+
+    if (!dto.email || !dto.password) {
+      throw createHttpError(400, "All Fields are required");
+    }
+
+    const result = await authService.login(dto, context);
+
+    res.cookie(
+      "refreshToken",
+      result.refreshToken,
+      authUtils.cookie_config as import("express").CookieOptions,
+    );
+
+    res.status(200).json({
+      accessToken: result.accessToken,
+      user: {
+        id: result.user.id,
+        firstName: result.user.firstName,
+        lastName: result.user.lastName,
+        email: result.user.email,
+      },
     });
   });
 }
