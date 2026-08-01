@@ -57,7 +57,7 @@ class AuthController {
 
   public LoginUser = asyncHandler(async (req: Request, res: Response) => {
     const dto: dtos.LoginDto = req.body;
-    const context: dtos.LoginContextDto = {
+    const context: dtos.LoginDeviceDto = {
       ip: req.ip as string,
       userAgent: req.headers["user-agent"] as string,
     };
@@ -91,10 +91,10 @@ class AuthController {
 
   public RotateToken = asyncHandler(async (req : Request, res : Response) => {
     if (req.cookies && !req.cookies.refreshToken) {
-      throw createHttpError(400, "Token missing");
+      throw createHttpError(400, "Token missing! Try to login again");
     }
     const dto : dtos.RotateTokenDto = {refreshToken : req.cookies.refreshToken as string};
-    const context: dtos.LoginContextDto = {
+    const context: dtos.LoginDeviceDto = {
       ip: req.ip as string,
       userAgent: req.headers["user-agent"] as string,
     };
@@ -104,6 +104,52 @@ class AuthController {
     res.cookie("refreshToken",result.refreshToken, authUtils.cookie_config as import("express").CookieOptions )
     res.status(200).json({
       accessToken : result.accessToken
+    })
+  });
+
+  public LogoutUser = asyncHandler(async(req : Request, res : Response) => {
+    if (req.cookies && !req.cookies.refreshToken) {
+      throw createHttpError(400, "Token missing! Try to login again");
+    }
+    const dto : dtos.logoutDto = {refreshToken : req.cookies.refreshToken as string};
+    const context: dtos.LoginDeviceDto = {
+      ip: req.ip as string,
+      userAgent: req.headers["user-agent"] as string,
+    };
+
+    await authService.logout(dto,context);
+
+    res.clearCookie("refreshToken");
+
+    res.status(200).json({
+      success : true,
+      message : "User logout Successful"
+    });
+  })
+  public LogoutAll = asyncHandler(async(req : Request, res : Response) => {
+    if (req.cookies && !req.cookies.refreshToken) {
+      throw createHttpError(400, "Token missing! Try to login again");
+    }
+    const dto : dtos.logoutDto = {refreshToken : req.cookies.refreshToken as string};
+    const context: dtos.LoginDeviceDto = {
+      ip: req.ip as string,
+      userAgent: req.headers["user-agent"] as string,
+    };
+
+    await authService.logoutAll(dto,context);
+
+    res.clearCookie("refreshToken");
+
+    res.status(200).json({
+      success : true,
+      message : "User logout Successful"
+    });
+  })
+  public clearCookies = asyncHandler(async(req : Request, res : Response) => {
+    res.clearCookie("refreshToken");
+    res.status(200).json({
+      success : true,
+      message : "Token deleted"
     })
   })
 }

@@ -68,11 +68,12 @@ export class AuthRepository {
     return prisma.session.create({ data });
   }
 
-  public async findSessionByUserId(id: string, ip: string): Promise<Session | null> {
+  public async findSessionByUserId(id: string, ip: string, userAgent : string): Promise<Session | null> {
     return prisma.session.findFirst({
       where: {
         userId: id,
         ip,
+        userAgent,
       },
     });
   }
@@ -93,12 +94,14 @@ export class AuthRepository {
   public async updateSessionById(
     id: string,
     ip: string,
+    userAgent : string,
     refreshTokenHash: string,
   ): Promise<Session> {
     return prisma.session.update({
       where: {
         id,
         ip,
+        userAgent
       },
       data: {
         refreshTokenHash,

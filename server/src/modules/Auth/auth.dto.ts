@@ -19,11 +19,15 @@ export interface LoginDto {
   password: string;
 }
 
-export interface LoginContextDto {
+export interface LoginDeviceDto {
   ip: string;
   userAgent: string;
 }
 
 export interface RotateTokenDto{
+  refreshToken : string,
+}
+
+export interface logoutDto{
   refreshToken : string,
 }

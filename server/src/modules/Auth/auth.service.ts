@@ -107,7 +107,7 @@ export class AuthService {
 
   public async login(
     dto: dtos.LoginDto,
-    context: dtos.LoginContextDto,
+    context: dtos.LoginDeviceDto,
   ): Promise<UserLoginResponse> {
     const existingUser = await this.authRepository.findUserByEmail(dto.email);
 
@@ -122,6 +122,7 @@ export class AuthService {
     const existingSession = await this.authRepository.findSessionByUserId(
       existingUser.id,
       context.ip,
+      context.userAgent,
     );
 
     if (existingSession) {
@@ -161,7 +162,7 @@ export class AuthService {
     };
   }
 
-  public async rotateToken(dto : dtos.RotateTokenDto, context : dtos.LoginContextDto) : Promise<NewRoatedToken> {
+  public async rotateToken(dto : dtos.RotateTokenDto, context : dtos.LoginDeviceDto) : Promise<NewRoatedToken> {
 
     const decode = authUtils.decodeRefreshToken(dto.refreshToken);
 
@@ -171,7 +172,7 @@ export class AuthService {
       throw createHttpError(404,"Resource(user) not Found Request");
     }
 
-    const session = await this.authRepository.findSessionByUserId(decode.id, context.ip);
+    const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
     console.log(session);
     if(!session){
       throw createHttpError(404, "Session Expired");
@@ -183,11 +184,40 @@ export class AuthService {
 
     const refreshTokenHash = authUtils.generateHash(refreshToken);
 
-    await this.authRepository.updateSessionById(session.id, context.ip, refreshTokenHash);
+    await this.authRepository.updateSessionById(session.id, context.ip, context.userAgent, refreshTokenHash);
 
     const data : NewRoatedToken = {accessToken, refreshToken}
 
     return data;
+  }
+
+  public async logout(dto : dtos.logoutDto, context : dtos.LoginDeviceDto): Promise<void>{
+
+    const decode = authUtils.decodeRefreshToken(dto.refreshToken);
+
+    const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
+
+    if(!session){
+      throw createHttpError(404,"Session is expired");
+    }
+
+    await this.authRepository.deleteSessionById(session.id);
+
+    return Promise.resolve();
+  } 
+
+  public async logoutAll(dto : dtos.logoutDto, context : dtos.LoginDeviceDto): Promise<void>{
+     const decode = authUtils.decodeRefreshToken(dto.refreshToken);
+
+    const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
+
+    if(!session){
+      throw createHttpError(404,"Session is expired");
+    }
+
+    await this.authRepository.deleteSessionsByUserId(decode.id);
+
+    return Promise.resolve();
   }
 }
 

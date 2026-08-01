@@ -24,3 +24,17 @@ export const rotateToken = async () => {
   const res = api.post("/api/auth/rotate");
   return (await res).data;
 }
+export const logoutUser = async () => {
+  const res = api.post("/api/auth/logout");
+  return (await res).data;
+}
+
+export const logoutAll = async () => {
+  const res = api.post("/api/auth/logout-all");
+  return (await res).data;
+}
+
+export const clearCookie = async () => {
+  const res = api.post("/api/auth/clear-cookie");
+  return (await res).data;
+}
