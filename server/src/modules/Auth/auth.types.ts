@@ -15,3 +15,8 @@ export interface CookieConfig {
   sameSite: string;
   maxAge: number;
 }
+
+export interface NewRoatedToken {
+  accessToken : string,
+  refreshToken : string,
+}

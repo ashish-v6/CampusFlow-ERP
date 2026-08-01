@@ -88,6 +88,24 @@ class AuthController {
       },
     });
   });
+
+  public RotateToken = asyncHandler(async (req : Request, res : Response) => {
+    if (req.cookies && !req.cookies.refreshToken) {
+      throw createHttpError(400, "Token missing");
+    }
+    const dto : dtos.RotateTokenDto = {refreshToken : req.cookies.refreshToken as string};
+    const context: dtos.LoginContextDto = {
+      ip: req.ip as string,
+      userAgent: req.headers["user-agent"] as string,
+    };
+
+    const result = await authService.rotateToken(dto,context);
+
+    res.cookie("refreshToken",result.refreshToken, authUtils.cookie_config as import("express").CookieOptions )
+    res.status(200).json({
+      accessToken : result.accessToken
+    })
+  })
 }
 const authController = new AuthController();
 export default authController;

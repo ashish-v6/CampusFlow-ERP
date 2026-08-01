@@ -28,8 +28,10 @@ class AuthUtils {
       },
     );
   };
-  public createRefreshToken = (id: string): string => {
-    return jwt.sign({ userId: id, jti: crypto.randomUUID() }, _config.refreshKey, {
+  public createRefreshToken = (id: string, email : string): string => {
+    return jwt.sign({ userId: id,email : email, jti: crypto.randomUUID() }, 
+    _config.refreshKey, 
+    {
       expiresIn: "7d",
     });
   };
@@ -37,7 +39,7 @@ class AuthUtils {
     return jwt.verify(token, _config.accessKey) as JwtPayload & { id: string; email: string };
   };
   public decodeRefreshToken = (token: string): JwtPayload => {
-    return jwt.verify(token, _config.accessKey) as JwtPayload & { id: string; sessionId: string };
+    return jwt.verify(token, _config.refreshKey) as JwtPayload & { id: string; email : string, sessionId: string };
   };
 }
 

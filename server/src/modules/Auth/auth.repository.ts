@@ -90,7 +90,7 @@ export class AuthRepository {
     return Promise.resolve();
   }
 
-  public async updateSessionByUserId(
+  public async updateSessionById(
     id: string,
     ip: string,
     refreshTokenHash: string,
@@ -102,6 +102,7 @@ export class AuthRepository {
       },
       data: {
         refreshTokenHash,
+        expiresAt : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       },
     });
   }

@@ -23,3 +23,7 @@ export interface LoginContextDto {
   ip: string;
   userAgent: string;
 }
+
+export interface RotateTokenDto{
+  refreshToken : string,
+}

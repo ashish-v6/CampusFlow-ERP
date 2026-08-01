@@ -10,7 +10,7 @@ import bcrypt from "bcrypt";
 //types
 import type * as dtos from "./auth.dto.js";
 import { Prisma, VerificationTokenType, type User } from "../../generated/prisma/client.js";
-import type { UserLoginResponse } from "./auth.types.js";
+import type { NewRoatedToken, UserLoginResponse } from "./auth.types.js";
 
 export class AuthService {
   constructor(private readonly authRepository: AuthRepository) {}
@@ -134,7 +134,7 @@ export class AuthService {
     }
 
     //refreshToken
-    const refreshToken = authUtils.createRefreshToken(existingUser.id);
+    const refreshToken = authUtils.createRefreshToken(existingUser.id, existingUser.email);
     const refreshTokenHash = authUtils.generateHash(refreshToken);
     //create Session
     const data: Prisma.SessionCreateInput = {
@@ -159,6 +159,35 @@ export class AuthService {
       refreshToken,
       user: existingUser,
     };
+  }
+
+  public async rotateToken(dto : dtos.RotateTokenDto, context : dtos.LoginContextDto) : Promise<NewRoatedToken> {
+
+    const decode = authUtils.decodeRefreshToken(dto.refreshToken);
+
+    const user = await this.authRepository.findUserByEmail(decode.email);
+
+    if(!user){
+      throw createHttpError(404,"Resource(user) not Found Request");
+    }
+
+    const session = await this.authRepository.findSessionByUserId(decode.id, context.ip);
+    console.log(session);
+    if(!session){
+      throw createHttpError(404, "Session Expired");
+    }
+
+    const refreshToken = authUtils.createRefreshToken(decode.id, decode.email);
+
+    const accessToken = authUtils.createAccessToken(decode.id, decode.email, session.id);
+
+    const refreshTokenHash = authUtils.generateHash(refreshToken);
+
+    await this.authRepository.updateSessionById(session.id, context.ip, refreshTokenHash);
+
+    const data : NewRoatedToken = {accessToken, refreshToken}
+
+    return data;
   }
 }
 
