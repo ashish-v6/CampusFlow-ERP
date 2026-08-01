@@ -20,3 +20,7 @@ export const loginUser = async (data : {email : string, password : string}) => {
   const res = api.post("/api/auth/login", data);
   return (await res).data;
 }
+export const rotateToken = async () => {
+  const res = api.post("/api/auth/rotate");
+  return (await res).data;
+}
