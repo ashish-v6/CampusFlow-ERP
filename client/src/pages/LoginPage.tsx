@@ -1,6 +1,10 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { AxiosError, AxiosResponse } from "axios";
+import toast from "react-hot-toast";
+import { loginUser } from "../services/auth.services";
+import { useAuth } from "../context/Auth/useAuth";
 
 interface LoginFormData {
   email: string;
@@ -15,6 +19,7 @@ interface LoginFormErrors {
 
 export default function LoginPage(): React.JSX.Element {
   const navigate = useNavigate();
+  const auth = useAuth();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
@@ -22,6 +27,7 @@ export default function LoginPage(): React.JSX.Element {
     rememberMe: false,
   });
   const [errors, setErrors] = useState<LoginFormErrors>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value, type, checked } = e.target;
@@ -54,14 +60,32 @@ export default function LoginPage(): React.JSX.Element {
     return true;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     if (!validateForm()) {
       return;
     }
 
-    navigate("/dashboard");
+    setLoading(true);
+    try{
+      const result = await loginUser(formData);
+      auth.login(
+        result.accessToken,
+        result.user
+      )
+      toast.success("Login Successful");
+      navigate("/dashboard");
+    }catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message ?? "Something went wrong");
+      } else {
+        toast.error("Something unexpected happened");
+      }
+    }finally{
+      setLoading(false);
+    }
+    
   };
 
   return (
@@ -178,9 +202,10 @@ export default function LoginPage(): React.JSX.Element {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2 group text-sm cursor-pointer"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2 group text-sm cursor-pointer  disabled:bg-blue-600/60  disabled:cursor-noy-allowed"
               >
-                <span>Sign In</span>
+                {loading ? "Signing..." : "Sign In"}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
             </form>

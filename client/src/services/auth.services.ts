@@ -15,3 +15,8 @@ export const verifyOtp = async (data: { email: string, otp : string }) => {
   const res = api.post("/api/auth/verify-email", data);
   return (await res).data;
 };
+
+export const loginUser = async (data : {email : string, password : string}) => {
+  const res = api.post("/api/auth/login", data);
+  return (await res).data;
+}
