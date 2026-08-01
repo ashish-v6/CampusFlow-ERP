@@ -11,11 +11,22 @@ import {
   Search,
   Sparkles,
 } from "lucide-react";
+import { logoutUser } from "../services/auth.services";
+import { useAuth } from "../context/Auth/useAuth";
+
 
 export default function DashboardPage(): React.JSX.Element {
   const navigate = useNavigate();
+  const auth = useAuth();
 
-  const handleLogout = (): void => {
+  const handleLogout = async (e : React.MouseEvent<HTMLButtonElement>) : Promise<void> => {
+    try{
+      await logoutUser();
+      auth.logout();
+    }catch(error){
+      console.log(error);
+    }
+
     navigate("/login");
   };
 

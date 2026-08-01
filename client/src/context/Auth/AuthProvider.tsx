@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { Props, User } from "./Types";
 import { clearAccessToken, getAccessToken, setAccessToken } from "./AcessToken";
-import { rotateToken } from "../../services/auth.services";
+import { clearCookie, rotateToken } from "../../services/auth.services";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 
@@ -19,12 +19,13 @@ function AuthProvider({ children }: Props) {
     setIsVerifying(true);
     try{
       const result = await rotateToken();
-      console.log(result);
       setAccessToken(result.accessToken);
-      console.log(getAccessToken())
     }catch(error){
       if(error instanceof AxiosError){
-        toast.error(error.message);
+        if(error.response?.status === 404){
+          logout();
+          await clearCookie();
+        }
       }else{
         console.log(error);
       }
