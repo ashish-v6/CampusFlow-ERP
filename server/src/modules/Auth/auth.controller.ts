@@ -103,7 +103,13 @@ class AuthController {
 
     res.cookie("refreshToken",result.refreshToken, authUtils.cookie_config as import("express").CookieOptions )
     res.status(200).json({
-      accessToken : result.accessToken
+      accessToken : result.accessToken,
+      user : {
+        id : result.user.id,
+        firstName : result.user.firstName,
+        lastName : result.user.lastName,
+        email : result.user.email,
+      }
     })
   });
 

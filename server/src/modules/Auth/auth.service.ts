@@ -10,7 +10,7 @@ import _config from "../../config/config.js";
 //types
 import type * as dtos from "./auth.dto.js";
 import { Prisma, VerificationTokenType, type User } from "../../generated/prisma/client.js";
-import type { NewRoatedToken, UserLoginResponse } from "./auth.types.js";
+import type { UserLoginResponse } from "./auth.types.js";
 import forgetPassowrdTemplete from "../../templates/ForgetPassword.js";
 
 export class AuthService {
@@ -160,7 +160,7 @@ export class AuthService {
     };
   }
 
-  public async rotateToken(dto : dtos.RotateTokenDto, context : dtos.LoginDeviceDto) : Promise<NewRoatedToken> {
+  public async rotateToken(dto : dtos.RotateTokenDto, context : dtos.LoginDeviceDto) : Promise<UserLoginResponse> {
 
     const decode = authUtils.decodeRefreshToken(dto.refreshToken);
 
@@ -184,7 +184,16 @@ export class AuthService {
 
     await this.authRepository.updateSessionById(session.id, context.ip, context.userAgent, refreshTokenHash);
 
-    const data : NewRoatedToken = {accessToken, refreshToken}
+    const data : UserLoginResponse = {
+      accessToken,
+      refreshToken,
+      user : {
+        id : user.id,
+        firstName : user.firstName,
+        lastName : user.lastName,
+        email : user.email,  
+      }
+    }
 
     return data;
   }
