@@ -3,8 +3,8 @@ import { clearAccessToken, getAccessToken, setAccessToken } from "../context/Aut
 import { rotateToken } from "../services/auth.services";
 
 declare module "axios" {
-  export interface InternalAxiosRequestConfig{
-    _retry? : boolean,
+  export interface InternalAxiosRequestConfig {
+    _retry?: boolean;
   }
 }
 
@@ -13,30 +13,27 @@ const api = axios.create({
   withCredentials: true,
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = getAccessToken();
-    if(token){
-      config.headers.set("Authorization", `Bearer ${token}`)
-    }
-    return config;
+api.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token) {
+    config.headers.set("Authorization", `Bearer ${token}`);
   }
-)
+  return config;
+});
 
-interface QueueType{
-  resolve : (token : string | null) => void;
-  reject : (error : unknown) => void;
+interface QueueType {
+  resolve: (token: string | null) => void;
+  reject: (error: unknown) => void;
 }
 
 let isRefreshing = false;
-let failedQueue : QueueType[] = [];
+let failedQueue: QueueType[] = [];
 
-function processQueue(error : unknown, token : string | null) {
-  for(const request of failedQueue){
-    if(error){
+function processQueue(error: unknown, token: string | null) {
+  for (const request of failedQueue) {
+    if (error) {
       request.reject(error);
-    }
-    else{
+    } else {
       request.resolve(token);
     }
   }
@@ -45,37 +42,37 @@ function processQueue(error : unknown, token : string | null) {
 
 api.interceptors.response.use(
   (response) => response,
-  
-  async (error : AxiosError) => {
+
+  async (error: AxiosError) => {
     const status = error.response?.status;
     const originalRequest = error.config as InternalAxiosRequestConfig;
 
-    if(status !== 401){
+    if (status !== 401) {
       return Promise.reject(error);
     }
 
-    if(!originalRequest){
+    if (!originalRequest) {
       return Promise.reject(error);
     }
 
-    if(originalRequest._retry){
+    if (originalRequest._retry) {
       return Promise.reject(error);
     }
 
-    if(originalRequest.url === "/api/auth/rotate"){
+    if (originalRequest.url === "/api/auth/rotate") {
       return Promise.reject(error);
     }
 
-    if(isRefreshing){
+    if (isRefreshing) {
       return new Promise((resolve, reject) => {
-        failedQueue.push({resolve,reject});
+        failedQueue.push({ resolve, reject });
       }).then(() => api(originalRequest));
     }
 
     isRefreshing = true;
     originalRequest._retry = true;
 
-    try{
+    try {
       const result = await rotateToken();
 
       setAccessToken(result.accessToken);
@@ -83,18 +80,16 @@ api.interceptors.response.use(
       processQueue(null, result.accessToken);
 
       return api(originalRequest);
-    }
-    catch(error){
-      processQueue(error,null);
+    } catch (error) {
+      processQueue(error, null);
 
       clearAccessToken();
 
       return Promise.reject(error);
-    }
-    finally{
+    } finally {
       isRefreshing = false;
     }
-  }
-)
+  },
+);
 
 export default api;

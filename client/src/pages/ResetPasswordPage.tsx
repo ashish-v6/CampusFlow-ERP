@@ -1,6 +1,9 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import { Link, useNavigate } from "react-router";
+import React, { useState, ChangeEvent, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { Lock, Eye, EyeOff, Sparkles, ArrowRight, Check, ShieldCheck } from "lucide-react";
+import { resetPassword, validateToken } from "../services/auth.services";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
 
 interface ResetPasswordFormData {
   newPassword: string;
@@ -14,8 +17,11 @@ interface ResetPasswordFormErrors {
 
 export default function ResetPasswordPage(): React.JSX.Element {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token") as string;
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<ResetPasswordFormData>({
     newPassword: "",
@@ -32,7 +38,7 @@ export default function ResetPasswordPage(): React.JSX.Element {
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const newErrors: ResetPasswordFormErrors = {};
 
@@ -49,9 +55,43 @@ export default function ResetPasswordPage(): React.JSX.Element {
       setErrors(newErrors);
       return;
     }
+    setLoading(true);
+    try {
+      await VerifyToken();
 
-    navigate("/login");
+      await resetPassword({ token, password: formData.newPassword });
+
+      toast.success("Password Reset Successful");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message ?? "Something went wrong");
+      } else {
+        toast.error("Something unexpected happened");
+      }
+    } finally {
+      navigate("/login");
+      setLoading(false);
+    }
   };
+
+  const VerifyToken = async () => {
+    if (!token) {
+      navigate("/login");
+      Promise.reject();
+    }
+    try {
+      await validateToken({ token });
+      return Promise.resolve();
+    } catch (error) {
+      toast.error("Link is Expired! Kindly sent Another Link");
+      navigate("/login");
+      return Promise.reject();
+    }
+  };
+
+  useEffect(() => {
+    VerifyToken().catch();
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12 min-h-[calc(100vh-7rem)]">
@@ -190,7 +230,8 @@ export default function ResetPasswordPage(): React.JSX.Element {
             {/* Primary Button */}
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-all flex items-center justify-center gap-2 group mt-1 cursor-pointer"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-all flex items-center justify-center gap-2 group mt-1 cursor-pointer disabled:cursor-not-allowed disabled:bg-blue-600/60"
             >
               <span>Update Password</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />

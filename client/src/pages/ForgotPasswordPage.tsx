@@ -1,6 +1,9 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { Mail, MailSearch, Sparkles, ArrowRight, Info } from "lucide-react";
+import { forgotPassword } from "../services/auth.services";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
 
 interface ForgotPasswordFormData {
   email: string;
@@ -16,6 +19,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
     email: "",
   });
   const [errors, setErrors] = useState<ForgotPasswordFormErrors>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -25,7 +29,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const newErrors: ForgotPasswordFormErrors = {};
 
@@ -37,8 +41,22 @@ export default function ForgotPasswordPage(): React.JSX.Element {
       setErrors(newErrors);
       return;
     }
+    setLoading(true);
+    try {
+      const res = await forgotPassword(formData);
+      console.log(res);
+      toast.success("Reset Link is sent to email");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message ?? "Something went wrong");
+      } else {
+        toast.error("Something unexpected happened");
+      }
+    } finally {
+      setLoading(false);
+    }
 
-    navigate("/reset-password");
+    navigate("/login");
   };
 
   return (
@@ -104,9 +122,10 @@ export default function ForgotPasswordPage(): React.JSX.Element {
             {/* Primary Button */}
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-all flex items-center justify-center gap-2 group mt-1 cursor-pointer"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-all flex items-center justify-center gap-2 group mt-1 cursor-pointer disabled:cursor-not-allowed disabled:bg-blue-600/60"
             >
-              <span>Send Reset Link</span>
+              {loading ? "Sending..." : "Send Reset Link"}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </form>

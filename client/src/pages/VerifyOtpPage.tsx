@@ -102,19 +102,19 @@ export default function VerifyOtpPage(): React.JSX.Element {
     };
 
     setLoading(true);
-    try{
+    try {
       const res = await verifyOtp(data);
 
       toast.success("User Verified");
 
       navigate("/login");
-    }catch(error){
-        if (error instanceof AxiosError) {
-          toast.error(error.response?.data.message ?? "Something went wrong");
-        } else {
-          toast.error("Something unexpected happened");
-        }
-    }finally{
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message ?? "Something went wrong");
+      } else {
+        toast.error("Something unexpected happened");
+      }
+    } finally {
       setLoading(false);
     }
   };

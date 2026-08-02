@@ -68,24 +68,20 @@ export default function LoginPage(): React.JSX.Element {
     }
 
     setLoading(true);
-    try{
+    try {
       const result = await loginUser(formData);
-      auth.login(
-        result.accessToken,
-        result.user
-      )
+      auth.login(result.accessToken, result.user);
       toast.success("Login Successful");
       navigate("/dashboard");
-    }catch (error) {
+    } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message ?? "Something went wrong");
       } else {
         toast.error("Something unexpected happened");
       }
-    }finally{
+    } finally {
       setLoading(false);
     }
-    
   };
 
   return (

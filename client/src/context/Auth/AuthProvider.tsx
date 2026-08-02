@@ -13,26 +13,26 @@ function AuthProvider({ children }: Props) {
   const login = (accessToken: string, user: User): void => {
     setUser(user);
     setAccessToken(accessToken);
-  };  
+  };
 
   const silentRefresh = async () => {
     setIsVerifying(true);
-    try{
+    try {
       const result = await rotateToken();
       setAccessToken(result.accessToken);
-    }catch(error){
-      if(error instanceof AxiosError){
-        if(error.response?.status === 404){
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 404) {
           logout();
           await clearCookie();
         }
-      }else{
+      } else {
         console.log(error);
       }
-    }finally{
+    } finally {
       setIsVerifying(false);
     }
-  }
+  };
 
   const logout = (): void => {
     setUser(null);
@@ -41,7 +41,7 @@ function AuthProvider({ children }: Props) {
 
   useEffect(() => {
     silentRefresh();
-  },[])
+  }, []);
   return (
     <AuthContext.Provider
       value={{

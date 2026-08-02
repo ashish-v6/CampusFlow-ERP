@@ -14,16 +14,15 @@ import {
 import { logoutUser } from "../services/auth.services";
 import { useAuth } from "../context/Auth/useAuth";
 
-
 export default function DashboardPage(): React.JSX.Element {
   const navigate = useNavigate();
   const auth = useAuth();
 
-  const handleLogout = async (e : React.MouseEvent<HTMLButtonElement>) : Promise<void> => {
-    try{
+  const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    try {
       await logoutUser();
       auth.logout();
-    }catch(error){
+    } catch (error) {
       console.log(error);
     }
 
