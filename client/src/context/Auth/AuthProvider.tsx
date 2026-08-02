@@ -20,6 +20,7 @@ function AuthProvider({ children }: Props) {
     try {
       const result = await rotateToken();
       setAccessToken(result.accessToken);
+      setUser(user);
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 404) {
