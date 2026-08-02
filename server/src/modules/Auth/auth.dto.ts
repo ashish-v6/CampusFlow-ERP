@@ -31,3 +31,16 @@ export interface RotateTokenDto{
 export interface logoutDto{
   refreshToken : string,
 }
+
+export interface ForgetPasswordLinkDto{
+  email : string,
+}
+
+export interface ResetPasswordDto{
+  token : string,
+  password : string,
+}
+
+export interface ValidateTokenDto{
+  token : string,
+}

@@ -5,12 +5,13 @@ import createHttpError from "http-errors";
 import VerificationTemplate from "../../templates/VerificationEmail.js";
 import { sendEmail } from "../../services/mail/sendMail.js";
 import authUtils from "./auth.utils.js";
-import bcrypt from "bcrypt";
+import _config from "../../config/config.js";
 
 //types
 import type * as dtos from "./auth.dto.js";
 import { Prisma, VerificationTokenType, type User } from "../../generated/prisma/client.js";
 import type { NewRoatedToken, UserLoginResponse } from "./auth.types.js";
+import forgetPassowrdTemplete from "../../templates/ForgetPassword.js";
 
 export class AuthService {
   constructor(private readonly authRepository: AuthRepository) {}
@@ -25,7 +26,7 @@ export class AuthService {
     //--creating user
 
     //hash password
-    const hashedPassword = await bcrypt.hash(dto.password, 11);
+    const hashedPassword = await authUtils.hashPassword(dto.password);
 
     //create db data payload
     const data: Prisma.UserCreateInput = {
@@ -105,10 +106,7 @@ export class AuthService {
     return Promise.resolve();
   }
 
-  public async login(
-    dto: dtos.LoginDto,
-    context: dtos.LoginDeviceDto,
-  ): Promise<UserLoginResponse> {
+  public async login(dto: dtos.LoginDto,context: dtos.LoginDeviceDto,): Promise<UserLoginResponse> {
     const existingUser = await this.authRepository.findUserByEmail(dto.email);
 
     if (!existingUser) {
@@ -129,7 +127,7 @@ export class AuthService {
       await this.authRepository.deleteSessionById(existingSession.id);
     }
 
-    const hashedPassword = await bcrypt.compare(dto.password, existingUser.password);
+    const hashedPassword = await authUtils.comparePassword(dto.password, existingUser.password);
     if (!hashedPassword) {
       throw createHttpError(401, "Invalid Email or Password");
     }
@@ -173,7 +171,7 @@ export class AuthService {
     }
 
     const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
-    console.log(session);
+
     if(!session){
       throw createHttpError(404, "Session Expired");
     }
@@ -207,7 +205,7 @@ export class AuthService {
   } 
 
   public async logoutAll(dto : dtos.logoutDto, context : dtos.LoginDeviceDto): Promise<void>{
-     const decode = authUtils.decodeRefreshToken(dto.refreshToken);
+    const decode = authUtils.decodeRefreshToken(dto.refreshToken);
 
     const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
 
@@ -218,6 +216,66 @@ export class AuthService {
     await this.authRepository.deleteSessionsByUserId(decode.id);
 
     return Promise.resolve();
+  }
+
+  public async sendForgetPasswordLink(dto : dtos.ForgetPasswordLinkDto){
+    
+    const user = await this.authRepository.findUserByEmail(dto.email);
+
+    if(!user){
+      throw createHttpError(404,"Inavalid Request");
+    }
+
+    await this.authRepository.deleteVerificationTokens(user.id, VerificationTokenType.RESET_PASSWORD);
+
+    const token = authUtils.generateRandomToken();
+   
+    const hashedToken = authUtils.generateHash(token);
+
+    const data : Prisma.VerificationTokenCreateInput = {
+      type : VerificationTokenType.RESET_PASSWORD,
+      user : {connect : {id : user.id,}},
+      token : hashedToken,
+      expiresAt : new Date(Date.now() + 10 * 60000)
+    }
+
+    await this.authRepository.createVerificationToken(data)
+    
+    const url = `${_config.clientUrl}/reset-password?token=${token}`
+
+    await sendEmail(dto.email, "Password Reset Request", forgetPassowrdTemplete(url));
+  }
+
+  public async resetPassword(dto : dtos.ResetPasswordDto){
+    const hashToken = authUtils.generateHash(dto.token);
+
+    const tokenRecord = await this.authRepository.findVerificationToken(hashToken,VerificationTokenType.RESET_PASSWORD);
+
+    if(!tokenRecord){
+      throw createHttpError(404,"Invalid Request");
+    }
+
+    const user = await this.authRepository.findUserById(tokenRecord.userId);
+
+    if(!user){
+      throw createHttpError(404,"Invalid Request");
+    }
+
+    const hashedPassword = await authUtils.hashPassword(dto.password);
+
+    await this.authRepository.deleteSessionsByUserId(user.id);
+
+    await this.authRepository.updateUserPassword(user.id, hashedPassword);
+
+    await this.authRepository.deleteVerificationTokens(user.id, VerificationTokenType.RESET_PASSWORD);
+  }
+
+  public async validateToken(dto : dtos.ValidateTokenDto) : Promise<void>{
+    const hashToken = authUtils.generateHash(dto.token);
+    const tokenRecord = await this.authRepository.findVerificationToken(hashToken,VerificationTokenType.RESET_PASSWORD);
+    if(!tokenRecord){
+      throw createHttpError(404,"Link is Expired sent new one");
+    }
   }
 }
 

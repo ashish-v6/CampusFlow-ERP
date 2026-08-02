@@ -126,6 +126,7 @@ class AuthController {
       message : "User logout Successful"
     });
   })
+
   public LogoutAll = asyncHandler(async(req : Request, res : Response) => {
     if (req.cookies && !req.cookies.refreshToken) {
       throw createHttpError(400, "Token missing! Try to login again");
@@ -145,11 +146,57 @@ class AuthController {
       message : "User logout Successful"
     });
   })
+
   public clearCookies = asyncHandler(async(req : Request, res : Response) => {
     res.clearCookie("refreshToken");
     res.status(200).json({
       success : true,
       message : "Token deleted"
+    })
+  })
+
+  public ForgetPassword = asyncHandler(async(req : Request, res : Response) => {
+    const dto : dtos.ForgetPasswordLinkDto = req.body;
+  
+    if(!dto.email){
+      throw createHttpError(400,"Email is required");
+    }
+
+    await authService.sendForgetPasswordLink(dto);
+
+    res.status(200).json({
+      success : true,
+      message : "Verification Link is sent to registered Mail id"
+    })
+  })
+
+  public ResetPassword = asyncHandler(async (req : Request, res : Response) => {
+    const dto : dtos.ResetPasswordDto = req.body;
+
+    if(!dto.password || !dto.token){
+      throw createHttpError(400,"All fields Are required");
+    }
+
+    await authService.resetPassword(dto);
+
+    res.status(200).json({
+      success : true,
+      message : "Password Reset Sucessful"
+    })
+  })
+
+  public ValidateToken = asyncHandler(async(req : Request, res : Response) => {
+    const dto : dtos.ValidateTokenDto = req.body;
+
+    if(!dto.token){
+      throw createHttpError(400, "Token is Required");
+    }
+
+    await authService.validateToken(dto);
+
+    res.status(200).json({
+      success : true,
+      message : "Token is Valid"
     })
   })
 }

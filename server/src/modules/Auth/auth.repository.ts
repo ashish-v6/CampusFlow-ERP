@@ -14,8 +14,21 @@ export class AuthRepository {
     });
   }
 
+  public async findUserById(id: string): Promise<User | null> {
+    return prisma.user.findUnique({
+      where : {id}
+    })
+  }
+
   public async createUser(data: Prisma.UserCreateInput): Promise<User> {
     return prisma.user.create({ data });
+  }
+
+  public async updateUserPassword(id : string, password: string){
+    return prisma.user.update({
+      where : {id},
+      data : {password}    
+    })
   }
 
   public async markUserAsVerified(id: string): Promise<User> {
@@ -43,6 +56,16 @@ export class AuthRepository {
     return prisma.verificationToken.create({
       data,
     });
+  }
+
+  public async findVerificationToken(token : string, type : VerificationTokenType): Promise<VerificationToken | null>{
+    return prisma.verificationToken.findFirst({
+      where : {
+        token,
+        type,
+        expiresAt: { gt: new Date(Date.now()) },
+      }
+    })
   }
 
   public async checkUserHasOtp(

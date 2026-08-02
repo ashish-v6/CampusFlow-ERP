@@ -11,5 +11,8 @@ router.post("/rotate",authcontrollers.RotateToken);
 router.post("/logout",authcontrollers.LogoutUser);
 router.post("/logout-all",authcontrollers.LogoutAll);
 router.post("/clear-cookie",authcontrollers.clearCookies);
+router.post("/forgot-password",authcontrollers.ForgetPassword);
+router.post("/reset-password",authcontrollers.ResetPassword);
+router.post("/validate-token",authcontrollers.ValidateToken);
 
 export default router;
