@@ -150,6 +150,7 @@ export class AuthService {
     const accessToken = authUtils.createAccessToken(
       existingUser.id,
       existingUser.email,
+      existingUser.role,
       seesion.id,
     );
 
@@ -162,7 +163,7 @@ export class AuthService {
 
   public async rotateToken(dto : dtos.RotateTokenDto, context : dtos.LoginDeviceDto) : Promise<UserLoginResponse> {
 
-    const decode = authUtils.decodeRefreshToken(dto.refreshToken);
+    const decode = authUtils.verifyRefreshToken(dto.refreshToken);
 
     const user = await this.authRepository.findUserByEmail(decode.email);
 
@@ -178,7 +179,7 @@ export class AuthService {
 
     const refreshToken = authUtils.createRefreshToken(decode.id, decode.email);
 
-    const accessToken = authUtils.createAccessToken(decode.id, decode.email, session.id);
+    const accessToken = authUtils.createAccessToken(user.id, user.email, user.role, session.id);
 
     const refreshTokenHash = authUtils.generateHash(refreshToken);
 
@@ -200,7 +201,7 @@ export class AuthService {
 
   public async logout(dto : dtos.logoutDto, context : dtos.LoginDeviceDto): Promise<void>{
 
-    const decode = authUtils.decodeRefreshToken(dto.refreshToken);
+    const decode = authUtils.verifyRefreshToken(dto.refreshToken);
 
     const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
 
@@ -214,7 +215,7 @@ export class AuthService {
   } 
 
   public async logoutAll(dto : dtos.logoutDto, context : dtos.LoginDeviceDto): Promise<void>{
-    const decode = authUtils.decodeRefreshToken(dto.refreshToken);
+    const decode = authUtils.verifyRefreshToken(dto.refreshToken);
 
     const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
 

@@ -32,9 +32,9 @@ class AuthUtils {
     return crypto.randomBytes(32).toString("hex");
   }
 
-  public createAccessToken = (id: string, email: string, sessionId: string): string => {
+  public createAccessToken = (id: string, email: string, role : string, sessionId: string): string => {
     return jwt.sign(
-      { userId: id, email: email, seesionId: sessionId, jti: crypto.randomUUID() },
+      { userId: id, email: email, role : role, seesionId: sessionId, jti: crypto.randomUUID() },
       _config.accessKey,
       {
         expiresIn: "15m",
@@ -50,12 +50,12 @@ class AuthUtils {
     });
   };
 
-  public decodeAccessToken = (token: string): JwtPayload => {
-    return jwt.verify(token, _config.accessKey) as JwtPayload & { id: string; email: string };
+  public verifyAccessToken = (token: string): JwtPayload | null=> {
+    return jwt.verify(token, _config.accessKey) as JwtPayload & { id: string; email: string, role : string } | null;
   };
 
-  public decodeRefreshToken = (token: string): JwtPayload => {
-    return jwt.verify(token, _config.refreshKey) as JwtPayload & { id: string; email : string, sessionId: string };
+  public verifyRefreshToken = (token: string): JwtPayload => {
+    return jwt.verify(token, _config.refreshKey) as JwtPayload & { id: string; email : string};
   };
 }
 

@@ -1,17 +1,34 @@
-import express from "express";
-import {
-  addHandler,
-  errorHandler,
-  removeHandler,
-  showHandler,
-  updateHandler,
-} from "./test.controller.js";
-const router = express.Router();
+import Router from "express";
+import type {Request, Response, NextFunction} from "express";
+import { authenticate, authorize } from "../../middlewares/auth.middlewares.js";
 
-router.get("/err", errorHandler);
-router.post("/add", addHandler);
-router.post("/remove", removeHandler);
-router.get("/show", showHandler);
-router.patch("/update", updateHandler);
+const router = Router();
+
+declare module "express"{
+  export interface Request{
+    user? : {
+      id : string,
+      email : string,
+      role : string,
+    }
+  }
+}
+
+router.get("/public",(req : Request, res : Response, next : NextFunction) => {
+  res.status(200).json({success : true});
+  next();
+})
+router.get("/auth",authenticate,(req : Request, res : Response, next : NextFunction) => {
+  res.status(200).json({user : req.user});
+  next();
+})
+router.get("/admin",authenticate, authorize("admin"), (req : Request, res : Response, next : NextFunction) => {
+  res.status(200).json({user : req.user});
+  next();
+})
+router.get("/admin-student",authenticate, authorize("student", "admin"), (req : Request, res : Response, next : NextFunction) => {
+  res.status(200).json({user : req.user});
+  next();
+})
 
 export default router;
