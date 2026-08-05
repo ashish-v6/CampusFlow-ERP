@@ -8,11 +8,6 @@ import authUtils from "./auth.utils.js";
 class AuthController {
   public SignUp = asyncHandler(async (req: Request, res: Response) => {
     const dto: dtos.RegisterUserDto = req.body;
-
-    if (!dto.firstName || !dto.lastName || !dto.email || !dto.password) {
-      throw createHttpError(400, "All fields are required");
-    }
-
     const result = await authService.register(dto);
 
     res.status(201).json({
@@ -31,10 +26,6 @@ class AuthController {
 
   public SendVerificationEmail = asyncHandler(async (req: Request, res: Response) => {
     const dto: dtos.SendVerificationEmailDto = req.body;
-    if (!dto.email) {
-      throw createHttpError(400, "Email is required");
-    }
-
     await authService.sendVerificationEmail(dto);
 
     res.status(200).json({ success: true, message: "OTP is sent to registered email" });
@@ -42,11 +33,6 @@ class AuthController {
 
   public verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     const dto: dtos.VerifyEmailDto = req.body;
-
-    if (!dto.email || !dto.otp) {
-      throw createHttpError(400, "All fields are required");
-    }
-
     await authService.verifyEmail(dto);
 
     res.status(200).json({
@@ -64,10 +50,6 @@ class AuthController {
 
     if (req.cookies && req.cookies?.refreshToken) {
       throw createHttpError(403, "Session is running");
-    }
-
-    if (!dto.email || !dto.password) {
-      throw createHttpError(400, "All Fields are required");
     }
 
     const result = await authService.login(dto, context);
@@ -89,122 +71,110 @@ class AuthController {
     });
   });
 
-  public RotateToken = asyncHandler(async (req : Request, res : Response) => {
+  public RotateToken = asyncHandler(async (req: Request, res: Response) => {
     if (req.cookies && !req.cookies.refreshToken) {
       throw createHttpError(400, "Token missing! Try to login again");
     }
-    const dto : dtos.RotateTokenDto = {refreshToken : req.cookies.refreshToken as string};
+    const dto: dtos.RotateTokenDto = { refreshToken: req.cookies.refreshToken as string };
     const context: dtos.LoginDeviceDto = {
       ip: req.ip as string,
       userAgent: req.headers["user-agent"] as string,
     };
 
-    const result = await authService.rotateToken(dto,context);
+    const result = await authService.rotateToken(dto, context);
 
-    res.cookie("refreshToken",result.refreshToken, authUtils.cookie_config as import("express").CookieOptions )
+    res.cookie(
+      "refreshToken",
+      result.refreshToken,
+      authUtils.cookie_config as import("express").CookieOptions,
+    );
     res.status(200).json({
-      accessToken : result.accessToken,
-      user : {
-        id : result.user.id,
-        firstName : result.user.firstName,
-        lastName : result.user.lastName,
-        email : result.user.email,
-      }
-    })
+      accessToken: result.accessToken,
+      user: {
+        id: result.user.id,
+        firstName: result.user.firstName,
+        lastName: result.user.lastName,
+        email: result.user.email,
+      },
+    });
   });
 
-  public LogoutUser = asyncHandler(async(req : Request, res : Response) => {
+  public LogoutUser = asyncHandler(async (req: Request, res: Response) => {
     if (req.cookies && !req.cookies.refreshToken) {
       throw createHttpError(400, "Token missing! Try to login again");
     }
-    const dto : dtos.logoutDto = {refreshToken : req.cookies.refreshToken as string};
+    const dto: dtos.logoutDto = { refreshToken: req.cookies.refreshToken as string };
     const context: dtos.LoginDeviceDto = {
       ip: req.ip as string,
       userAgent: req.headers["user-agent"] as string,
     };
 
-    await authService.logout(dto,context);
+    await authService.logout(dto, context);
 
     res.clearCookie("refreshToken");
 
     res.status(200).json({
-      success : true,
-      message : "User logout Successful"
+      success: true,
+      message: "User logout Successful",
     });
-  })
+  });
 
-  public LogoutAll = asyncHandler(async(req : Request, res : Response) => {
+  public LogoutAll = asyncHandler(async (req: Request, res: Response) => {
     if (req.cookies && !req.cookies.refreshToken) {
       throw createHttpError(400, "Token missing! Try to login again");
     }
-    const dto : dtos.logoutDto = {refreshToken : req.cookies.refreshToken as string};
+    const dto: dtos.logoutDto = { refreshToken: req.cookies.refreshToken as string };
     const context: dtos.LoginDeviceDto = {
       ip: req.ip as string,
       userAgent: req.headers["user-agent"] as string,
     };
 
-    await authService.logoutAll(dto,context);
+    await authService.logoutAll(dto, context);
 
     res.clearCookie("refreshToken");
 
     res.status(200).json({
-      success : true,
-      message : "User logout Successful"
+      success: true,
+      message: "User logout Successful",
     });
-  })
+  });
 
-  public clearCookies = asyncHandler(async(req : Request, res : Response) => {
-    res.clearCookie("refreshToken");
-    res.status(200).json({
-      success : true,
-      message : "Token deleted"
-    })
-  })
+  public clearCookies = asyncHandler(async (req: Request, res: Response) => {
+    res.clearCookie("refreshToken").status(200).json({
+      success: true,
+      message: "Token deleted",
+    });
+  });
 
-  public ForgetPassword = asyncHandler(async(req : Request, res : Response) => {
-    const dto : dtos.ForgetPasswordLinkDto = req.body;
-  
-    if(!dto.email){
-      throw createHttpError(400,"Email is required");
-    }
-
+  public ForgetPassword = asyncHandler(async (req: Request, res: Response) => {
+    const dto: dtos.ForgetPasswordLinkDto = req.body;
     await authService.sendForgetPasswordLink(dto);
 
     res.status(200).json({
-      success : true,
-      message : "Verification Link is sent to registered Mail id"
-    })
-  })
+      success: true,
+      message: "Verification Link is sent to registered Mail id",
+    });
+  });
 
-  public ResetPassword = asyncHandler(async (req : Request, res : Response) => {
-    const dto : dtos.ResetPasswordDto = req.body;
-
-    if(!dto.password || !dto.token){
-      throw createHttpError(400,"All fields Are required");
-    }
-
+  public ResetPassword = asyncHandler(async (req: Request, res: Response) => {
+    const dto: dtos.ResetPasswordDto = req.body;
     await authService.resetPassword(dto);
 
     res.status(200).json({
-      success : true,
-      message : "Password Reset Sucessful"
-    })
-  })
+      success: true,
+      message: "Password Reset Sucessful",
+    });
+  });
 
-  public ValidateToken = asyncHandler(async(req : Request, res : Response) => {
-    const dto : dtos.ValidateTokenDto = req.body;
-
-    if(!dto.token){
-      throw createHttpError(400, "Token is Required");
-    }
-
+  public ValidateToken = asyncHandler(async (req: Request, res: Response) => {
+    const dto: dtos.ValidateTokenDto = req.body;
     await authService.validateToken(dto);
 
     res.status(200).json({
-      success : true,
-      message : "Token is Valid"
-    })
-  })
+      success: true,
+      message: "Token is Valid",
+    });
+  });
 }
 const authController = new AuthController();
 export default authController;
