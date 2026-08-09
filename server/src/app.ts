@@ -8,6 +8,7 @@ import type { Request, Response } from "express";
 import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 import testRoutes from "./modules/Test/test.routes.js";
 import authRoutes from "./modules/Auth/auth.routes.js";
+import userRoutes from "./modules/User/user.routes.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.get("/health", (req: Request, res: Response) => {
 // --- Routes go here ---
 app.use("/api/test", testRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/users",userRoutes);
 
 // --- 404 + Global error handler (always LAST) ---
 app.use(globalErrorHandler);
