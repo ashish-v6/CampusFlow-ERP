@@ -1,6 +1,7 @@
 import { UserRepository } from "./user.repository.js";
 import * as dtos from "./user.dto.js";
 import createHttpError from "http-errors";
+import * as utils from "./user.utils.js";
 
 class UserServices {
   constructor(private readonly userRepository: UserRepository) {}
@@ -24,7 +25,7 @@ class UserServices {
 
   public async updateUserProfile(id: string, dto: dtos.updateUserProfileDto) {
     const existingUser = await this.userRepository.findUserById(id);
-    
+
     if (!existingUser) {
       throw createHttpError(404, "Invalid Request");
     }
@@ -36,6 +37,48 @@ class UserServices {
       role: "",
     };
     return safeUser;
+  }
+
+  public async updateUserPassword(id: string, dto: dtos.updateUserPasswordDto) {
+    const existingUser = await this.userRepository.findUserById(id);
+
+    if (!existingUser) {
+      throw createHttpError(404, "Invalid Request");
+    }
+
+    const checkPassword = await utils.verifyPassword(existingUser.password, dto.currentPassword);
+    if (!checkPassword) {
+      throw createHttpError(401, "Invalid password");
+    }
+    const password = await utils.hashPassword(dto.newPassword);
+    await this.userRepository.updateUserPassword(id, password);
+
+    return;
+  }
+
+  public async getAllUsers(dto: dtos.getAllUsersDto) {
+    const skip = (dto.page - 1) * dto.limit;
+
+    const result = await this.userRepository.findUsers(skip, dto.limit);
+
+    const totalPages = Math.ceil(result.total / dto.limit);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const safeUsers = result.users.map(({password, ...user}) => user);
+
+    if(!safeUsers.length){
+      throw createHttpError(404, "User not found");
+    }
+
+    return {
+      users: safeUsers,
+      pagination: {
+        page: dto.page,
+        limit: dto.limit,
+        total: result.total,
+        totalPages,
+      },
+    };
   }
 }
 

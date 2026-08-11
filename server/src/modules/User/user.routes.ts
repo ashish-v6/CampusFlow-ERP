@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { userControllers } from "./user.controller.js";
-import { authenticate } from "../../middlewares/auth.middlewares.js";
+import { authenticate, authorize } from "../../middlewares/auth.middlewares.js";
 import { validateSchema } from "../../middlewares/validation.middleware.js";
 import { userSchema } from "./user.schema.js";
 
@@ -18,4 +18,19 @@ router.patch(
   validateSchema(userSchema.updateUserProfileSchema, "body"),
   userControllers.updateUserProfile,
 );
+
+router.patch(
+  "/change-password",
+  authenticate,
+  validateSchema(userSchema.updatePasswordSchema, "body"),
+  userControllers.updateUserPassword,
+)
+
+router.get(
+  "/users",
+  authenticate,
+  authorize("admin"),
+  validateSchema(userSchema.getAllUsersQuerySchema,"query"),
+  userControllers.getAllUsers,
+)
 export default router;

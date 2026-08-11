@@ -8,3 +8,13 @@ export interface updateUserProfileDto{
     phone? : string,
     avatar? : string,
 }
+
+export interface updateUserPasswordDto{
+    currentPassword : string,
+    newPassword : string,
+}
+
+export interface getAllUsersDto{
+    page : number,
+    limit : number,
+}
