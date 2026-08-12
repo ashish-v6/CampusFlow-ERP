@@ -33,4 +33,11 @@ router.get(
   validateSchema(userSchema.getAllUsersQuerySchema,"query"),
   userControllers.getAllUsers,
 )
+router.get(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  validateSchema(userSchema.getUserByIdSchema,"params"),
+  userControllers.getUserById,
+)
 export default router;

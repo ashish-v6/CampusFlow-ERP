@@ -80,6 +80,21 @@ class UserServices {
       },
     };
   }
+
+  public async getUserById(dto : dtos.getUserByIdDto){
+    const user = await this.userRepository.findUserById(dto.id);
+
+    if(!user){
+      throw createHttpError(404, "invalid Request");
+    }
+
+    const safeUser = {
+      ...user,
+      password : "",
+    }
+
+    return safeUser;
+  }
 }
 
 export const userServices = new UserServices(new UserRepository());

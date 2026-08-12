@@ -24,6 +24,10 @@ class UserSchema {
     page: z.coerce.number().int().min(1,"Page number is required"),
     limit: z.coerce.number().int().min(1, "limit is required").max(10, "Only 10 record can be fetched"),
   })
+
+  public getUserByIdSchema = z.object({
+    id : z.string().trim().min(1,"Id is required")
+  })
 }
 
 export const userSchema = new UserSchema();

@@ -18,3 +18,6 @@ export interface getAllUsersDto{
     page : number,
     limit : number,
 }
+export interface getUserByIdDto{
+    id : string,
+}

@@ -42,6 +42,16 @@ class UserControllers {
     })
   })
 
+  public getUserById = asyncHandler(async(req : Request, res : Response) => {
+    const dto = req.params as unknown as dtos.getUserByIdDto;
+
+    const result = await userServices.getUserById(dto);
+
+    res.status(200).json({
+      result,
+    })
+  })
+
 }
 
 export const userControllers = new UserControllers();
