@@ -64,6 +64,16 @@ class UserControllers {
     res.status(200).json({result});
   })
 
+  public inactivateUser = asyncHandler(async(req : Request, res : Response) => {  
+    const dto : dtos.updateStatusDto = {
+      id : req.params.id as string,
+      status : "INACTIVE" as UserStatus,
+    }
+
+    const result = await userServices.updateUserStatus(dto);
+
+    res.status(200).json({result});
+  })
 }
 
 export const userControllers = new UserControllers();

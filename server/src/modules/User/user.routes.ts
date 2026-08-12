@@ -51,5 +51,11 @@ router.patch(
   userControllers.updateUserStatus,
 )
 
-
+router.delete(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  validateSchema(userSchema.veifyIdParamsSchema,"params"),
+  userControllers.inactivateUser,
+)
 export default router;
