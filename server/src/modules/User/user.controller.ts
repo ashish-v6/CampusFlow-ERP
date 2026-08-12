@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { userServices } from "./user.service.js";
 import * as dtos from "./user.dto.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import type { UserStatus } from "../../generated/prisma/enums.js";
 
 class UserControllers {
 
@@ -50,6 +51,17 @@ class UserControllers {
     res.status(200).json({
       result,
     })
+  })
+
+  public updateUserStatus = asyncHandler(async(req : Request, res : Response) => {
+    const dto : dtos.updateStatusDto = {
+      id : req.params.id as string,
+      status : req.body.status as UserStatus,
+    }
+
+    const result = await userServices.updateUserStatus(dto);
+
+    res.status(200).json({result});
   })
 
 }

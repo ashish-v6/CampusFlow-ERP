@@ -1,3 +1,5 @@
+import type { UserStatus } from "../../generated/prisma/enums.js";
+
 export interface CureentUserDto{
     id? : string | undefined,
 }
@@ -20,4 +22,9 @@ export interface getAllUsersDto{
 }
 export interface getUserByIdDto{
     id : string,
+}
+
+export interface updateStatusDto{
+    id : string,
+    status : UserStatus,
 }

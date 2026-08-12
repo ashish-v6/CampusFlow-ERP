@@ -1,4 +1,4 @@
-import type { User } from "../../generated/prisma/client.js";
+import type { User, UserStatus } from "../../generated/prisma/client.js";
 import prisma from "../../utils/prisma.js";
 import * as dtos from "./user.dto.js";
 
@@ -33,6 +33,15 @@ export class UserRepository {
       prisma.user.count(),
     ]);
     return { users, total };
+  }
+
+  public async updateUserStatus(id: string, status: UserStatus): Promise<User> {
+    return prisma.user.update({
+      where: { id },
+      data: {
+        status,
+      },
+    });
   }
 }
 

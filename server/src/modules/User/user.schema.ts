@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UserStatus } from "../../generated/prisma/enums.js";
 
 class UserSchema {
   public updateUserProfileSchema = z
@@ -25,8 +26,12 @@ class UserSchema {
     limit: z.coerce.number().int().min(1, "limit is required").max(10, "Only 10 record can be fetched"),
   })
 
-  public getUserByIdSchema = z.object({
+  public veifyIdParamsSchema = z.object({
     id : z.string().trim().min(1,"Id is required")
+  })
+  
+  public upateUserStatusSchema = z.object({
+    status : z.enum(UserStatus)
   })
 }
 

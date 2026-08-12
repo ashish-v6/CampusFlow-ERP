@@ -19,6 +19,12 @@ enum VerificationTokenType {
   RESET_PASSWORD
 }
 
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
 model User {
   id                 String              @id @default(uuid())
   firstName          String
@@ -26,6 +32,7 @@ model User {
   email              String              @unique
   password           String
   role               Roles               @default(STUDENT)
+  status             UserStatus          @default(ACTIVE)
   isVerified         Boolean             @default(false)
   verificationTokens VerificationToken[]
   sessions           Session[]

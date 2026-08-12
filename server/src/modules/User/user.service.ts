@@ -95,6 +95,22 @@ class UserServices {
 
     return safeUser;
   }
+
+  public async updateUserStatus(dto : dtos.updateStatusDto){
+
+    const user = await this.userRepository.findUserById(dto.id);
+
+    if(!user || user.role === "ADMIN"){
+      throw createHttpError(404,"Invalid Request");
+    }
+
+    await this.userRepository.updateUserStatus(dto.id,dto.status);
+
+    return {
+      success : true,
+      message : "Status Update Successful"
+    }
+  }
 }
 
 export const userServices = new UserServices(new UserRepository());
