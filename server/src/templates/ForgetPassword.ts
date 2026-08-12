@@ -1,5 +1,5 @@
-const forgetPassowrdTemplete = (resetUrl : string) =>{
-    return `
+const forgetPassowrdTemplete = (resetUrl: string) => {
+  return `
     <!DOCTYPE html>
 <html>
 <head>
@@ -11,6 +11,6 @@ const forgetPassowrdTemplete = (resetUrl : string) =>{
     <a href="${resetUrl}">Reset Password</a>
 </body>
 </html>
-    `
-}
-export default  forgetPassowrdTemplete;
+    `;
+};
+export default forgetPassowrdTemplete;

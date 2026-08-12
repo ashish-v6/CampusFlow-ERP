@@ -28,7 +28,7 @@ app.get("/health", (req: Request, res: Response) => {
 // --- Routes go here ---
 app.use("/api/test", testRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/users",userRoutes);
+app.use("/api/users", userRoutes);
 
 // --- 404 + Global error handler (always LAST) ---
 app.use(globalErrorHandler);

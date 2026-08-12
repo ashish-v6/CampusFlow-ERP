@@ -18,11 +18,10 @@ declare module "express" {
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   try {
-
     const validHeader = req.headers.authorization?.startsWith("Bearer ey");
-    
-    if(!validHeader){
-        return next(createHttpError(401,"Invalid Token"));
+
+    if (!validHeader) {
+      return next(createHttpError(401, "Invalid Token"));
     }
 
     const token = req.headers.authorization?.split(" ")[1];
@@ -33,10 +32,10 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
     const decoded = authUtils.verifyAccessToken(token);
 
-    if(!decoded){
-        return next(createHttpError(401,"Invalid Token"))
+    if (!decoded) {
+      return next(createHttpError(401, "Invalid Token"));
     }
-    
+
     req.user = decoded as User;
     next();
   } catch (error) {
@@ -44,17 +43,17 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const authorize = (...roles : Role[]) => {
- return (req : Request, res : Response, next : NextFunction) => {
-    if(!req.user){
-        return next(createHttpError(401,"No credential found"));
+export const authorize = (...roles: Role[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return next(createHttpError(401, "No credential found"));
     }
 
     const role = req.user.role.toLowerCase() as Role;
-    
-    if(!roles.includes(role)){
-        return next(createHttpError(403,"Forbidden"));
+
+    if (!roles.includes(role)) {
+      return next(createHttpError(403, "Forbidden"));
     }
     next();
- }
-}
+  };
+};

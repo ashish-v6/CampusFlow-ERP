@@ -64,9 +64,9 @@ class UserServices {
     const totalPages = Math.ceil(result.total / dto.limit);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const safeUsers = result.users.map(({password, ...user}) => user);
+    const safeUsers = result.users.map(({ password, ...user }) => user);
 
-    if(!safeUsers.length){
+    if (!safeUsers.length) {
       throw createHttpError(404, "User not found");
     }
 
@@ -81,35 +81,34 @@ class UserServices {
     };
   }
 
-  public async getUserById(dto : dtos.getUserByIdDto){
+  public async getUserById(dto: dtos.getUserByIdDto) {
     const user = await this.userRepository.findUserById(dto.id);
 
-    if(!user){
+    if (!user) {
       throw createHttpError(404, "invalid Request");
     }
 
     const safeUser = {
       ...user,
-      password : "",
-    }
+      password: "",
+    };
 
     return safeUser;
   }
 
-  public async updateUserStatus(dto : dtos.updateStatusDto){
-
+  public async updateUserStatus(dto: dtos.updateStatusDto) {
     const user = await this.userRepository.findUserById(dto.id);
 
-    if(!user || user.role === "ADMIN"){
-      throw createHttpError(404,"Invalid Request");
+    if (!user || user.role === "ADMIN") {
+      throw createHttpError(404, "Invalid Request");
     }
 
-    await this.userRepository.updateUserStatus(dto.id,dto.status);
+    await this.userRepository.updateUserStatus(dto.id, dto.status);
 
     return {
-      success : true,
-      message : "Status Update Successful"
-    }
+      success: true,
+      message: "Status Update Successful",
+    };
   }
 }
 

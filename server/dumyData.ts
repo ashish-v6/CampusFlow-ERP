@@ -27,10 +27,7 @@ async function createUser(index: number) {
     if (response.ok) {
       console.log(`✓ [${index}/${TOTAL_USERS}] ${user.email}`);
     } else {
-      console.log(
-        `✗ [${index}/${TOTAL_USERS}] ${user.email} → ${response.status}`,
-        data
-      );
+      console.log(`✗ [${index}/${TOTAL_USERS}] ${user.email} → ${response.status}`, data);
     }
   } catch (error) {
     console.error(`✗ [${index}/${TOTAL_USERS}] ${user.email}`, error);

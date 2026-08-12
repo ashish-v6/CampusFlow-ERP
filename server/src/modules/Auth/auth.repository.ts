@@ -16,19 +16,19 @@ export class AuthRepository {
 
   public async findUserById(id: string): Promise<User | null> {
     return prisma.user.findUnique({
-      where : {id}
-    })
+      where: { id },
+    });
   }
 
   public async createUser(data: Prisma.UserCreateInput): Promise<User> {
     return prisma.user.create({ data });
   }
 
-  public async updateUserPassword(id : string, password: string){
+  public async updateUserPassword(id: string, password: string) {
     return prisma.user.update({
-      where : {id},
-      data : {password}    
-    })
+      where: { id },
+      data: { password },
+    });
   }
 
   public async markUserAsVerified(id: string): Promise<User> {
@@ -58,14 +58,17 @@ export class AuthRepository {
     });
   }
 
-  public async findVerificationToken(token : string, type : VerificationTokenType): Promise<VerificationToken | null>{
+  public async findVerificationToken(
+    token: string,
+    type: VerificationTokenType,
+  ): Promise<VerificationToken | null> {
     return prisma.verificationToken.findFirst({
-      where : {
+      where: {
         token,
         type,
         expiresAt: { gt: new Date(Date.now()) },
-      }
-    })
+      },
+    });
   }
 
   public async checkUserHasOtp(
@@ -91,7 +94,11 @@ export class AuthRepository {
     return prisma.session.create({ data });
   }
 
-  public async findSessionByUserId(id: string, ip: string, userAgent : string): Promise<Session | null> {
+  public async findSessionByUserId(
+    id: string,
+    ip: string,
+    userAgent: string,
+  ): Promise<Session | null> {
     return prisma.session.findFirst({
       where: {
         userId: id,
@@ -117,18 +124,18 @@ export class AuthRepository {
   public async updateSessionById(
     id: string,
     ip: string,
-    userAgent : string,
+    userAgent: string,
     refreshTokenHash: string,
   ): Promise<Session> {
     return prisma.session.update({
       where: {
         id,
         ip,
-        userAgent
+        userAgent,
       },
       data: {
         refreshTokenHash,
-        expiresAt : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
   }

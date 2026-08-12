@@ -106,7 +106,7 @@ export class AuthService {
     return Promise.resolve();
   }
 
-  public async login(dto: dtos.LoginDto,context: dtos.LoginDeviceDto,): Promise<UserLoginResponse> {
+  public async login(dto: dtos.LoginDto, context: dtos.LoginDeviceDto): Promise<UserLoginResponse> {
     const existingUser = await this.authRepository.findUserByEmail(dto.email);
 
     if (!existingUser) {
@@ -161,19 +161,25 @@ export class AuthService {
     };
   }
 
-  public async rotateToken(dto : dtos.RotateTokenDto, context : dtos.LoginDeviceDto) : Promise<UserLoginResponse> {
-
+  public async rotateToken(
+    dto: dtos.RotateTokenDto,
+    context: dtos.LoginDeviceDto,
+  ): Promise<UserLoginResponse> {
     const decode = authUtils.verifyRefreshToken(dto.refreshToken);
 
     const user = await this.authRepository.findUserByEmail(decode.email);
 
-    if(!user){
-      throw createHttpError(404,"Resource(user) not Found Request");
+    if (!user) {
+      throw createHttpError(404, "Resource(user) not Found Request");
     }
 
-    const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
+    const session = await this.authRepository.findSessionByUserId(
+      decode.id,
+      context.ip,
+      context.userAgent,
+    );
 
-    if(!session){
+    if (!session) {
       throw createHttpError(404, "Session Expired");
     }
 
@@ -183,44 +189,56 @@ export class AuthService {
 
     const refreshTokenHash = authUtils.generateHash(refreshToken);
 
-    await this.authRepository.updateSessionById(session.id, context.ip, context.userAgent, refreshTokenHash);
+    await this.authRepository.updateSessionById(
+      session.id,
+      context.ip,
+      context.userAgent,
+      refreshTokenHash,
+    );
 
-    const data : UserLoginResponse = {
+    const data: UserLoginResponse = {
       accessToken,
       refreshToken,
-      user : {
-        id : user.id,
-        firstName : user.firstName,
-        lastName : user.lastName,
-        email : user.email,  
-      }
-    }
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      },
+    };
 
     return data;
   }
 
-  public async logout(dto : dtos.logoutDto, context : dtos.LoginDeviceDto): Promise<void>{
-
+  public async logout(dto: dtos.logoutDto, context: dtos.LoginDeviceDto): Promise<void> {
     const decode = authUtils.verifyRefreshToken(dto.refreshToken);
 
-    const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
+    const session = await this.authRepository.findSessionByUserId(
+      decode.id,
+      context.ip,
+      context.userAgent,
+    );
 
-    if(!session){
-      throw createHttpError(404,"Session is expired");
+    if (!session) {
+      throw createHttpError(404, "Session is expired");
     }
 
     await this.authRepository.deleteSessionById(session.id);
 
     return Promise.resolve();
-  } 
+  }
 
-  public async logoutAll(dto : dtos.logoutDto, context : dtos.LoginDeviceDto): Promise<void>{
+  public async logoutAll(dto: dtos.logoutDto, context: dtos.LoginDeviceDto): Promise<void> {
     const decode = authUtils.verifyRefreshToken(dto.refreshToken);
 
-    const session = await this.authRepository.findSessionByUserId(decode.id, context.ip, context.userAgent);
+    const session = await this.authRepository.findSessionByUserId(
+      decode.id,
+      context.ip,
+      context.userAgent,
+    );
 
-    if(!session){
-      throw createHttpError(404,"Session is expired");
+    if (!session) {
+      throw createHttpError(404, "Session is expired");
     }
 
     await this.authRepository.deleteSessionsByUserId(decode.id);
@@ -228,47 +246,52 @@ export class AuthService {
     return Promise.resolve();
   }
 
-  public async sendForgetPasswordLink(dto : dtos.ForgetPasswordLinkDto){
-    
+  public async sendForgetPasswordLink(dto: dtos.ForgetPasswordLinkDto) {
     const user = await this.authRepository.findUserByEmail(dto.email);
 
-    if(!user){
-      throw createHttpError(404,"Inavalid Request");
+    if (!user) {
+      throw createHttpError(404, "Inavalid Request");
     }
 
-    await this.authRepository.deleteVerificationTokens(user.id, VerificationTokenType.RESET_PASSWORD);
+    await this.authRepository.deleteVerificationTokens(
+      user.id,
+      VerificationTokenType.RESET_PASSWORD,
+    );
 
     const token = authUtils.generateRandomToken();
-   
+
     const hashedToken = authUtils.generateHash(token);
 
-    const data : Prisma.VerificationTokenCreateInput = {
-      type : VerificationTokenType.RESET_PASSWORD,
-      user : {connect : {id : user.id,}},
-      token : hashedToken,
-      expiresAt : new Date(Date.now() + 10 * 60000)
-    }
+    const data: Prisma.VerificationTokenCreateInput = {
+      type: VerificationTokenType.RESET_PASSWORD,
+      user: { connect: { id: user.id } },
+      token: hashedToken,
+      expiresAt: new Date(Date.now() + 10 * 60000),
+    };
 
-    await this.authRepository.createVerificationToken(data)
-    
-    const url = `${_config.clientUrl}/reset-password?token=${token}`
+    await this.authRepository.createVerificationToken(data);
+
+    const url = `${_config.clientUrl}/reset-password?token=${token}`;
 
     await sendEmail(dto.email, "Password Reset Request", forgetPassowrdTemplete(url));
   }
 
-  public async resetPassword(dto : dtos.ResetPasswordDto){
+  public async resetPassword(dto: dtos.ResetPasswordDto) {
     const hashToken = authUtils.generateHash(dto.token);
 
-    const tokenRecord = await this.authRepository.findVerificationToken(hashToken,VerificationTokenType.RESET_PASSWORD);
+    const tokenRecord = await this.authRepository.findVerificationToken(
+      hashToken,
+      VerificationTokenType.RESET_PASSWORD,
+    );
 
-    if(!tokenRecord){
-      throw createHttpError(404,"Invalid Request");
+    if (!tokenRecord) {
+      throw createHttpError(404, "Invalid Request");
     }
 
     const user = await this.authRepository.findUserById(tokenRecord.userId);
 
-    if(!user){
-      throw createHttpError(404,"Invalid Request");
+    if (!user) {
+      throw createHttpError(404, "Invalid Request");
     }
 
     const hashedPassword = await authUtils.hashPassword(dto.password);
@@ -277,14 +300,20 @@ export class AuthService {
 
     await this.authRepository.updateUserPassword(user.id, hashedPassword);
 
-    await this.authRepository.deleteVerificationTokens(user.id, VerificationTokenType.RESET_PASSWORD);
+    await this.authRepository.deleteVerificationTokens(
+      user.id,
+      VerificationTokenType.RESET_PASSWORD,
+    );
   }
 
-  public async validateToken(dto : dtos.ValidateTokenDto) : Promise<void>{
+  public async validateToken(dto: dtos.ValidateTokenDto): Promise<void> {
     const hashToken = authUtils.generateHash(dto.token);
-    const tokenRecord = await this.authRepository.findVerificationToken(hashToken,VerificationTokenType.RESET_PASSWORD);
-    if(!tokenRecord){
-      throw createHttpError(404,"Link is Expired sent new one");
+    const tokenRecord = await this.authRepository.findVerificationToken(
+      hashToken,
+      VerificationTokenType.RESET_PASSWORD,
+    );
+    if (!tokenRecord) {
+      throw createHttpError(404, "Link is Expired sent new one");
     }
   }
 }

@@ -24,23 +24,23 @@ export interface LoginDeviceDto {
   userAgent: string;
 }
 
-export interface RotateTokenDto{
-  refreshToken : string,
+export interface RotateTokenDto {
+  refreshToken: string;
 }
 
-export interface logoutDto{
-  refreshToken : string,
+export interface logoutDto {
+  refreshToken: string;
 }
 
-export interface ForgetPasswordLinkDto{
-  email : string,
+export interface ForgetPasswordLinkDto {
+  email: string;
 }
 
-export interface ResetPasswordDto{
-  token : string,
-  password : string,
+export interface ResetPasswordDto {
+  token: string;
+  password: string;
 }
 
-export interface ValidateTokenDto{
-  token : string,
+export interface ValidateTokenDto {
+  token: string;
 }

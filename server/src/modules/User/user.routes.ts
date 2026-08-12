@@ -6,11 +6,7 @@ import { userSchema } from "./user.schema.js";
 
 const router = Router();
 
-router.get(
-  "/me",
-  authenticate,
-  userControllers.getCurrentUser,
-);
+router.get("/me", authenticate, userControllers.getCurrentUser);
 
 router.patch(
   "/me",
@@ -24,38 +20,38 @@ router.patch(
   authenticate,
   validateSchema(userSchema.updatePasswordSchema, "body"),
   userControllers.updateUserPassword,
-)
+);
 
 router.get(
   "/users",
   authenticate,
   authorize("admin"),
-  validateSchema(userSchema.getAllUsersQuerySchema,"query"),
+  validateSchema(userSchema.getAllUsersQuerySchema, "query"),
   userControllers.getAllUsers,
-)
+);
 
 router.get(
   "/:id",
   authenticate,
   authorize("admin"),
-  validateSchema(userSchema.veifyIdParamsSchema,"params"),
+  validateSchema(userSchema.veifyIdParamsSchema, "params"),
   userControllers.getUserById,
-)
+);
 
 router.patch(
   "/:id/status",
   authenticate,
   authorize("admin"),
-  validateSchema(userSchema.veifyIdParamsSchema,"params"),
-  validateSchema(userSchema.upateUserStatusSchema,"body"),
+  validateSchema(userSchema.veifyIdParamsSchema, "params"),
+  validateSchema(userSchema.upateUserStatusSchema, "body"),
   userControllers.updateUserStatus,
-)
+);
 
 router.delete(
   "/:id",
   authenticate,
   authorize("admin"),
-  validateSchema(userSchema.veifyIdParamsSchema,"params"),
+  validateSchema(userSchema.veifyIdParamsSchema, "params"),
   userControllers.inactivateUser,
-)
+);
 export default router;

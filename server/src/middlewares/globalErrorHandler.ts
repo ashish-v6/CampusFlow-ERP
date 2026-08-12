@@ -5,7 +5,7 @@ const globalErrorHandler = (err: unknown, req: Request, res: Response, next: Nex
   if (err instanceof HttpError) {
     return res.status(err.statusCode || 500).json({
       message: err.message,
-      Stack:  err.stack
+      Stack: err.stack,
     });
   }
   if (err instanceof Error) {

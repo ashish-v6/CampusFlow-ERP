@@ -7,7 +7,7 @@ type Target = "body" | "query" | "params";
 declare module "express" {
   export interface Request {
     validated?: {
-      query?:unknown;
+      query?: unknown;
     };
   }
 }
