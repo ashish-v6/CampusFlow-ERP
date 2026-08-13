@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router";
 import { 
   Users, 
   UserCheck, 
@@ -12,7 +13,8 @@ import {
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Eye
 } from "lucide-react";
 
 // GET /api/users
@@ -109,23 +111,23 @@ export default function UserManagementPage(): React.JSX.Element {
             <input 
               type="text" 
               placeholder="Search users..." 
-              className="w-full pl-9 pr-4 py-2 text-sm bg-input/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground"
+              className="w-full pl-9 pr-4 py-2 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground text-foreground"
             />
           </div>
           
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <select className="w-full sm:w-36 px-3 py-2 text-sm bg-input/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground appearance-none cursor-pointer">
-              <option value="">All roles</option>
-              <option value="admin">Admin</option>
-              <option value="faculty">Faculty</option>
-              <option value="student">Student</option>
+            <select className="w-full sm:w-36 px-3 py-2 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground cursor-pointer">
+              <option value="" className="bg-card text-foreground">All roles</option>
+              <option value="admin" className="bg-card text-foreground">Admin</option>
+              <option value="faculty" className="bg-card text-foreground">Faculty</option>
+              <option value="student" className="bg-card text-foreground">Student</option>
             </select>
             
-            <select className="w-full sm:w-36 px-3 py-2 text-sm bg-input/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground appearance-none cursor-pointer">
-              <option value="">All statuses</option>
-              <option value="active">Active</option>
-              <option value="suspended">Suspended</option>
-              <option value="inactive">Inactive</option>
+            <select className="w-full sm:w-36 px-3 py-2 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground cursor-pointer">
+              <option value="" className="bg-card text-foreground">All statuses</option>
+              <option value="active" className="bg-card text-foreground">Active</option>
+              <option value="suspended" className="bg-card text-foreground">Suspended</option>
+              <option value="inactive" className="bg-card text-foreground">Inactive</option>
             </select>
 
             <button className="p-2.5 text-muted-foreground hover:text-foreground bg-accent/50 hover:bg-accent border border-transparent rounded-xl transition-all sm:hidden lg:block">
@@ -184,19 +186,19 @@ export default function UserManagementPage(): React.JSX.Element {
                 {dummyUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-muted/30 transition-colors group">
                     <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
+                      <Link to={`/users/${user.id}`} className="flex items-center gap-3 group/user">
                         <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20">
                           {user.avatar}
                         </div>
                         <div>
-                          <div className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                          <div className="font-semibold text-foreground group-hover/user:text-primary transition-colors">
                             {user.name}
                           </div>
                           <div className="text-xs text-muted-foreground mt-0.5">
                             {user.id}
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     </td>
                     <td className="px-5 py-4 text-muted-foreground">
                       {user.email}
@@ -243,9 +245,13 @@ export default function UserManagementPage(): React.JSX.Element {
                       {user.joined}
                     </td>
                     <td className="px-5 py-4 text-right">
-                      <button className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors focus:outline-none">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </button>
+                      <Link 
+                        to={`/users/${user.id}`}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        View
+                      </Link>
                     </td>
                   </tr>
                 ))}
