@@ -81,7 +81,7 @@ export default function ChangePasswordPage(): React.JSX.Element {
                     type="password"
                     id="currentPassword"
                     defaultValue="dummy-password"
-                    className="w-full bg-input/50 border border-border rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary hover:border-border/80 transition-all placeholder:text-muted-foreground shadow-sm"
+                    className="w-full bg-background border border-border rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary hover:border-border/80 transition-all placeholder:text-muted-foreground shadow-xs"
                     placeholder="Enter current password"
                   />
                   <button 
@@ -104,7 +104,7 @@ export default function ChangePasswordPage(): React.JSX.Element {
                     type="password"
                     id="newPassword"
                     defaultValue="NewP@ssw0rd!"
-                    className="w-full bg-input/50 border border-border rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary hover:border-border/80 transition-all placeholder:text-muted-foreground shadow-sm"
+                    className="w-full bg-background border border-border rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary hover:border-border/80 transition-all placeholder:text-muted-foreground shadow-xs"
                     placeholder="Enter new password"
                   />
                   <button 
@@ -154,7 +154,7 @@ export default function ChangePasswordPage(): React.JSX.Element {
                     type="password"
                     id="confirmPassword"
                     defaultValue="NewP@ssw0rd!"
-                    className="w-full bg-input/50 border border-border rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary hover:border-border/80 transition-all placeholder:text-muted-foreground shadow-sm"
+                    className="w-full bg-background border border-border rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary hover:border-border/80 transition-all placeholder:text-muted-foreground shadow-xs"
                     placeholder="Confirm new password"
                   />
                   <button 
