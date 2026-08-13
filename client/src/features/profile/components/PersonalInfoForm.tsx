@@ -10,6 +10,9 @@ interface PersonalInfoFormProps {
   };
 }
 
+// PATCH /api/users/me
+// UI component for updating authenticated user's basic profile details (firstName, lastName).
+// Email and role are displayed as read-only information.
 export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React.JSX.Element {
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">

@@ -17,6 +17,7 @@ Thumbs.db
 # IDE
 .vscode/*
 !.vscode/settings.json
+*.pdf
 
 # Prisma
 server/prisma/dev.db

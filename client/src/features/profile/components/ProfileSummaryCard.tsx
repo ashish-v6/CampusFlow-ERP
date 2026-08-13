@@ -1,5 +1,5 @@
 import React from "react";
-import { Camera, Mail, User, CheckCircle2, Activity } from "lucide-react";
+import { Mail, User, CheckCircle2, Activity } from "lucide-react";
 
 interface ProfileSummaryCardProps {
   user: {
@@ -13,22 +13,14 @@ interface ProfileSummaryCardProps {
   };
 }
 
+// GET /api/users/me
+// Displays the authenticated user's profile summary (read-only initials avatar, name, email, role, status).
 export default function ProfileSummaryCard({ user }: ProfileSummaryCardProps): React.JSX.Element {
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col items-center text-center space-y-4">
-      {/* Avatar */}
-      <div className="relative group">
-        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-primary/10 border-4 border-background flex items-center justify-center text-primary text-3xl sm:text-4xl font-bold shadow-md">
-          {user.initials}
-        </div>
-        {/* 6. PROFILE AVATAR ACTION */}
-        <button 
-          type="button"
-          className="absolute bottom-0 right-0 p-2 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-          aria-label="Change photo"
-        >
-          <Camera className="w-4 h-4" />
-        </button>
+      {/* Avatar (Initials Display) */}
+      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-primary/10 border-4 border-background flex items-center justify-center text-primary text-3xl sm:text-4xl font-bold shadow-md">
+        {user.initials}
       </div>
 
       {/* User Info */}
