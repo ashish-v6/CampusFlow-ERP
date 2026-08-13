@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { Props, User } from "./Types";
 import { clearAccessToken, getAccessToken, setAccessToken } from "./AcessToken";
-import { clearCookie, rotateToken } from "../../services/auth.services";
+import { clearCookie, rotateToken } from "../../features/auth/services/auth.services";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 

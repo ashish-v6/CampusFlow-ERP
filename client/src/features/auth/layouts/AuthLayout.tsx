@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, Link, useLocation } from "react-router";
 import { GraduationCap } from "lucide-react";
-import { ThemeToggle } from "../components/ThemeToggle";
+import { ThemeToggle } from "../../../components/ThemeToggle";
 
 export default function AuthLayout(): React.JSX.Element {
   const location = useLocation();

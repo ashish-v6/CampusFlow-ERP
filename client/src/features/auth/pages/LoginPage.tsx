@@ -4,7 +4,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { AxiosError, AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import { loginUser } from "../services/auth.services";
-import { useAuth } from "../context/Auth/useAuth";
+import { useAuth } from "../../../context/Auth/useAuth";
 
 interface LoginFormData {
   email: string;

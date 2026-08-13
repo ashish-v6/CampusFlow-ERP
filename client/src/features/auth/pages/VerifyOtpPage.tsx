@@ -33,6 +33,7 @@ export default function VerifyOtpPage(): React.JSX.Element {
       const timerId = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timerId);
     }
+    return undefined;
   }, [countdown]);
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {

@@ -11,9 +11,9 @@ import {
   Search,
   Sparkles,
 } from "lucide-react";
-import { logoutUser } from "../services/auth.services";
-import { useAuth } from "../context/Auth/useAuth";
-import { ThemeToggle } from "../components/ThemeToggle";
+import { logoutUser } from "../../auth/services/auth.services";
+import { useAuth } from "../../../context/Auth/useAuth";
+import { ThemeToggle } from "../../../components/ThemeToggle";
 
 export default function DashboardPage(): React.JSX.Element {
   const navigate = useNavigate();
