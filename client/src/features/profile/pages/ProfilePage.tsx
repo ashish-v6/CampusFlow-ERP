@@ -4,6 +4,8 @@ import AccountOverviewCard from "../components/AccountOverviewCard";
 import PersonalInfoForm from "../components/PersonalInfoForm";
 import AccountSecurityCard from "../components/AccountSecurityCard";
 
+// GET /api/users/me & PATCH /api/users/me
+// Displays authenticated user's profile information and encapsulates basic profile editing (firstName, lastName).
 export default function ProfilePage(): React.JSX.Element {
   // Dummy data
   const user = {

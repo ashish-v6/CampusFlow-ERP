@@ -1,6 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { clearAccessToken, getAccessToken, setAccessToken } from "../context/Auth/AcessToken";
-import { rotateToken } from "../services/auth.services";
+import { rotateToken } from "../features/auth/services/auth.services";
 
 declare module "axios" {
   export interface InternalAxiosRequestConfig {

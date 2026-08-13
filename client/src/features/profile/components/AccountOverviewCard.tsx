@@ -10,6 +10,8 @@ interface AccountOverviewCardProps {
   };
 }
 
+// GET /api/users/me
+// Read-only account overview displaying user status, email verification, role, and member creation date.
 export default function AccountOverviewCard({ user }: AccountOverviewCardProps): React.JSX.Element {
   return (
     <div className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4">

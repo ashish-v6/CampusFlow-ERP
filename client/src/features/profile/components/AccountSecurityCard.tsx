@@ -1,6 +1,8 @@
 import React from "react";
+import { Link } from "react-router";
 import { Lock, ShieldCheck } from "lucide-react";
 
+// Security overview card linking to the separate Change Password feature (PATCH /api/users/change-password).
 export default function AccountSecurityCard(): React.JSX.Element {
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
@@ -29,12 +31,12 @@ export default function AccountSecurityCard(): React.JSX.Element {
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            className="w-full sm:w-auto px-4 py-2 bg-accent hover:bg-accent/80 text-foreground text-sm font-medium rounded-xl border border-border transition-all focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background"
+          <Link
+            to="/profile/change-password"
+            className="w-full sm:w-auto px-4 py-2 bg-accent hover:bg-accent/80 text-foreground text-sm font-medium rounded-xl border border-border transition-all text-center focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background"
           >
             Change Password
-          </button>
+          </Link>
         </div>
       </div>
     </div>
