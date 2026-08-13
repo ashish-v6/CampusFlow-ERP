@@ -6,7 +6,7 @@ interface AccountOverviewCardProps {
     status: string;
     verified: boolean;
     role: string;
-    memberSince: string;
+    memberSince: Date;
   };
 }
 
@@ -43,7 +43,7 @@ export default function AccountOverviewCard({ user }: AccountOverviewCardProps):
             <Shield className="w-4 h-4" />
             <span>Role</span>
           </div>
-          <span className="font-medium text-foreground capitalize">{user.role.toLowerCase()}</span>
+          <span className="font-medium text-foreground capitalize">{user.role}</span>
         </div>
 
         <div className="flex items-center justify-between text-sm">
@@ -51,7 +51,7 @@ export default function AccountOverviewCard({ user }: AccountOverviewCardProps):
             <Calendar className="w-4 h-4" />
             <span>Member Since</span>
           </div>
-          <span className="font-medium text-foreground">{user.memberSince}</span>
+          <span className="font-medium text-foreground">{new Date(user.memberSince).toDateString()}</span>
         </div>
       </div>
     </div>

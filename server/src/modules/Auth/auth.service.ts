@@ -204,6 +204,10 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        isVerified : user.isVerified,
+        role : user.role,
+        status : user.status,
+        createdAt : user.createdAt,
       },
     };
 

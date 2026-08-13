@@ -3,19 +3,24 @@ import ProfileSummaryCard from "../components/ProfileSummaryCard";
 import AccountOverviewCard from "../components/AccountOverviewCard";
 import PersonalInfoForm from "../components/PersonalInfoForm";
 import AccountSecurityCard from "../components/AccountSecurityCard";
+import { useAuth } from "../../../context/Auth/useAuth";
 
 // GET /api/users/me & PATCH /api/users/me
 // Displays authenticated user's profile information and encapsulates basic profile editing (firstName, lastName).
 export default function ProfilePage(): React.JSX.Element {
   // Dummy data
+
+  const auth = useAuth();
+  const realUser = auth.user;
+
   const user = {
-    firstName: "Ashu",
-    lastName: "Patel",
-    email: "ashu@example.com",
-    role: "STUDENT",
-    status: "Active",
-    verified: true,
-    memberSince: "August 2024",
+    firstName: realUser?.firstName as string,
+    lastName: realUser?.lastName as string,
+    email: realUser?.email as string,
+    role: realUser?.role as string,
+    status: realUser?.status as string,
+    verified: realUser?.isVerified as boolean,
+    memberSince: realUser?.createdAt as Date,
     initials: "AP"
   };
 

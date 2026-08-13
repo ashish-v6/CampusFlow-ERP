@@ -67,6 +67,10 @@ class AuthController {
         firstName: result.user.firstName,
         lastName: result.user.lastName,
         email: result.user.email,
+        isVerified : result.user.isVerified,
+        role : result.user.role,
+        status : result.user.status,
+        createdAt : result.user.createdAt,
       },
     });
   });
@@ -90,12 +94,7 @@ class AuthController {
     );
     res.status(200).json({
       accessToken: result.accessToken,
-      user: {
-        id: result.user.id,
-        firstName: result.user.firstName,
-        lastName: result.user.lastName,
-        email: result.user.email,
-      },
+      user: result.user,
     });
   });
 

@@ -3,6 +3,10 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  isVerified : boolean;
+  role : string;
+  status : string;
+  createdAt : Date;
 }
 
 export interface AuthContextType {
