@@ -87,31 +87,31 @@ export default function LoginPage(): React.JSX.Element {
   return (
     <div className="flex-1 flex flex-col lg:flex-row w-full min-h-[calc(100vh-7rem)]">
       {/* Form Section */}
-      <section className="w-full lg:w-[45%] xl:w-[42%] flex-1 flex flex-col justify-center items-center p-6 sm:p-10 lg:p-14 bg-slate-950">
+      <section className="w-full lg:w-[45%] xl:w-[42%] flex-1 flex flex-col justify-center items-center p-6 sm:p-10 lg:p-14 bg-background">
         <div className="max-w-md w-full my-auto space-y-6">
           {/* Title & Description */}
           <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
               Sign in to CampusFlow
             </h1>
-            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
               Welcome back! Please enter your credentials to access your portal.
             </p>
           </div>
 
           {/* Login Card */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+          <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
             <form className="space-y-5" onSubmit={handleSubmit} noValidate>
               {/* Email Field */}
               <div className="space-y-2">
                 <label
                   htmlFor="email"
-                  className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                  className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
                 >
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                     <Mail className="w-5 h-5" />
                   </div>
                   <input
@@ -121,10 +121,10 @@ export default function LoginPage(): React.JSX.Element {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="name@university.edu"
-                    className={`w-full bg-slate-950 border rounded-xl pl-11 pr-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full bg-input/50 border rounded-xl pl-11 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
                       errors.email
                         ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
-                        : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
+                        : "border-border focus:ring-primary/50 focus:border-primary"
                     }`}
                   />
                 </div>
@@ -137,12 +137,12 @@ export default function LoginPage(): React.JSX.Element {
               <div className="space-y-2">
                 <label
                   htmlFor="password"
-                  className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                  className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
                 >
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                     <Lock className="w-5 h-5" />
                   </div>
                   <input
@@ -152,16 +152,16 @@ export default function LoginPage(): React.JSX.Element {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Enter your password"
-                    className={`w-full bg-slate-950 border rounded-xl pl-11 pr-11 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full bg-input/50 border rounded-xl pl-11 pr-11 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
                       errors.password
                         ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
-                        : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
+                        : "border-border focus:ring-primary/50 focus:border-primary"
                     }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-foreground hover:text-foreground transition-colors"
                     aria-label="Toggle password visibility"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -181,9 +181,9 @@ export default function LoginPage(): React.JSX.Element {
                     name="rememberMe"
                     checked={formData.rememberMe}
                     onChange={handleChange}
-                    className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-blue-500/40 cursor-pointer"
+                    className="w-4 h-4 rounded border-border bg-input/50 text-primary focus:ring-primary/40 cursor-pointer"
                   />
-                  <span className="text-slate-300 group-hover:text-white transition-colors">
+                  <span className="text-foreground/80 group-hover:text-foreground transition-colors">
                     Remember me
                   </span>
                 </label>
@@ -199,15 +199,14 @@ export default function LoginPage(): React.JSX.Element {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2 group text-sm cursor-pointer  disabled:bg-blue-600/60  disabled:cursor-noy-allowed"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-4 rounded-xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 group text-sm cursor-pointer disabled:bg-primary/60 disabled:cursor-not-allowed"
               >
                 {loading ? "Signing..." : "Sign In"}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
             </form>
 
-            {/* Bottom Link */}
-            <div className="text-center pt-2 text-sm text-slate-400 border-t border-slate-800/80">
+            <div className="text-center pt-2 text-sm text-muted-foreground border-t border-border/80">
               <span>Don't have an account? </span>
               <Link
                 to="/signup"
@@ -221,7 +220,7 @@ export default function LoginPage(): React.JSX.Element {
       </section>
 
       {/* Hero Image Section */}
-      <section className="hidden lg:flex lg:w-[55%] xl:w-[58%] relative p-12 flex-col justify-end overflow-hidden border-l border-slate-800/80">
+      <section className="hidden lg:flex lg:w-[55%] xl:w-[58%] relative p-12 flex-col justify-end overflow-hidden border-l border-border/80">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
@@ -229,16 +228,16 @@ export default function LoginPage(): React.JSX.Element {
             alt="Modern Educational Campus Architecture"
             className="w-full h-full object-cover object-center filter brightness-[0.75]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-blue-950/30 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-primary/30 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent" />
         </div>
 
         {/* Clean Hero Caption */}
-        <div className="relative z-10 max-w-lg space-y-3">
-          <h2 className="text-3xl font-extrabold text-white tracking-tight leading-tight">
+        <div className="relative z-10 max-w-lg space-y-3 text-white">
+          <h2 className="text-3xl font-extrabold tracking-tight leading-tight">
             Next-Generation Campus Intelligence
           </h2>
-          <p className="text-slate-300 text-base leading-relaxed">
+          <p className="text-white/80 text-base leading-relaxed">
             Streamline administrative workflows, student lifecycle management, and academic
             analytics from a single platform.
           </p>

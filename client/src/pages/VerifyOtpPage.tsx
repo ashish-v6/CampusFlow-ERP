@@ -72,6 +72,7 @@ export default function VerifyOtpPage(): React.JSX.Element {
       return Promise.resolve();
     } catch (error) {
       if (error instanceof AxiosError) {
+        console.log(error);
         toast.error(error.response?.data.message ?? "Something went wrong");
       } else {
         toast.error("Something unexpected happened");
@@ -123,23 +124,23 @@ export default function VerifyOtpPage(): React.JSX.Element {
     <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12 min-h-[calc(100vh-7rem)]">
       <div className="max-w-md w-full my-auto space-y-6">
         {/* Verification Card */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-10 shadow-2xl space-y-6 text-center">
+        <div className="bg-card border border-border rounded-2xl p-6 sm:p-10 shadow-2xl space-y-6 text-center">
           {/* Circular Icon Illustration & Badge */}
           <div className="space-y-3">
-            <div className="w-14 h-14 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mx-auto shadow-md shadow-blue-500/10">
+            <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mx-auto shadow-md shadow-primary/10">
               <MailCheck className="w-7 h-7" />
             </div>
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold tracking-wider uppercase">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wider uppercase">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
               <span>EMAIL VERIFICATION</span>
             </div>
 
             <div className="space-y-2 pt-1">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
                 Verify your email
               </h1>
-              <p className="text-slate-400 text-sm leading-relaxed max-w-sm mx-auto">
+              <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mx-auto">
                 Enter your email address and the 6-digit verification code sent to your inbox.
               </p>
             </div>
@@ -151,12 +152,12 @@ export default function VerifyOtpPage(): React.JSX.Element {
             <div className="space-y-2">
               <label
                 htmlFor="verify-email"
-                className="block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
               >
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                   <Mail className="w-5 h-5" />
                 </div>
                 <input
@@ -166,10 +167,10 @@ export default function VerifyOtpPage(): React.JSX.Element {
                   value={formData.email}
                   onChange={handleEmailChange}
                   placeholder="name@university.edu"
-                  className={`w-full bg-slate-950 border rounded-xl pl-11 pr-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all ${
+                  className={`w-full bg-input/50 border rounded-xl pl-11 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
                     errors.email
                       ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
-                      : "border-slate-800 focus:ring-blue-500/50 focus:border-blue-500"
+                      : "border-border focus:ring-primary/50 focus:border-primary"
                   }`}
                 />
               </div>
@@ -180,7 +181,7 @@ export default function VerifyOtpPage(): React.JSX.Element {
 
             {/* 6-Digit OTP Input Grid */}
             <div className="space-y-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground/80">
                 6-Digit Verification Code
               </label>
               <div className="grid grid-cols-6 gap-2.5 sm:gap-3">
@@ -194,10 +195,10 @@ export default function VerifyOtpPage(): React.JSX.Element {
                       handleOtpChange(index, e.target.value)
                     }
                     aria-label={`OTP Digit ${index + 1}`}
-                    className={`w-full h-12 text-center text-lg font-bold text-white bg-slate-950 border rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full h-12 text-center text-lg font-bold text-foreground bg-input/50 border rounded-xl focus:outline-none focus:ring-2 transition-all ${
                       errors.otp
                         ? "border-red-500/80 focus:ring-red-500/40"
-                        : "border-slate-800 focus:border-blue-500 focus:ring-blue-500/50"
+                        : "border-border focus:border-primary focus:ring-primary/50"
                     }`}
                   />
                 ))}
@@ -211,10 +212,10 @@ export default function VerifyOtpPage(): React.JSX.Element {
                 type="button"
                 onClick={handleSendOtp}
                 disabled={countdown > 0}
-                className={`w-full ${countdown > 0 ? "bg-slate-900 border-slate-800 text-slate-500 cursor-not-allowed" : "bg-slate-950 hover:bg-slate-800 border-slate-800 hover:border-slate-700 text-slate-200 cursor-pointer"} border font-semibold py-3 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2 group order-2 sm:order-1`}
+                className={`w-full ${countdown > 0 ? "bg-muted border-border text-muted-foreground cursor-not-allowed" : "bg-accent/50 hover:bg-accent border-border hover:border-muted-foreground text-muted-foreground hover:text-foreground cursor-pointer"} border font-semibold py-3 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2 group order-2 sm:order-1`}
               >
                 <RefreshCw
-                  className={`w-4 h-4 ${countdown > 0 ? "text-slate-500" : "text-slate-400 group-hover:rotate-180"} transition-transform duration-300`}
+                  className={`w-4 h-4 ${countdown > 0 ? "text-muted-foreground" : "text-muted-foreground group-hover:rotate-180"} transition-transform duration-300`}
                 />
                 <span>{countdown > 0 ? `Resend in ${countdown}s` : "Send OTP"}</span>
               </button>
@@ -222,7 +223,7 @@ export default function VerifyOtpPage(): React.JSX.Element {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-all flex items-center justify-center gap-2 group order-1 sm:order-2 cursor-pointer disabled:bg-blue-600/60  disabled:cursor-noy-allowed"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-4 rounded-xl shadow-lg shadow-primary/20 text-sm transition-all flex items-center justify-center gap-2 group order-1 sm:order-2 cursor-pointer disabled:bg-primary/60 disabled:cursor-not-allowed"
               >
                 {loading ? "Verifing..." : "Verify OTP"}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -231,12 +232,12 @@ export default function VerifyOtpPage(): React.JSX.Element {
           </form>
 
           {/* Additional Information Card */}
-          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-left text-xs space-y-2">
-            <div className="flex items-center gap-2 font-semibold text-slate-300">
-              <Info className="w-4 h-4 text-blue-400 shrink-0" />
+          <div className="bg-accent/30 border border-border rounded-xl p-4 text-left text-xs space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-foreground/80">
+              <Info className="w-4 h-4 text-primary shrink-0" />
               <span>Didn't receive the code?</span>
             </div>
-            <ul className="list-disc list-inside text-slate-400 space-y-1 pl-1 leading-relaxed">
+            <ul className="list-disc list-inside text-muted-foreground space-y-1 pl-1 leading-relaxed">
               <li>Check your spam or junk folder.</li>
               <li>Ensure your email address is typed correctly.</li>
               <li>Click "Send OTP" to request a new verification code.</li>
@@ -244,11 +245,11 @@ export default function VerifyOtpPage(): React.JSX.Element {
           </div>
 
           {/* Bottom Link */}
-          <div className="pt-2 text-sm text-slate-400 border-t border-slate-800/80">
+          <div className="pt-2 text-sm text-muted-foreground border-t border-border/80">
             <span>Already verified? </span>
             <Link
               to="/login"
-              className="font-semibold text-blue-400 hover:text-blue-300 transition-colors ml-1"
+              className="font-semibold text-primary hover:text-primary/80 transition-colors ml-1"
             >
               Sign In
             </Link>
