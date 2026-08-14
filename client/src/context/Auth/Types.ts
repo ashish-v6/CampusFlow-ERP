@@ -11,6 +11,7 @@ export interface User {
 
 export interface AuthContextType {
   user: User | null;
+  isVerifying : boolean;
   login: (accessToken: string, user: User) => void;
   logout: () => void;
 }

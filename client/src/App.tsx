@@ -22,6 +22,8 @@ import UpdateUserStatusPage from "./features/users/pages/UpdateUserStatusPage";
 import DeactivateUserPage from "./features/users/pages/DeactivateUserPage";
 
 import { Toaster } from "react-hot-toast";
+import AccessDeniedPage from "./components/AccessDeniedPage";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 export default function App(): React.JSX.Element {
   return (
@@ -38,6 +40,7 @@ export default function App(): React.JSX.Element {
         </Route>
 
         {/* Authenticated Application Routes inside MainLayout (Header & Footer) */}
+        <Route element={<ProtectedRoute/>}>
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
 
@@ -51,8 +54,11 @@ export default function App(): React.JSX.Element {
           <Route path="/users/:id" element={<UserDetailsPage />} />
           <Route path="/users/:id/status" element={<UpdateUserStatusPage />} />
           <Route path="/users/:id/deactivate" element={<DeactivateUserPage />} />
-        </Route>
 
+          {/* {Forbidden Route} */}
+        <Route path="/403" element={<AccessDeniedPage/>}/>
+        </Route>
+</Route>
         {/* Fallback Catch-all Route */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

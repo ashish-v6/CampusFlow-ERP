@@ -5,6 +5,7 @@ import { clearAccessToken, getAccessToken, setAccessToken } from "./AcessToken";
 import { clearCookie, rotateToken } from "../../features/auth/services/auth.services";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
+import AuthLoading from "../../components/AuthLoading";
 
 function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
@@ -48,11 +49,12 @@ function AuthProvider({ children }: Props) {
     <AuthContext.Provider
       value={{
         user,
+        isVerifying,
         login,
         logout,
       }}
     >
-      {isVerifying ? "Loading.." : children}
+      {isVerifying ? <AuthLoading/> : children}
     </AuthContext.Provider>
   );
 }
