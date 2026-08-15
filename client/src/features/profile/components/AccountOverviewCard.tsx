@@ -6,7 +6,7 @@ interface AccountOverviewCardProps {
     status: string;
     verified: boolean;
     role: string;
-    memberSince: Date;
+    createdAt: Date;
   };
 }
 
@@ -51,7 +51,7 @@ export default function AccountOverviewCard({ user }: AccountOverviewCardProps):
             <Calendar className="w-4 h-4" />
             <span>Member Since</span>
           </div>
-          <span className="font-medium text-foreground">{new Date(user.memberSince).toDateString()}</span>
+          <span className="font-medium text-foreground">{new Date(user.createdAt).toDateString()}</span>
         </div>
       </div>
     </div>
