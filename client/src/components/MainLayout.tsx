@@ -9,7 +9,7 @@ import {
   Bell,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { logoutUser } from "../features/auth/services/auth.services";
@@ -38,20 +38,21 @@ export default function MainLayout(): React.JSX.Element {
       label: "Overview",
       path: "/dashboard",
       icon: LayoutDashboard,
-      isActive: currentPath === "/dashboard"
+      isActive: currentPath === "/dashboard",
     },
     {
       label: "Users",
       path: "/users",
       icon: Users,
-      isActive: currentPath.startsWith("/users")
+      isActive: currentPath.startsWith("/users"),
+      adminOnly: true,
     },
     {
       label: "Profile",
       path: "/profile",
       icon: User,
-      isActive: currentPath.startsWith("/profile")
-    }
+      isActive: currentPath.startsWith("/profile"),
+    },
   ];
 
   return (
@@ -62,7 +63,6 @@ export default function MainLayout(): React.JSX.Element {
       {/* Top Navigation Bar */}
       <header className="w-full h-16 shrink-0 border-b border-border/80 bg-background/90 dark:bg-background/80 backdrop-blur-md sticky top-0 z-50 transition-colors">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-          
           {/* Brand Logo */}
           <Link to="/dashboard" className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-indigo-600 flex items-center justify-center shadow-md shadow-primary/20 border border-primary/20">
@@ -78,28 +78,30 @@ export default function MainLayout(): React.JSX.Element {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-2 text-sm font-medium">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all duration-200 ${
-                    item.isActive
-                      ? "text-foreground bg-accent border border-border shadow-xs font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 ${item.isActive ? "text-primary" : ""}`} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
+            {navItems
+              .filter((item) => !item.adminOnly || auth.user?.role === "ADMIN")
+              .map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all duration-200 ${
+                      item.isActive
+                        ? "text-foreground bg-accent border border-border shadow-xs font-semibold"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 ${item.isActive ? "text-primary" : ""}`} />
+
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
           </nav>
 
           {/* Right Section: Theme Toggle, Notifications, Logout & Mobile Toggle */}
           <div className="flex items-center gap-3">
-            
             {/* Theme Toggle Button */}
             <ThemeToggle />
 

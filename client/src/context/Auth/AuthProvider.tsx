@@ -9,7 +9,8 @@ import AuthLoading from "../../components/AuthLoading";
 
 function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
-  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  // Start in verification mode on mount so ProtectedRoute waits for session restoration
+  const [isVerifying, setIsVerifying] = useState<boolean>(true);
 
   const login = (accessToken: string, user: User): void => {
     setUser(user);
@@ -22,15 +23,15 @@ function AuthProvider({ children }: Props) {
       const result = await rotateToken();
       setAccessToken(result.accessToken);
       setUser(result.user);
-      console.log(user);
     } catch (error) {
+      // If session restoration fails, ensure user and access token are reset
+      logout();
       if (error instanceof AxiosError) {
         if (error.response?.status === 404) {
-          logout();
           await clearCookie();
         }
       } else {
-        console.log(error);
+        console.error("Session restoration error:", error);
       }
     } finally {
       setIsVerifying(false);

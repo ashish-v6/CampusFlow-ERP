@@ -40,25 +40,28 @@ export default function App(): React.JSX.Element {
         </Route>
 
         {/* Authenticated Application Routes inside MainLayout (Header & Footer) */}
-        <Route element={<ProtectedRoute/>}>
         <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
 
-          {/* Profile Feature Routes */}
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/profile/edit" element={<EditProfilePage />} />
-          <Route path="/profile/change-password" element={<ChangePasswordPage />} />
+            {/* Profile Feature Routes */}
 
-          {/* Users Feature Routes */}
-          <Route path="/users" element={<UserManagementPage />} />
-          <Route path="/users/:id" element={<UserDetailsPage />} />
-          <Route path="/users/:id/status" element={<UpdateUserStatusPage />} />
-          <Route path="/users/:id/deactivate" element={<DeactivateUserPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/edit" element={<EditProfilePage />} />
+            <Route path="/profile/change-password" element={<ChangePasswordPage />} />
 
-          {/* {Forbidden Route} */}
-        <Route path="/403" element={<AccessDeniedPage/>}/>
+            {/* Users Feature Routes */}
+            <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+              <Route path="/users" element={<UserManagementPage />} />
+              <Route path="/users/:id" element={<UserDetailsPage />} />
+              <Route path="/users/:id/status" element={<UpdateUserStatusPage />} />
+              <Route path="/users/:id/deactivate" element={<DeactivateUserPage />} />
+            </Route>
+            {/* {Forbidden Route} */}
+            <Route path="/403" element={<AccessDeniedPage />} />
+          </Route>
         </Route>
-</Route>
+
         {/* Fallback Catch-all Route */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

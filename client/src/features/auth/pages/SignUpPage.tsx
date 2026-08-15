@@ -142,11 +142,10 @@ export default function SignUpPage(): React.JSX.Element {
                       value={formData.firstName}
                       onChange={handleChange}
                       placeholder="First Name"
-                      className={`w-full bg-input/50 border rounded-xl pl-10 pr-3 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
-                        errors.firstName
+                      className={`w-full bg-input/50 border rounded-xl pl-10 pr-3 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${errors.firstName
                           ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                           : "border-border focus:ring-primary/50 focus:border-primary"
-                      }`}
+                        }`}
                     />
                   </div>
                   {errors.firstName && (
@@ -172,11 +171,10 @@ export default function SignUpPage(): React.JSX.Element {
                       value={formData.lastName}
                       onChange={handleChange}
                       placeholder="Last Name"
-                      className={`w-full bg-input/50 border rounded-xl pl-10 pr-3 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
-                        errors.lastName
+                      className={`w-full bg-input/50 border rounded-xl pl-10 pr-3 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${errors.lastName
                           ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                           : "border-border focus:ring-primary/50 focus:border-primary"
-                      }`}
+                        }`}
                     />
                   </div>
                   {errors.lastName && (
@@ -204,11 +202,10 @@ export default function SignUpPage(): React.JSX.Element {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="name@university.edu"
-                    className={`w-full bg-input/50 border rounded-xl pl-10 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
-                      errors.email
+                    className={`w-full bg-input/50 border rounded-xl pl-10 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${errors.email
                         ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                         : "border-border focus:ring-primary/50 focus:border-primary"
-                    }`}
+                      }`}
                   />
                 </div>
                 {errors.email && (
@@ -235,11 +232,10 @@ export default function SignUpPage(): React.JSX.Element {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Create password"
-                    className={`w-full bg-input/50 border rounded-xl pl-10 pr-10 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
-                      errors.password
+                    className={`w-full bg-input/50 border rounded-xl pl-10 pr-10 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${errors.password
                         ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                         : "border-border focus:ring-primary/50 focus:border-primary"
-                    }`}
+                      }`}
                   />
                   <button
                     type="button"
@@ -274,11 +270,10 @@ export default function SignUpPage(): React.JSX.Element {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="Confirm password"
-                    className={`w-full bg-input/50 border rounded-xl pl-10 pr-10 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
-                      errors.confirmPassword
+                    className={`w-full bg-input/50 border rounded-xl pl-10 pr-10 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${errors.confirmPassword
                         ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                         : "border-border focus:ring-primary/50 focus:border-primary"
-                    }`}
+                      }`}
                   />
                   <button
                     type="button"
@@ -357,18 +352,25 @@ export default function SignUpPage(): React.JSX.Element {
           <img
             src="https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop"
             alt="Modern Educational Campus Architecture"
-            className="w-full h-full object-cover object-center filter brightness-[0.75]"
+            className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-primary/30 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent" />
+          
+          {/* Overall Darken (Only applied in dark mode) */}
+          <div className="absolute inset-0 bg-transparent dark:bg-black/50 transition-colors duration-300" />
+          
+          {/* Bottom Gradient for Text Readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent dark:from-black dark:via-black/60 dark:to-primary/30 transition-colors duration-300" />
+          
+          {/* Side Edge Blend Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent w-1/2 dark:from-black dark:via-transparent transition-colors duration-300" />
         </div>
 
         {/* Clean Hero Caption */}
-        <div className="relative z-10 max-w-lg space-y-3 text-white">
+        <div className="relative z-10 max-w-lg space-y-3 text-foreground dark:text-white transition-colors duration-300">
           <h2 className="text-3xl font-extrabold tracking-tight leading-tight">
             Empowering Higher Education
           </h2>
-          <p className="text-white/80 text-base leading-relaxed">
+          <p className="text-muted-foreground dark:text-white/80 text-base leading-relaxed">
             Join hundreds of universities and institutions modernizing campus management with
             enterprise-grade security.
           </p>

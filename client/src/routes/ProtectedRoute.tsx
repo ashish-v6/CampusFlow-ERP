@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/Auth/useAuth";
-import { replace, useNavigate, Navigate } from "react-router";
+import { replace, useNavigate, Navigate, Outlet } from "react-router";
 import toast from "react-hot-toast";
 import AuthLoading from "../components/AuthLoading";
 
@@ -8,11 +8,14 @@ type Role = "ADMIN" | "STUDENT" | "FACULTY";
 
 interface AllowedRoles {
   allowedRoles?: Role[];
-  children: React.ReactNode;
 }
 
-function ProtectedRoute({ allowedRoles, children }: AllowedRoles): React.JSX.Element {
+function ProtectedRoute({ allowedRoles }: AllowedRoles): React.JSX.Element {
   const { user, isVerifying } = useAuth();
+  console.log("ProtectedRoute:", {
+  user,
+  isVerifying,
+  });
   if(isVerifying){
     return <AuthLoading/>
   }
@@ -20,10 +23,10 @@ function ProtectedRoute({ allowedRoles, children }: AllowedRoles): React.JSX.Ele
     return <Navigate to={"/login"} replace/>
   }
   if(!allowedRoles){
-    return <>{children}</>;
+    return <Outlet/>
   }
   if(allowedRoles.includes(user.role as Role)){
-    return <>{children}</>;
+    return <Outlet/>;
   }
   return <Navigate to={"/403"} replace/>
 }
