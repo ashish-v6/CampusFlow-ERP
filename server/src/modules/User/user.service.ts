@@ -13,12 +13,10 @@ class UserServices {
       throw createHttpError(404, "Invalid Request");
     }
     const safeUser = {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      isVerified: user.isVerified,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      ...user,
+      password : "",
+      verified : user.isVerified,
+      initials: `${user.firstName[0]}${user.lastName[0]}`
     };
     return safeUser;
   }
