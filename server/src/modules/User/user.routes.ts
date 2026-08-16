@@ -31,6 +31,13 @@ router.get(
 );
 
 router.get(
+  "/users-status",
+  authenticate,
+  authorize("admin"),
+  userControllers.getStauts,
+)
+
+router.get(
   "/:id",
   authenticate,
   authorize("admin"),

@@ -38,9 +38,18 @@ class UserControllers {
     const result = await userServices.getAllUsers(dto);
 
     res.status(200).json({
-      result,
+      users : result.users,
+      pagination : result.pagination,
     });
   });
+
+  public getStauts = asyncHandler(async(req : Request, res : Response) => {
+    const result = await userServices.getUsersStautsDetails();
+
+    res.status(200).json({
+      result
+    })
+  })
 
   public getUserById = asyncHandler(async (req: Request, res: Response) => {
     const dto = req.params as unknown as dtos.getUserByIdDto;
