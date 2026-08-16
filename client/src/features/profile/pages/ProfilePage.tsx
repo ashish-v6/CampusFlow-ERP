@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { getProfile } from "../services/profile.services";
 import { User } from "../profile.types";
+import LoadingState from "../../../components/LoadingState";
+import ErrorState from "../../../components/ErrorState";
 
 // GET /api/users/me & PATCH /api/users/me
 // Displays authenticated user's profile information and encapsulates basic profile editing (firstName, lastName).
@@ -41,15 +43,15 @@ export default function ProfilePage(): React.JSX.Element {
   useEffect(() => {getUser()}, []);
 
   if(loading){
-    return <div>Loading</div>
+    return <LoadingState message="Loading Profile..." subtitle="Retrieving your account information." />
   }
 
   if(error){
-    return <div>Error</div>
+    return <ErrorState title="Failed to Load Profile" message={error} onRetry={getUser} />
   }
 
   if(!user){
-    return <div>Profile Error</div>
+    return <ErrorState title="Profile Error" message="User profile data could not be found." onRetry={getUser} />
   }
 
   return (

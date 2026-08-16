@@ -79,6 +79,17 @@ class UserServices {
     };
   }
 
+  public async getUsersStautsDetails(){
+    const result = await this.userRepository.findUsersDetails();
+
+    return {
+      total : result.total ?? 0,
+      active : result.active ?? 0,
+      inActive : result.inActive ?? 0,
+      suspended : result.suspended ?? 0,
+    };
+  }
+
   public async getUserById(dto: dtos.getUserByIdDto) {
     const user = await this.userRepository.findUserById(dto.id);
 
@@ -89,6 +100,7 @@ class UserServices {
     const safeUser = {
       ...user,
       password: "",
+      initials : `${user.firstName[0]}${user.lastName[0]}`
     };
 
     return safeUser;
