@@ -29,6 +29,14 @@ interface QueueType {
 let isRefreshing = false;
 let failedQueue: QueueType[] = [];
 
+function shouldSkipRefresh(url?: string) {
+  if (!url) {
+    return false;
+  }
+
+  return url.includes("/api/auth/");
+}
+
 function processQueue(error: unknown, token: string | null) {
   for (const request of failedQueue) {
     if (error) {
@@ -59,7 +67,7 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (originalRequest.url === "/api/auth/rotate") {
+    if (shouldSkipRefresh(originalRequest.url)) {
       return Promise.reject(error);
     }
 

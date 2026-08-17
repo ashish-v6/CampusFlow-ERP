@@ -20,7 +20,7 @@ export class AuthService {
     const existingUser = await this.authRepository.findUserByEmail(dto.email);
     //--validate user
     if (existingUser) {
-      throw createHttpError(409, "Email is already Registered");
+      throw createHttpError(409, "Invalid Request");
     }
 
     //--creating user
@@ -110,7 +110,7 @@ export class AuthService {
     const existingUser = await this.authRepository.findUserByEmail(dto.email);
 
     if (!existingUser) {
-      throw createHttpError(404, "Resource not found");
+      throw createHttpError(404, "Invalid Email or password");
     }
 
     if (!existingUser.isVerified) {
