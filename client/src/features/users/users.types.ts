@@ -38,8 +38,8 @@ export interface Pagination {
 }
 
 export interface UserPagination {
-  page: string;
-  limit: string;
+  page: number;
+  limit: number;
 }
 
 export interface Params {
