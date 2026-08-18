@@ -19,11 +19,11 @@ export default function UserManagementPage(): React.JSX.Element {
   const [isEmpty, setIsEmpty] = useState(false);
   const [userDetails, setUserDetails] = useState<UserStats | null>(null);
   const [paginationDetails, setPaginationDetails] = useState<Pagination | null>(null);
-  const [params, setParams] = useState(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const getAllUsers = async (): Promise<void> => {
     try {
-      const data = await fetchUsers({ page: "1", limit: "10" });
+      const data = await fetchUsers({ page: currentPage, limit: 10 });
       const details = await getUsersStatus();
       setUsers(data.users);
       setPaginationDetails(data.pagination);
@@ -42,7 +42,7 @@ export default function UserManagementPage(): React.JSX.Element {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [currentPage]);
 
   if (loading) {
     return (
@@ -110,7 +110,7 @@ export default function UserManagementPage(): React.JSX.Element {
         {!loading && !isEmpty && <UserTable users={users} />}
 
         {/* 5. PAGINATION UI */}
-        <UserPagination paginationDetails={paginationDetails} />
+        <UserPagination paginationDetails={paginationDetails} currentPage={currentPage} setCurrentPage={setCurrentPage} />
       </div>
     </div>
   );

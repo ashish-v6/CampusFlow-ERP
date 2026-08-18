@@ -46,6 +46,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
       const res = await forgotPassword(formData);
       console.log(res);
       toast.success("Reset Link is sent to email");
+      navigate("/login");
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message ?? "Something went wrong");
@@ -55,8 +56,6 @@ export default function ForgotPasswordPage(): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-
-    navigate("/login");
   };
 
   return (

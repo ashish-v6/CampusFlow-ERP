@@ -26,9 +26,10 @@ export default function MainLayout(): React.JSX.Element {
   const handleLogout = async (): Promise<void> => {
     try {
       await logoutUser();
-      auth.logout();
     } catch (error) {
       console.error("Logout error:", error);
+    }finally{
+      auth.logout();
     }
     navigate("/login");
   };
@@ -140,7 +141,8 @@ export default function MainLayout(): React.JSX.Element {
         {/* Mobile Navigation Menu Dropdown */}
         {mobileMenuOpen && (
           <div className="md:hidden border-b border-border bg-background/95 backdrop-blur-lg px-4 pt-3 pb-4 space-y-2 animate-in slide-in-from-top-2">
-            {navItems.map((item) => {
+            {navItems.filter((item) => !item.adminOnly || auth.user?.role === "ADMIN")
+            .map((item) => {
               const Icon = item.icon;
               return (
                 <Link

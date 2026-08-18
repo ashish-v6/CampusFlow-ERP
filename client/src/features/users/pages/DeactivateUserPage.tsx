@@ -97,6 +97,7 @@ export default function DeactivateUserPage(): React.JSX.Element {
             type="button"
             className="w-full sm:w-auto px-6 py-2.5 bg-accent hover:bg-accent/80 text-foreground text-sm font-semibold rounded-xl border border-border transition-all"
           >
+          {/* Add Try Again Logic */}
             Try Again
           </button>
         </div>
