@@ -34,28 +34,23 @@ class UserControllers {
 
   public getAllUsers = asyncHandler(async (req: Request, res: Response) => {
     const dto = req.validated?.query as dtos.getAllUsersDto;
-
     const result = await userServices.getAllUsers(dto);
-
     res.status(200).json({
-      users : result.users,
-      pagination : result.pagination,
+      users: result.users,
+      pagination: result.pagination,
     });
   });
 
-  public getStauts = asyncHandler(async(req : Request, res : Response) => {
+  public getStauts = asyncHandler(async (req: Request, res: Response) => {
     const result = await userServices.getUsersStautsDetails();
-
     res.status(200).json({
-      result
-    })
-  })
+      result,
+    });
+  });
 
   public getUserById = asyncHandler(async (req: Request, res: Response) => {
     const dto = req.params as unknown as dtos.getUserByIdDto;
-
     const result = await userServices.getUserById(dto);
-
     res.status(200).json({
       result,
     });
@@ -66,9 +61,7 @@ class UserControllers {
       id: req.params.id as string,
       status: req.body.status as UserStatus,
     };
-
     const result = await userServices.updateUserStatus(dto);
-
     res.status(200).json({ result });
   });
 
@@ -77,9 +70,7 @@ class UserControllers {
       id: req.params.id as string,
       status: "INACTIVE" as UserStatus,
     };
-
     const result = await userServices.updateUserStatus(dto);
-
     res.status(200).json({ result });
   });
 }

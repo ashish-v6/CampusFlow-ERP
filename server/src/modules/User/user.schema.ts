@@ -4,8 +4,18 @@ import { UserStatus } from "../../generated/prisma/enums.js";
 class UserSchema {
   public updateUserProfileSchema = z
     .object({
-      firstName: z.string().trim().min(3, "firstName must be of 3 characters").max(10,"Too Long Name").optional(),
-      lastName: z.string().trim().min(3, "LastName must be of 3 characters").max(10,"Too Long Name").optional(),
+      firstName: z
+        .string()
+        .trim()
+        .min(3, "firstName must be of 3 characters")
+        .max(10, "Too Long Name")
+        .optional(),
+      lastName: z
+        .string()
+        .trim()
+        .min(3, "LastName must be of 3 characters")
+        .max(10, "Too Long Name")
+        .optional(),
       phone: z.string().trim().min(1, "Value cannot be empty").optional(),
       avatar: z.string().trim().min(1, "Value cannot be empty").optional(),
     })

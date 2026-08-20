@@ -8,22 +8,20 @@ class UserServices {
 
   public async getCurrentUser(id: string) {
     const user = await this.userRepository.findUserById(id);
-
     if (!user) {
       throw createHttpError(404, "Invalid Request");
     }
     const safeUser = {
       ...user,
-      password : "",
-      verified : user.isVerified,
-      initials: `${user.firstName[0]}${user.lastName[0]}`
+      password: "",
+      verified: user.isVerified,
+      initials: `${user.firstName[0]}${user.lastName[0]}`,
     };
     return safeUser;
   }
 
   public async updateUserProfile(id: string, dto: dtos.updateUserProfileDto) {
     const existingUser = await this.userRepository.findUserById(id);
-
     if (!existingUser) {
       throw createHttpError(404, "Invalid Request");
     }
@@ -39,7 +37,6 @@ class UserServices {
 
   public async updateUserPassword(id: string, dto: dtos.updateUserPasswordDto) {
     const existingUser = await this.userRepository.findUserById(id);
-
     if (!existingUser) {
       throw createHttpError(404, "Invalid Request");
     }
@@ -56,18 +53,14 @@ class UserServices {
 
   public async getAllUsers(dto: dtos.getAllUsersDto) {
     const skip = (dto.page - 1) * dto.limit;
-
     const result = await this.userRepository.findUsers(skip, dto.limit);
-
     const totalPages = Math.ceil(result.total / dto.limit);
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const safeUsers = result.users.map(({ password, ...user }) => user);
 
     if (!safeUsers.length) {
       throw createHttpError(404, "User not found");
     }
-
     return {
       users: safeUsers,
       pagination: {
@@ -79,36 +72,31 @@ class UserServices {
     };
   }
 
-  public async getUsersStautsDetails(){
+  public async getUsersStautsDetails() {
     const result = await this.userRepository.findUsersDetails();
-
     return {
-      total : result.total ?? 0,
-      active : result.active ?? 0,
-      inActive : result.inActive ?? 0,
-      suspended : result.suspended ?? 0,
+      total: result.total ?? 0,
+      active: result.active ?? 0,
+      inActive: result.inActive ?? 0,
+      suspended: result.suspended ?? 0,
     };
   }
 
   public async getUserById(dto: dtos.getUserByIdDto) {
     const user = await this.userRepository.findUserById(dto.id);
-
     if (!user) {
       throw createHttpError(404, "invalid Request");
     }
-
     const safeUser = {
       ...user,
       password: "",
-      initials : `${user.firstName[0]}${user.lastName[0]}`
+      initials: `${user.firstName[0]}${user.lastName[0]}`,
     };
-
     return safeUser;
   }
 
   public async updateUserStatus(dto: dtos.updateStatusDto) {
     const user = await this.userRepository.findUserById(dto.id);
-
     if (!user || user.role === "ADMIN") {
       throw createHttpError(404, "Invalid Request");
     }

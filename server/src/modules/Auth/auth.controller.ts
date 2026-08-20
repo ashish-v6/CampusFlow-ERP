@@ -67,10 +67,10 @@ class AuthController {
         firstName: result.user.firstName,
         lastName: result.user.lastName,
         email: result.user.email,
-        isVerified : result.user.isVerified,
-        role : result.user.role,
-        status : result.user.status,
-        createdAt : result.user.createdAt,
+        isVerified: result.user.isVerified,
+        role: result.user.role,
+        status: result.user.status,
+        createdAt: result.user.createdAt,
       },
     });
   });

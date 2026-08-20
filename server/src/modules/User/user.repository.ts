@@ -8,12 +8,14 @@ export class UserRepository {
       where: { id },
     });
   }
+
   public async updateUserProfile(id: string, data: dtos.updateUserProfileDto): Promise<User> {
     return prisma.user.update({
       where: { id },
       data: { ...data, updatedAt: new Date(Date.now()) },
     });
   }
+
   public async updateUserPassword(id: string, password: string): Promise<User> {
     return prisma.user.update({
       where: { id },
@@ -35,14 +37,19 @@ export class UserRepository {
     return { users, total };
   }
 
-  public async findUsersDetails() : Promise<{total : number; active : number; inActive : number, suspended : number}>{
+  public async findUsersDetails(): Promise<{
+    total: number;
+    active: number;
+    inActive: number;
+    suspended: number;
+  }> {
     const [total, active, inActive, suspended] = await Promise.all([
       prisma.user.count(),
-      prisma.user.count({where : {status : "ACTIVE"}}),
-      prisma.user.count({where : {status : "INACTIVE"}}),
-      prisma.user.count({where : {status : "SUSPENDED"}}),
-    ])
-    return {total, active, inActive, suspended}
+      prisma.user.count({ where: { status: "ACTIVE" } }),
+      prisma.user.count({ where: { status: "INACTIVE" } }),
+      prisma.user.count({ where: { status: "SUSPENDED" } }),
+    ]);
+    return { total, active, inActive, suspended };
   }
 
   public async updateUserStatus(id: string, status: UserStatus): Promise<User> {

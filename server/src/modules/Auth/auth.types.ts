@@ -6,10 +6,10 @@ export interface UserLoginResponse {
     firstName: string;
     lastName: string;
     email: string;
-    role : string,
-    isVerified : boolean,
-    status : string,
-    createdAt : Date,
+    role: string;
+    isVerified: boolean;
+    status: string;
+    createdAt: Date;
   };
 }
 
