@@ -17,35 +17,34 @@ interface Names {
   firstName: string;
   lastName: string;
 }
-interface formError{
+interface formError {
   firstName?: string;
   lastName?: string;
 }
-
 
 // PATCH /api/users/me
 // UI component for updating authenticated user's basic profile details (firstName, lastName).
 // Email and role are displayed as read-only information.
 export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React.JSX.Element {
-  const name = {firstName:user.firstName, lastName : user.lastName}
+  const name = { firstName: user.firstName, lastName: user.lastName };
   const [names, setNames] = useState<Names>(name);
   const [formError, setFormError] = useState<formError>({});
   const [disabled, setDisabled] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  
+
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setNames((oldNames)=>{
+    setNames((oldNames) => {
       return {
         ...oldNames,
-        [e.target.name] : e.target.value,
-      }
-    })
-    setFormError((oldErrors) =>{
+        [e.target.name]: e.target.value,
+      };
+    });
+    setFormError((oldErrors) => {
       return {
         ...oldErrors,
-        [e.target.name] : "",
-      }
-    })
+        [e.target.name]: "",
+      };
+    });
     setDisabled(false);
   };
 
@@ -65,50 +64,49 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
       return;
     }
 
-    try{
+    try {
       setLoading(true);
       const result = await changeProfile(names);
       toast.success("Profile Updated");
-    }catch(error){
-      if(error instanceof AxiosError){
+    } catch (error) {
+      if (error instanceof AxiosError) {
         toast.error(error.response?.data.message ?? "Something went wrong");
-      }else{
-        toast.error("Something unexpected happend")
+      } else {
+        toast.error("Something unexpected happend");
       }
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
 
   const handleCancel = (): void => {
-    setNames({firstName : user.firstName, lastName : user.lastName})
+    setNames({ firstName: user.firstName, lastName: user.lastName });
     setFormError({});
   };
 
-  useEffect(()=>{
-    if(names.firstName === name.firstName && names.lastName === name.lastName){
+  useEffect(() => {
+    if (names.firstName === name.firstName && names.lastName === name.lastName) {
       setDisabled(true);
-    }
-    else{
+    } else {
       setDisabled(false);
     }
-  },[names,loading])
+  }, [names, loading]);
 
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
       <div className="p-5 sm:p-6 border-b border-border">
         <h2 className="text-lg font-bold text-foreground">Personal Information</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Update your basic profile information.
-        </p>
+        <p className="text-sm text-muted-foreground mt-1">Update your basic profile information.</p>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="p-5 sm:p-6 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-
           {/* First Name (Editable) */}
           <div className="space-y-2">
-            <label htmlFor="firstName" className="block text-xs font-semibold uppercase tracking-wider text-foreground/80">
+            <label
+              htmlFor="firstName"
+              className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+            >
               First Name
             </label>
             <input
@@ -118,10 +116,11 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
               value={names.firstName}
               onChange={handleNameChange}
               placeholder="Enter first name"
-              className={`w-full bg-background border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${formError.firstName
-                ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
-                : "border-border focus:ring-primary/50 focus:border-primary"
-                }`}
+              className={`w-full bg-background border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${
+                formError.firstName
+                  ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                  : "border-border focus:ring-primary/50 focus:border-primary"
+              }`}
             />
             {formError.firstName && (
               <p className="text-red-400 text-xs mt-1 font-medium">{formError.firstName}</p>
@@ -130,7 +129,10 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
 
           {/* Last Name (Editable) */}
           <div className="space-y-2">
-            <label htmlFor="lastName" className="block text-xs font-semibold uppercase tracking-wider text-foreground/80">
+            <label
+              htmlFor="lastName"
+              className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+            >
               Last Name
             </label>
             <input
@@ -140,10 +142,11 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
               value={names.lastName}
               onChange={handleNameChange}
               placeholder="Enter last name"
-              className={`w-full bg-background border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${formError.lastName
-                ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
-                : "border-border focus:ring-primary/50 focus:border-primary"
-                }`}
+              className={`w-full bg-background border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${
+                formError.lastName
+                  ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                  : "border-border focus:ring-primary/50 focus:border-primary"
+              }`}
             />
             {formError.lastName && (
               <p className="text-red-400 text-xs mt-1 font-medium">{formError.lastName}</p>
@@ -152,7 +155,10 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
 
           {/* Email (Read-only) */}
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-foreground/80">
+            <label
+              htmlFor="email"
+              className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+            >
               Email Address
             </label>
             <div className="relative">
@@ -172,7 +178,10 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
 
           {/* Role (Read-only) */}
           <div className="space-y-2">
-            <label htmlFor="role" className="block text-xs font-semibold uppercase tracking-wider text-foreground/80">
+            <label
+              htmlFor="role"
+              className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+            >
               Account Role
             </label>
             <input
@@ -182,7 +191,9 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
               disabled
               className="w-full bg-accent/30 border border-border rounded-xl px-4 py-2.5 text-sm text-muted-foreground cursor-not-allowed transition-all"
             />
-            <p className="text-[11px] text-muted-foreground">Contact support to change your role.</p>
+            <p className="text-[11px] text-muted-foreground">
+              Contact support to change your role.
+            </p>
           </div>
         </div>
 

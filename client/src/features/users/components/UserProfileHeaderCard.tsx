@@ -26,7 +26,7 @@ export default function UserProfileHeaderCard({
           <div className="flex flex-wrap items-center gap-2">
             <span
               className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[10px] font-bold tracking-wider uppercase ${getRoleBadgeStyles(
-                user.role
+                user.role,
               )}`}
             >
               {user.role}

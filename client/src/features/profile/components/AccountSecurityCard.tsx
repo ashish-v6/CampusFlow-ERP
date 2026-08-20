@@ -17,7 +17,7 @@ export default function AccountSecurityCard(): React.JSX.Element {
           </p>
         </div>
       </div>
-      
+
       <div className="p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-border bg-background/50">
           <div className="flex items-start sm:items-center gap-3">

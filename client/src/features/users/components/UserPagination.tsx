@@ -65,23 +65,22 @@ export default function UserPagination({
           <ChevronLeft className="w-4 h-4" />
         </button>
         <button
-              type="button"
-              onClick={() => {
-                setCurrentPage(1);
-              }}
-              hidden={startPage === 1}
-              className={
-                1 === currentPage
-                  ? "w-8 h-8 flex items-center justify-center rounded-md bg-primary text-primary-foreground font-medium shadow-sm shadow-primary/20"
-                  : "w-8 h-8 flex items-center justify-center rounded-md text-muted-foreground hover:bg-accent transition-colors"
-              }
-            >
-              1
-            </button>
-            <span
-            hidden={startPage <= 2}
-            className="text-xl"
-            >. . .</span>
+          type="button"
+          onClick={() => {
+            setCurrentPage(1);
+          }}
+          hidden={startPage === 1}
+          className={
+            1 === currentPage
+              ? "w-8 h-8 flex items-center justify-center rounded-md bg-primary text-primary-foreground font-medium shadow-sm shadow-primary/20"
+              : "w-8 h-8 flex items-center justify-center rounded-md text-muted-foreground hover:bg-accent transition-colors"
+          }
+        >
+          1
+        </button>
+        <span hidden={startPage <= 2} className="text-xl">
+          . . .
+        </span>
         {pages &&
           pages.map((page) => (
             <button
@@ -98,25 +97,24 @@ export default function UserPagination({
               {page}
             </button>
           ))}
-          <span
-            hidden={endPage > totalPages - 2}
-            className="text-xl"
-            >. . .</span>
-          <button
-              type="button"
-              onClick={() => {
-                setCurrentPage(totalPages);
-              }}
-              hidden={endPage === totalPages}
-              className={
-                totalPages === currentPage
-                  ? "w-8 h-8 flex items-center justify-center rounded-md bg-primary text-primary-foreground font-medium shadow-sm shadow-primary/20"
-                  : "w-8 h-8 flex items-center justify-center rounded-md text-muted-foreground hover:bg-accent transition-colors"
-              }
-            >
-              {totalPages}
-            </button>
-            
+        <span hidden={endPage > totalPages - 2} className="text-xl">
+          . . .
+        </span>
+        <button
+          type="button"
+          onClick={() => {
+            setCurrentPage(totalPages);
+          }}
+          hidden={endPage === totalPages}
+          className={
+            totalPages === currentPage
+              ? "w-8 h-8 flex items-center justify-center rounded-md bg-primary text-primary-foreground font-medium shadow-sm shadow-primary/20"
+              : "w-8 h-8 flex items-center justify-center rounded-md text-muted-foreground hover:bg-accent transition-colors"
+          }
+        >
+          {totalPages}
+        </button>
+
         <button
           type="button"
           className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors disabled:opacity-50"

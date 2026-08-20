@@ -25,9 +25,7 @@ export default function DeactivateWarningCard(): React.JSX.Element {
             </li>
             <li className="flex items-start gap-2.5">
               <div className="mt-0.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-              <span>
-                Existing account information and historical records are fully preserved.
-              </span>
+              <span>Existing account information and historical records are fully preserved.</span>
             </li>
             <li className="flex items-start gap-2.5">
               <div className="mt-0.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />

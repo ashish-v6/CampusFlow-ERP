@@ -5,9 +5,7 @@ interface UserProfileInfoCardProps {
   user: UserDetails;
 }
 
-export default function UserProfileInfoCard({
-  user,
-}: UserProfileInfoCardProps): React.JSX.Element {
+export default function UserProfileInfoCard({ user }: UserProfileInfoCardProps): React.JSX.Element {
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
       <div className="p-5 sm:p-6 border-b border-border">

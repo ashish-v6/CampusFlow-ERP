@@ -3,15 +3,15 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  isVerified : boolean;
-  role : string;
-  status : string;
-  createdAt : Date;
+  isVerified: boolean;
+  role: string;
+  status: string;
+  createdAt: Date;
 }
 
 export interface AuthContextType {
   user: User | null;
-  isVerifying : boolean;
+  isVerifying: boolean;
   login: (accessToken: string, user: User) => void;
   logout: () => void;
 }

@@ -23,15 +23,11 @@ export default function UserAccountStatusCard({
             <span
               className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusStyles.pingDot}`}
             />
-            <span
-              className={`relative inline-flex rounded-full h-3 w-3 ${statusStyles.dot}`}
-            />
+            <span className={`relative inline-flex rounded-full h-3 w-3 ${statusStyles.dot}`} />
           </div>
           <span className={`font-semibold ${statusStyles.text}`}>{user.status}</span>
         </div>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {statusStyles.description}
-        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed">{statusStyles.description}</p>
         <Link
           to={`/users/${user.id}/status`}
           className="block text-center w-full mt-2 px-4 py-2 bg-accent hover:bg-accent/80 text-foreground text-sm font-medium rounded-xl border border-border transition-all focus:outline-none focus:ring-2 focus:ring-accent"

@@ -22,7 +22,6 @@ export const AuthLoading: React.FC<AuthLoadingProps> = ({
 
       {/* Main Centered Content */}
       <div className="w-full max-w-sm mx-auto text-center z-10 flex flex-col items-center animate-in fade-in zoom-in-95 duration-200">
-        
         {/* CampusFlow Brand Logo & Wordmark */}
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-indigo-600 flex items-center justify-center shadow-md shadow-primary/20 border border-primary/20">
@@ -38,7 +37,6 @@ export const AuthLoading: React.FC<AuthLoadingProps> = ({
 
         {/* Polished Card Container */}
         <div className="w-full bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-lg shadow-black/5 dark:shadow-black/20 flex flex-col items-center">
-          
           {/* Subtle Spinner & Security Indicator */}
           <div className="relative flex items-center justify-center mb-6">
             {/* Outer Ring Spinner */}

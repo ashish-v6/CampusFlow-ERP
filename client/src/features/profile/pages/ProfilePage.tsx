@@ -15,7 +15,6 @@ import ErrorState from "../../../components/ErrorState";
 // GET /api/users/me & PATCH /api/users/me
 // Displays authenticated user's profile information and encapsulates basic profile editing (firstName, lastName).
 export default function ProfilePage(): React.JSX.Element {
-  
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +29,7 @@ export default function ProfilePage(): React.JSX.Element {
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message ?? "Something happend");
-        setError(error.response?.data.message ?? "Something happend")
+        setError(error.response?.data.message ?? "Something happend");
       } else {
         toast.error("Unexpected Happend");
         setError("Unexpected Happend");
@@ -40,18 +39,28 @@ export default function ProfilePage(): React.JSX.Element {
     }
   };
 
-  useEffect(() => {getUser()}, []);
+  useEffect(() => {
+    getUser();
+  }, []);
 
-  if(loading){
-    return <LoadingState message="Loading Profile..." subtitle="Retrieving your account information." />
+  if (loading) {
+    return (
+      <LoadingState message="Loading Profile..." subtitle="Retrieving your account information." />
+    );
   }
 
-  if(error){
-    return <ErrorState title="Failed to Load Profile" message={error} onRetry={getUser} />
+  if (error) {
+    return <ErrorState title="Failed to Load Profile" message={error} onRetry={getUser} />;
   }
 
-  if(!user){
-    return <ErrorState title="Profile Error" message="User profile data could not be found." onRetry={getUser} />
+  if (!user) {
+    return (
+      <ErrorState
+        title="Profile Error"
+        message="User profile data could not be found."
+        onRetry={getUser}
+      />
+    );
   }
 
   return (

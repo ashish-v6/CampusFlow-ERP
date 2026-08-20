@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  GraduationCap,
-  Users,
-  BarChart3,
-  Sparkles,
-} from "lucide-react";
+import { GraduationCap, Users, BarChart3, Sparkles } from "lucide-react";
 
 export default function DashboardPage(): React.JSX.Element {
   return (
@@ -20,8 +15,8 @@ export default function DashboardPage(): React.JSX.Element {
             Welcome back, Administrator!
           </h1>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Here is what is happening across your campus today. Manage user records,
-            administrative workflows, and system operations seamlessly.
+            Here is what is happening across your campus today. Manage user records, administrative
+            workflows, and system operations seamlessly.
           </p>
         </div>
       </div>
@@ -37,20 +32,26 @@ export default function DashboardPage(): React.JSX.Element {
           </div>
           <div>
             <div className="text-2xl font-bold text-foreground">247</div>
-            <span className="text-xs text-emerald-600 dark:text-emerald-500 font-medium">+12 this month</span>
+            <span className="text-xs text-emerald-600 dark:text-emerald-500 font-medium">
+              +12 this month
+            </span>
           </div>
         </div>
 
         <div className="bg-card border border-border rounded-2xl p-5 space-y-3 shadow-sm">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span className="text-xs font-semibold uppercase tracking-wider font-semibold">Active Users</span>
+            <span className="text-xs font-semibold uppercase tracking-wider font-semibold">
+              Active Users
+            </span>
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-500">
               <Users className="w-4 h-4" />
             </div>
           </div>
           <div>
             <div className="text-2xl font-bold text-foreground">218</div>
-            <span className="text-xs text-emerald-600 dark:text-emerald-500 font-medium">88.2% active status</span>
+            <span className="text-xs text-emerald-600 dark:text-emerald-500 font-medium">
+              88.2% active status
+            </span>
           </div>
         </div>
 
@@ -76,7 +77,9 @@ export default function DashboardPage(): React.JSX.Element {
           </div>
           <div>
             <div className="text-2xl font-bold text-foreground">99.9%</div>
-            <span className="text-xs text-emerald-600 dark:text-emerald-500 font-medium">All services operational</span>
+            <span className="text-xs text-emerald-600 dark:text-emerald-500 font-medium">
+              All services operational
+            </span>
           </div>
         </div>
       </div>

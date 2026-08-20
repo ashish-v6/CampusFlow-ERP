@@ -27,8 +27,8 @@ export const AccessDeniedPage: React.FC<AccessDeniedPageProps> = ({
 }) => {
   const navigate = useNavigate();
   const onGoToDashboard = () => {
-    navigate("/dashboard",{replace : true});
-  }
+    navigate("/dashboard", { replace: true });
+  };
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-background text-foreground font-sans relative select-none">
       {/* Background Subtle Ambient Blur */}
@@ -37,7 +37,6 @@ export const AccessDeniedPage: React.FC<AccessDeniedPageProps> = ({
       {/* Main Container Card */}
       <div className="w-full max-w-md mx-auto text-center z-10 animate-in fade-in zoom-in-95 duration-200">
         <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-lg shadow-black/5 dark:shadow-black/20 flex flex-col items-center">
-          
           {/* Status Badge */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />

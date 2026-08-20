@@ -121,10 +121,11 @@ export default function LoginPage(): React.JSX.Element {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="name@university.edu"
-                    className={`w-full bg-input/50 border rounded-xl pl-11 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${errors.email
+                    className={`w-full bg-input/50 border rounded-xl pl-11 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
+                      errors.email
                         ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                         : "border-border focus:ring-primary/50 focus:border-primary"
-                      }`}
+                    }`}
                   />
                 </div>
                 {errors.email && (
@@ -151,10 +152,11 @@ export default function LoginPage(): React.JSX.Element {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Enter your password"
-                    className={`w-full bg-input/50 border rounded-xl pl-11 pr-11 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${errors.password
+                    className={`w-full bg-input/50 border rounded-xl pl-11 pr-11 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
+                      errors.password
                         ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                         : "border-border focus:ring-primary/50 focus:border-primary"
-                      }`}
+                    }`}
                   />
                   <button
                     type="button"
@@ -226,13 +228,13 @@ export default function LoginPage(): React.JSX.Element {
             alt="Modern Educational Campus Architecture"
             className="w-full h-full object-cover object-center"
           />
-          
+
           {/* Overall Darken (Only applied in dark mode) */}
           <div className="absolute inset-0 bg-transparent dark:bg-black/50 transition-colors duration-300" />
-          
+
           {/* Bottom Gradient for Text Readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent dark:from-black dark:via-black/60 dark:to-primary/30 transition-colors duration-300" />
-          
+
           {/* Side Edge Blend Gradient */}
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent w-1/2 dark:from-black dark:via-transparent transition-colors duration-300" />
         </div>

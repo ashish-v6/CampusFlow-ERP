@@ -28,7 +28,7 @@ export default function MainLayout(): React.JSX.Element {
       await logoutUser();
     } catch (error) {
       console.error("Logout error:", error);
-    }finally{
+    } finally {
       auth.logout();
     }
     navigate("/login");
@@ -141,28 +141,29 @@ export default function MainLayout(): React.JSX.Element {
         {/* Mobile Navigation Menu Dropdown */}
         {mobileMenuOpen && (
           <div className="md:hidden border-b border-border bg-background/95 backdrop-blur-lg px-4 pt-3 pb-4 space-y-2 animate-in slide-in-from-top-2">
-            {navItems.filter((item) => !item.adminOnly || auth.user?.role === "ADMIN")
-            .map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                    item.isActive
-                      ? "bg-primary/10 text-primary border border-primary/20 font-semibold"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4" />
-                    <span>{item.label}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 opacity-50" />
-                </Link>
-              );
-            })}
+            {navItems
+              .filter((item) => !item.adminOnly || auth.user?.role === "ADMIN")
+              .map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                      item.isActive
+                        ? "bg-primary/10 text-primary border border-primary/20 font-semibold"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 opacity-50" />
+                  </Link>
+                );
+              })}
             <button
               type="button"
               onClick={handleLogout}

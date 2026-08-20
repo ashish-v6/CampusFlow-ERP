@@ -55,7 +55,7 @@ function AuthProvider({ children }: Props) {
         logout,
       }}
     >
-      {isVerifying ? <AuthLoading/> : children}
+      {isVerifying ? <AuthLoading /> : children}
     </AuthContext.Provider>
   );
 }

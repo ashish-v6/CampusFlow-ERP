@@ -6,9 +6,7 @@ interface UserDetailsHeaderProps {
   userId: string;
 }
 
-export default function UserDetailsHeader({
-  userId,
-}: UserDetailsHeaderProps): React.JSX.Element {
+export default function UserDetailsHeader({ userId }: UserDetailsHeaderProps): React.JSX.Element {
   return (
     <div className="space-y-4">
       <Link

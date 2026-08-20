@@ -110,7 +110,11 @@ export default function UserManagementPage(): React.JSX.Element {
         {!loading && !isEmpty && <UserTable users={users} />}
 
         {/* 5. PAGINATION UI */}
-        <UserPagination paginationDetails={paginationDetails} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        <UserPagination
+          paginationDetails={paginationDetails}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
     </div>
   );

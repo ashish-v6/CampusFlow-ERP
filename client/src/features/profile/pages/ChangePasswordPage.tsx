@@ -1,14 +1,6 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Link, replace, useNavigate } from "react-router";
-import { 
-  ArrowLeft, 
-  ShieldCheck, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  Check, 
-  Circle
-} from "lucide-react";
+import { ArrowLeft, ShieldCheck, Lock, Eye, EyeOff, Check, Circle } from "lucide-react";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { changePassword } from "../services/profile.services";
@@ -60,9 +52,9 @@ export default function ChangePasswordPage(): React.JSX.Element {
   const hasNumber = /[0-9]/.test(passwords.newPassword);
   const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(passwords.newPassword);
 
-  const checkPasswordRegex = () : boolean =>{
-    return (hasMinLength && hasUpper && hasLower && hasNumber && hasSpecial);
-  }
+  const checkPasswordRegex = (): boolean => {
+    return hasMinLength && hasUpper && hasLower && hasNumber && hasSpecial;
+  };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -79,8 +71,8 @@ export default function ChangePasswordPage(): React.JSX.Element {
     } else if (passwords.newPassword !== passwords.confirmPassword) {
       errors.confirmPassword = "Passwords do not match";
     }
-    if(!checkPasswordRegex()){
-      errors.newPassword = "Invalid Format must follow below rules"
+    if (!checkPasswordRegex()) {
+      errors.newPassword = "Invalid Format must follow below rules";
     }
 
     if (Object.keys(errors).length > 0) {
@@ -88,15 +80,15 @@ export default function ChangePasswordPage(): React.JSX.Element {
       return;
     }
     const data = {
-      currentPassword : passwords.currentPassword,
-      newPassword : passwords.confirmPassword
-    }
+      currentPassword: passwords.currentPassword,
+      newPassword: passwords.confirmPassword,
+    };
     try {
       setLoading(true);
       await changePassword(data);
       toast.success("Password updated successfully");
       setPasswords({ currentPassword: "", newPassword: "", confirmPassword: "" });
-      navigate("/profile",{replace : true})
+      navigate("/profile", { replace: true });
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message ?? "Failed to update password");
@@ -121,15 +113,12 @@ export default function ChangePasswordPage(): React.JSX.Element {
     }
   }, [passwords, loading]);
 
-  
-
   return (
     <div className="w-full max-w-2xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8 animate-in fade-in duration-500">
-      
       {/* 1. PAGE HEADER */}
       <div className="space-y-4">
-        <Link 
-          to="/profile" 
+        <Link
+          to="/profile"
           className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
         >
           <div className="p-1 rounded-md group-hover:bg-accent transition-colors">
@@ -150,13 +139,10 @@ export default function ChangePasswordPage(): React.JSX.Element {
 
       {/* Main Content Area */}
       <div className="w-full max-w-[560px] mx-auto space-y-6">
-        
         {/* 2. SECURITY CARD */}
         <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden flex flex-col">
-          
           <form onSubmit={handleSubmit} noValidate>
             <div className="p-6 sm:p-8 space-y-6">
-              
               {/* Header Area */}
               <div className="flex items-center gap-4 pb-6 border-b border-border/50">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
@@ -172,10 +158,12 @@ export default function ChangePasswordPage(): React.JSX.Element {
 
               {/* 3. PASSWORD FORM */}
               <div className="space-y-5">
-                
                 {/* Current Password */}
                 <div className="space-y-2">
-                  <label htmlFor="currentPassword" className="block text-xs font-semibold uppercase tracking-wider text-foreground/80">
+                  <label
+                    htmlFor="currentPassword"
+                    className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+                  >
                     Current Password
                   </label>
                   <div className="relative">
@@ -192,23 +180,32 @@ export default function ChangePasswordPage(): React.JSX.Element {
                       }`}
                       placeholder="Enter current password"
                     />
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setShowCurrentPassword((prev) => !prev)}
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                       aria-label="Toggle password visibility"
                     >
-                      {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showCurrentPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                   {formError.currentPassword && (
-                    <p className="text-red-400 text-xs mt-1 font-medium">{formError.currentPassword}</p>
+                    <p className="text-red-400 text-xs mt-1 font-medium">
+                      {formError.currentPassword}
+                    </p>
                   )}
                 </div>
 
                 {/* New Password */}
                 <div className="space-y-2 pt-2">
-                  <label htmlFor="newPassword" className="block text-xs font-semibold uppercase tracking-wider text-foreground/80">
+                  <label
+                    htmlFor="newPassword"
+                    className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+                  >
                     New Password
                   </label>
                   <div className="relative">
@@ -225,13 +222,17 @@ export default function ChangePasswordPage(): React.JSX.Element {
                       }`}
                       placeholder="Enter new password"
                     />
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setShowNewPassword((prev) => !prev)}
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                       aria-label="Toggle password visibility"
                     >
-                      {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showNewPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                   {formError.newPassword && (
@@ -249,7 +250,9 @@ export default function ChangePasswordPage(): React.JSX.Element {
                       ) : (
                         <Circle className="w-3 h-3 ml-[1px] mr-[1px] text-muted-foreground/50" />
                       )}
-                      <span className={hasMinLength ? "text-foreground font-medium" : ""}>At least 8 characters</span>
+                      <span className={hasMinLength ? "text-foreground font-medium" : ""}>
+                        At least 8 characters
+                      </span>
                     </li>
                     <li className="flex items-center gap-2 text-xs text-muted-foreground">
                       {hasUpper ? (
@@ -257,7 +260,9 @@ export default function ChangePasswordPage(): React.JSX.Element {
                       ) : (
                         <Circle className="w-3 h-3 ml-[1px] mr-[1px] text-muted-foreground/50" />
                       )}
-                      <span className={hasUpper ? "text-foreground font-medium" : ""}>One uppercase letter</span>
+                      <span className={hasUpper ? "text-foreground font-medium" : ""}>
+                        One uppercase letter
+                      </span>
                     </li>
                     <li className="flex items-center gap-2 text-xs text-muted-foreground">
                       {hasLower ? (
@@ -265,7 +270,9 @@ export default function ChangePasswordPage(): React.JSX.Element {
                       ) : (
                         <Circle className="w-3 h-3 ml-[1px] mr-[1px] text-muted-foreground/50" />
                       )}
-                      <span className={hasLower ? "text-foreground font-medium" : ""}>One lowercase letter</span>
+                      <span className={hasLower ? "text-foreground font-medium" : ""}>
+                        One lowercase letter
+                      </span>
                     </li>
                     <li className="flex items-center gap-2 text-xs text-muted-foreground">
                       {hasNumber ? (
@@ -273,7 +280,9 @@ export default function ChangePasswordPage(): React.JSX.Element {
                       ) : (
                         <Circle className="w-3 h-3 ml-[1px] mr-[1px] text-muted-foreground/50" />
                       )}
-                      <span className={hasNumber ? "text-foreground font-medium" : ""}>One number</span>
+                      <span className={hasNumber ? "text-foreground font-medium" : ""}>
+                        One number
+                      </span>
                     </li>
                     <li className="flex items-center gap-2 text-xs text-muted-foreground">
                       {hasSpecial ? (
@@ -281,14 +290,19 @@ export default function ChangePasswordPage(): React.JSX.Element {
                       ) : (
                         <Circle className="w-3 h-3 ml-[1px] mr-[1px] text-muted-foreground/50" />
                       )}
-                      <span className={hasSpecial ? "text-foreground font-medium" : ""}>One special character</span>
+                      <span className={hasSpecial ? "text-foreground font-medium" : ""}>
+                        One special character
+                      </span>
                     </li>
                   </ul>
                 </div>
 
                 {/* Confirm New Password */}
                 <div className="space-y-2 pt-2">
-                  <label htmlFor="confirmPassword" className="block text-xs font-semibold uppercase tracking-wider text-foreground/80">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+                  >
                     Confirm New Password
                   </label>
                   <div className="relative">
@@ -305,20 +319,25 @@ export default function ChangePasswordPage(): React.JSX.Element {
                       }`}
                       placeholder="Confirm new password"
                     />
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setShowConfirmPassword((prev) => !prev)}
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                       aria-label="Toggle password visibility"
                     >
-                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                   {formError.confirmPassword && (
-                    <p className="text-red-400 text-xs mt-1 font-medium">{formError.confirmPassword}</p>
+                    <p className="text-red-400 text-xs mt-1 font-medium">
+                      {formError.confirmPassword}
+                    </p>
                   )}
                 </div>
-
               </div>
             </div>
 
@@ -340,7 +359,6 @@ export default function ChangePasswordPage(): React.JSX.Element {
               </button>
             </div>
           </form>
-
         </div>
 
         {/* 5. SECURITY INFORMATION */}
@@ -351,11 +369,11 @@ export default function ChangePasswordPage(): React.JSX.Element {
           <div>
             <h4 className="text-xs font-bold text-foreground">Security tip</h4>
             <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-              Never share your password with anyone. Use a unique, strong password specifically for your CampusFlow account to keep your data secure.
+              Never share your password with anyone. Use a unique, strong password specifically for
+              your CampusFlow account to keep your data secure.
             </p>
           </div>
         </div>
-
       </div>
     </div>
   );

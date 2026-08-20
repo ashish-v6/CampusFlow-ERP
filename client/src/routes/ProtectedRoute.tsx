@@ -13,22 +13,22 @@ interface AllowedRoles {
 function ProtectedRoute({ allowedRoles }: AllowedRoles): React.JSX.Element {
   const { user, isVerifying } = useAuth();
   console.log("ProtectedRoute:", {
-  user,
-  isVerifying,
+    user,
+    isVerifying,
   });
-  if(isVerifying){
-    return <AuthLoading/>
+  if (isVerifying) {
+    return <AuthLoading />;
   }
-  if(!user){
-    return <Navigate to={"/login"} replace/>
+  if (!user) {
+    return <Navigate to={"/login"} replace />;
   }
-  if(!allowedRoles){
-    return <Outlet/>
+  if (!allowedRoles) {
+    return <Outlet />;
   }
-  if(allowedRoles.includes(user.role as Role)){
-    return <Outlet/>;
+  if (allowedRoles.includes(user.role as Role)) {
+    return <Outlet />;
   }
-  return <Navigate to={"/403"} replace/>
+  return <Navigate to={"/403"} replace />;
 }
 
 export default ProtectedRoute;
