@@ -14,11 +14,6 @@ enum Roles {
   STUDENT
 }
 
-enum VerificationTokenType {
-  EMAIL_VERIFICATION
-  RESET_PASSWORD
-}
-
 enum UserStatus {
   ACTIVE
   SUSPENDED
@@ -36,8 +31,14 @@ model User {
   isVerified         Boolean             @default(false)
   verificationTokens VerificationToken[]
   sessions           Session[]
+  student            Student?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+}
+
+enum VerificationTokenType {
+  EMAIL_VERIFICATION
+  RESET_PASSWORD
 }
 
 model VerificationToken {
@@ -60,4 +61,41 @@ model Session {
   expiresAt        DateTime
   userId           String
   user             User     @relation(fields: [userId], references: [id])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Student {
+  id           String        @id @default(uuid())
+  studentId    String        @unique
+  phone        String?
+  dateOfBirth  DateTime?
+  gender       Gender?
+  address      String?
+  semester     Int
+  status       StudentStatus @default(ACTIVE)
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id])
+  departmentId String
+  department   Department    @relation(fields: [departmentId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Department {
+  id        String    @id @default(uuid())
+  name      String
+  code      String    @unique
+  students  Student[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
