@@ -36,6 +36,7 @@ model User {
   isVerified         Boolean             @default(false)
   verificationTokens VerificationToken[]
   sessions           Session[]
+  student            Student?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -60,4 +61,64 @@ model Session {
   expiresAt        DateTime
   userId           String
   user             User     @relation(fields: [userId], references: [id])
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model Student {
+  id            String        @id @default(uuid())
+  userId        String        @unique
+  user          User          @relation(fields: [userId], references: [id])
+  studentId     String        @unique
+  programId     String
+  program       Program       @relation(fields: [programId], references: [id])
+  status        StudentStatus @default(ACTIVE)
+  admissionDate DateTime
+  dateOfBirth   DateTime?
+  gender        Gender?
+  phone         String?
+  address       String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+enum DepartmentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Department {
+  id        String           @id @default(uuid())
+  name      String
+  code      String           @unique
+  status    DepartmentStatus @default(ACTIVE)
+  programs  Program[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+enum ProgramStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Program {
+  id           String        @id @default(uuid())
+  name         String
+  code         String        @unique
+  departmentId String
+  department   Department    @relation(fields: [departmentId], references: [id])
+  students     Student[]
+  status       ProgramStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
