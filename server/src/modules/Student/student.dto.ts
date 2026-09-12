@@ -43,3 +43,11 @@ export interface StudentResponseDto {
     code: string;
   };
 }
+
+export interface StudentQueryDto {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: StudentStatus;
+  programId?: string;
+}

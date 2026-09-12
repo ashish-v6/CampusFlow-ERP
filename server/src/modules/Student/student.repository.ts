@@ -1,4 +1,4 @@
-import type { Student } from "../../generated/prisma/client.js";
+import type { Prisma, Student } from "../../generated/prisma/client.js";
 import type { StudentCreateInput, StudentUpdateInput } from "../../generated/prisma/models.js";
 import prisma from "../../utils/prisma.js";
 import type { StudentResponseDto } from "./student.dto.js";
@@ -47,6 +47,47 @@ export class StudentRepository {
       where: { id },
       data,
     });
+  }
+  public async findMany(
+    skip: number,
+    limit: number,
+    where : Prisma.StudentWhereInput
+  ): Promise<{ students: StudentResponseDto[]; total: number }> {
+    const [students, total] = await prisma.$transaction([
+      prisma.student.findMany({
+        where,
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          studentId: true,
+          status: true,
+          admissionDate: true,
+          dateOfBirth: true,
+          address: true,
+          gender: true,
+          phone: true,
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          program: {
+            select: {
+              id: true,
+              name: true,
+              code: true,
+            },
+          },
+        },
+      }),
+      prisma.student.count({where}),
+    ]);
+
+    return { students, total };
   }
 }
 

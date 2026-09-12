@@ -34,6 +34,14 @@ class StudentController {
     }
     res.status(200).json({ ...result });
   });
+  public findStudents = asyncHandler(async (req : Request, res : Response) => {
+    const query = req.validated?.query as dtos.StudentQueryDto;
+
+    const result = await studentService.findStudents(query);
+
+    res.status(200).json(result);
+
+  })
 }
 
 export const studentController = new StudentController();

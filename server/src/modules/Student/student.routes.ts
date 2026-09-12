@@ -8,8 +8,6 @@ const router = Router();
 
 router.post(
   "/",
-  authenticate,
-  authorize("admin"),
   validateSchema(studentSchema.studentCreateSchema, "body"),
   studentController.createStudent,
 );
@@ -24,4 +22,9 @@ router.patch(
 
 router.get("/:id", authenticate, authorize("admin"), studentController.getStudentById);
 
+router.get(
+  "/",
+  validateSchema(studentSchema.studentQuerySchema, "query"),
+  studentController.findStudents,
+);
 export default router;

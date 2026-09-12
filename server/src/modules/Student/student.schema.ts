@@ -31,5 +31,19 @@ class StudentSchema {
     .refine((data) => Object.keys(data).length > 0, {
       message: "At least one field is required",
     });
+
+  public studentQuerySchema = z.object({
+    page: z.coerce.number().int().positive().default(1),
+    limit: z.coerce
+      .number()
+      .int()
+      .positive()
+      .min(1, "limit is required")
+      .max(10, "Only 10 record can be fetched")
+      .default(10),
+    status : z.enum(StudentStatus).optional(),
+    programId : z.uuid().optional(),
+    search : z.string().trim().min(1).max(20).optional(),
+  });
 }
 export const studentSchema = new StudentSchema();

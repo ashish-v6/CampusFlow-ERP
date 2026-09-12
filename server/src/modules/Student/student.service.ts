@@ -3,7 +3,11 @@ import { userRepository } from "../User/user.repository.js";
 import * as dtos from "./student.dto.js";
 import createHttpError from "http-errors";
 import { programRepository } from "../Program/program.repositroy.js";
-import type { StudentCreateInput, StudentUpdateInput } from "../../generated/prisma/models.js";
+import type {
+  StudentCreateInput,
+  StudentUpdateInput,
+  StudentWhereInput,
+} from "../../generated/prisma/models.js";
 
 class StudentService {
   constructor(private readonly studentRepository: StudentRepository) {}
@@ -70,7 +74,7 @@ class StudentService {
     return student;
   }
 
-  public async updateStudent(id : string, dto: dtos.StudentUpdateDto) {
+  public async updateStudent(id: string, dto: dtos.StudentUpdateDto) {
     const student = await this.studentRepository.findById(id);
 
     if (!student) {
@@ -85,37 +89,99 @@ class StudentService {
         throw createHttpError(403, "Unable to change as program is inactive");
       }
     }
-    const updateStudent : StudentUpdateInput = {
+    const updateStudent: StudentUpdateInput = {
       ...(dto.programId !== undefined && {
-        program : {connect : {id : dto.programId}}
+        program: { connect: { id: dto.programId } },
       }),
       ...(dto.address !== undefined && {
         address: dto.address,
       }),
       ...(dto.gender !== undefined && {
-        gender : dto.gender
+        gender: dto.gender,
       }),
       ...(dto.phone !== undefined && {
-        phone : dto.phone
+        phone: dto.phone,
       }),
       ...(dto.dateOfBirth !== undefined && {
-        dateOfBirth : dto.dateOfBirth
+        dateOfBirth: dto.dateOfBirth,
       }),
       ...(dto.status !== undefined && {
-        status : dto.status
-      })
-    }
+        status: dto.status,
+      }),
+    };
 
     const updatedStudent = await this.studentRepository.update(id, updateStudent);
 
     return updatedStudent;
   }
 
-  public async getStudentById(id : string){
-
+  public async getStudentById(id: string) {
     const student = await this.studentRepository.findById(id);
 
     return student;
+  }
+
+  public async findStudents(query: dtos.StudentQueryDto) {
+    //pagination
+    const { page = 1, limit = 10 } = query;
+    const skip = (page - 1) * limit;
+
+    //filters
+    const where: StudentWhereInput = {};
+    if (query.status !== undefined) {
+      where.status = query.status;
+    }
+    if (query.programId !== undefined) {
+      where.programId = query.programId;
+    }
+    if (query.search !== undefined) {
+      where.OR = [
+        {
+          studentId: {
+            contains: query.search,
+            mode: "insensitive",
+          },
+        },
+        {
+          user: {
+            firstName: {
+              contains: query.search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          user: {
+            lastName: {
+              contains: query.search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          user: {
+            email: {
+              contains: query.search,
+              mode: "insensitive",
+            },
+          },
+        },
+      ];
+    }
+    const { students, total } = await this.studentRepository.findMany(skip, limit, where);
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      students,
+      pagination: {
+        totalPages,
+        total,
+        limit,
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
   }
 }
 
