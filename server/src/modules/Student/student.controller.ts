@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import * as dtos from "./student.dto.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { studentService } from "./student.service.js";
+import type { User } from "../../middlewares/auth.middlewares.js";
 
 class StudentController {
   public createStudent = asyncHandler(async (req: Request, res: Response) => {
@@ -27,7 +28,8 @@ class StudentController {
       res.status(400).json({ message: "Invalid student id" });
       return;
     }
-    const result = await studentService.getStudentById(id);
+    const currentUser = req.user as User;
+    const result = await studentService.getStudentById(id, currentUser);
     if(!result){
         res.status(404).json({message : "Student Not Found"});
         return;

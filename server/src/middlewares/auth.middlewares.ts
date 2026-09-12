@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
 import authUtils from "../modules/Auth/auth.utils.js";
 
-interface User {
+export interface User {
   userId: string;
   email: string;
   role: string;

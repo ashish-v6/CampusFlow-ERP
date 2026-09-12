@@ -3,6 +3,7 @@ import { userRepository } from "../User/user.repository.js";
 import * as dtos from "./student.dto.js";
 import createHttpError from "http-errors";
 import { programRepository } from "../Program/program.repositroy.js";
+import type { User } from "../../middlewares/auth.middlewares.js";
 import type {
   StudentCreateInput,
   StudentUpdateInput,
@@ -115,9 +116,11 @@ class StudentService {
     return updatedStudent;
   }
 
-  public async getStudentById(id: string) {
-    const student = await this.studentRepository.findById(id);
-
+  public async getStudentById(studentId: string, requester: User) {
+    const student = await this.studentRepository.findById(studentId);
+    if (requester.role.toUpperCase() === "STUDENT" && student?.user.id !== requester.userId) {
+      throw createHttpError(403, "Not Allowd to fetch other student profile");
+    }
     return student;
   }
 
