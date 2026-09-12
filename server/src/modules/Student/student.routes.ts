@@ -22,11 +22,6 @@ router.patch(
   studentController.updateStudent,
 );
 
-router.get(
-    "/:id",
-    authenticate,
-    authorize("admin"),
-    studentController.getStudentById,
-)
+router.get("/:id", authenticate, authorize("admin"), studentController.getStudentById);
 
 export default router;

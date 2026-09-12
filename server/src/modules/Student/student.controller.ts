@@ -28,6 +28,10 @@ class StudentController {
       return;
     }
     const result = await studentService.getStudentById(id);
+    if(!result){
+        res.status(404).json({message : "Student Not Found"});
+        return;
+    }
     res.status(200).json({ ...result });
   });
 }
