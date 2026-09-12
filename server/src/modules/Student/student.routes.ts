@@ -6,13 +6,20 @@ import { studentController } from "./student.controller.js";
 
 const router = Router();
 
-
 router.post(
-    "/",
-    authenticate,
-    authorize("admin"),
-    validateSchema(studentSchema.studentCreateSchema,"body"),
-    studentController.createStudent,
-)
+  "/",
+  authenticate,
+  authorize("admin"),
+  validateSchema(studentSchema.studentCreateSchema, "body"),
+  studentController.createStudent,
+);
 
-export default router
+router.patch(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  validateSchema(studentSchema.studentUpdateSchema, "body"),
+  studentController.updateStudent,
+);
+
+export default router;

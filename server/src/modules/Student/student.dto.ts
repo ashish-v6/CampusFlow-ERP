@@ -1,4 +1,4 @@
-import type { Gender } from "../../generated/prisma/enums.js";
+import type { Gender, StudentStatus } from "../../generated/prisma/enums.js";
 
 export interface StudentCreateDto {
   userId: string;
@@ -9,4 +9,13 @@ export interface StudentCreateDto {
   phone?: string;
   address?: string;
   programId: string;
+}
+
+export interface StudentUpdateDto {
+  programId?: string;
+  dateOfBirth?: Date;
+  gender?: Gender;
+  phone?: string;
+  address?: string;
+  status?: StudentStatus;
 }
