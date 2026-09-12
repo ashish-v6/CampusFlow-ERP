@@ -19,3 +19,27 @@ export interface StudentUpdateDto {
   address?: string;
   status?: StudentStatus;
 }
+
+export interface StudentResponseDto {
+  id: string;
+  studentId: string;
+  status: StudentStatus;
+  admissionDate: Date;
+  dateOfBirth: Date | null;
+  gender: Gender | null;
+  phone: string | null;
+  address: string | null;
+
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+
+  program: {
+    id: string;
+    name: string;
+    code: string;
+  };
+}

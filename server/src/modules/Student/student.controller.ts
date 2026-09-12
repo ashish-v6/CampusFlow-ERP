@@ -13,15 +13,21 @@ class StudentController {
   });
   public updateStudent = asyncHandler(async (req: Request, res: Response) => {
     const dto: dtos.StudentUpdateDto = req.body;
-    const { id } = req.params;
-
-    if (typeof id !== "string") {
+    const id = req.params.id as string;
+    if (!id) {
       res.status(400).json({ message: "Invalid student id" });
       return;
     }
-
     const result = await studentService.updateStudent(id, dto);
-
+    res.status(200).json({ ...result });
+  });
+  public getStudentById = asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    if (!id) {
+      res.status(400).json({ message: "Invalid student id" });
+      return;
+    }
+    const result = await studentService.getStudentById(id);
     res.status(200).json({ ...result });
   });
 }

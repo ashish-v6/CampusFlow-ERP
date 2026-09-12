@@ -110,6 +110,13 @@ class StudentService {
 
     return updatedStudent;
   }
+
+  public async getStudentById(id : string){
+
+    const student = await this.studentRepository.findById(id);
+
+    return student;
+  }
 }
 
 export const studentService = new StudentService(new StudentRepository());
