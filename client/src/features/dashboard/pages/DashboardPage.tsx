@@ -1,7 +1,12 @@
 import React from "react";
-import { GraduationCap, Users, BarChart3, Sparkles } from "lucide-react";
+import { Link } from "react-router";
+import { GraduationCap, Users, BarChart3, Sparkles, ArrowRight } from "lucide-react";
+import { useAuth } from "../../../context/Auth/useAuth";
 
 export default function DashboardPage(): React.JSX.Element {
+  const { user } = useAuth();
+  const isStudent = user?.role?.toUpperCase() === "STUDENT";
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 z-10 space-y-6 animate-in fade-in duration-500">
       {/* Welcome Banner */}
@@ -12,14 +17,41 @@ export default function DashboardPage(): React.JSX.Element {
             <span>CAMPUSFLOW DASHBOARD</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-            Welcome back, Administrator!
+            {isStudent
+              ? `Welcome back, ${user?.firstName || "Student"}!`
+              : "Welcome back, Administrator!"}
           </h1>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Here is what is happening across your campus today. Manage user records, administrative
-            workflows, and system operations seamlessly.
+            {isStudent
+              ? "Here is your campus student portal. Access your academic records, enrolled program details, and institutional profile."
+              : "Here is what is happening across your campus today. Manage user records, administrative workflows, and system operations seamlessly."}
           </p>
         </div>
       </div>
+
+      {/* Student Profile Quick Access Card (Shown for Students) */}
+      {isStudent && (
+        <div className="bg-card border border-primary/20 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-primary/5 via-card to-card">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0 shadow-sm">
+              <GraduationCap className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-foreground">My Student Profile</h2>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                View your institutional student ID, admission date, enrolled academic program, and personal records.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/students/me"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold shadow-sm shadow-primary/25 transition-all shrink-0 cursor-pointer"
+          >
+            <span>View Profile</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      )}
 
       {/* Metric Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

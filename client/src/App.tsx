@@ -21,6 +21,10 @@ import UserDetailsPage from "./features/users/pages/UserDetailsPage";
 import UpdateUserStatusPage from "./features/users/pages/UpdateUserStatusPage";
 import DeactivateUserPage from "./features/users/pages/DeactivateUserPage";
 
+// Students Feature Pages
+import StudentManagementPage from "./features/students/pages/StudentManagementPage";
+import StudentDetailsPage from "./features/students/pages/StudentDetailsPage";
+
 import { Toaster } from "react-hot-toast";
 import AccessDeniedPage from "./components/AccessDeniedPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -57,6 +61,18 @@ export default function App(): React.JSX.Element {
               <Route path="/users/:id/status" element={<UpdateUserStatusPage />} />
               <Route path="/users/:id/deactivate" element={<DeactivateUserPage />} />
             </Route>
+
+            {/* Students Feature Routes */}
+            {/* Administrative Directory: Accessible by ADMIN and FACULTY */}
+            <Route element={<ProtectedRoute allowedRoles={["ADMIN", "FACULTY"]} />}>
+              <Route path="/students" element={<StudentManagementPage />} />
+            </Route>
+
+            {/* Student Details: Accessible by ADMIN, FACULTY, and verified owning STUDENT */}
+            <Route element={<ProtectedRoute allowedRoles={["ADMIN", "FACULTY", "STUDENT"]} />}>
+              <Route path="/students/:id" element={<StudentDetailsPage />} />
+            </Route>
+
             {/* {Forbidden Route} */}
             <Route path="/403" element={<AccessDeniedPage />} />
           </Route>
