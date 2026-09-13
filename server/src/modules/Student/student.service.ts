@@ -117,11 +117,40 @@ class StudentService {
   }
 
   public async getStudentById(studentId: string, requester: User) {
+    if (studentId === "me") {
+      return this.getMyStudentProfile(requester.userId);
+    }
     const student = await this.studentRepository.findById(studentId);
-    if (requester.role.toUpperCase() === "STUDENT" && student?.user.id !== requester.userId) {
-      throw createHttpError(403, "Not Allowd to fetch other student profile");
+    if (!student) {
+      return null;
+    }
+    const studentOwnerId = student.userId || student.user?.id;
+    if (requester.role.toUpperCase() === "STUDENT" && studentOwnerId !== requester.userId) {
+      throw createHttpError(403, "Not allowed to fetch other student profile");
     }
     return student;
+  }
+
+  public async getMyStudentProfile(userId: string) {
+    const student = await this.studentRepository.findDetailByUserId(userId);
+    if (!student) {
+      throw createHttpError(404, "Student profile not found for current user");
+    }
+    return student;
+  }
+
+  public async getEligibleUsers() {
+    return userRepository.findEligibleStudentUsers();
+  }
+
+  public async getStudentsStatusDetails() {
+    const result = await this.studentRepository.findStudentsDetails();
+    return {
+      total: result.total ?? 0,
+      active: result.active ?? 0,
+      inActive: result.inActive ?? 0,
+      programs: result.programs ?? 0,
+    };
   }
 
   public async findStudents(query: dtos.StudentQueryDto) {

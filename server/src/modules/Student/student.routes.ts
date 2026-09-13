@@ -23,6 +23,27 @@ router.patch(
 );
 
 router.get(
+  "/me",
+  authenticate,
+  authorize("student"),
+  studentController.getMyStudentProfile,
+);
+
+router.get(
+  "/eligible-users",
+  authenticate,
+  authorize("admin", "faculty"),
+  studentController.getEligibleUsers,
+);
+
+router.get(
+  "/status",
+  authenticate,
+  authorize("admin", "faculty"),
+  studentController.getStudentStatus,
+);
+
+router.get(
   "/:id",
   authenticate,
   authorize("admin", "faculty", "student"),

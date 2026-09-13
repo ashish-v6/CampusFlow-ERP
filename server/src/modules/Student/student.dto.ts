@@ -22,6 +22,7 @@ export interface StudentUpdateDto {
 
 export interface StudentResponseDto {
   id: string;
+  userId: string;
   studentId: string;
   status: StudentStatus;
   admissionDate: Date;

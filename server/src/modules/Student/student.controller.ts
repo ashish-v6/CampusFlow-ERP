@@ -43,7 +43,27 @@ class StudentController {
 
     res.status(200).json(result);
 
-  })
+  });
+
+  public getMyStudentProfile = asyncHandler(async (req: Request, res: Response) => {
+    const currentUser = req.user as User;
+    if (!currentUser || !currentUser.userId) {
+      res.status(401).json({ message: "Authentication required" });
+      return;
+    }
+    const result = await studentService.getMyStudentProfile(currentUser.userId);
+    res.status(200).json({ ...result });
+  });
+
+  public getEligibleUsers = asyncHandler(async (_req: Request, res: Response) => {
+    const users = await studentService.getEligibleUsers();
+    res.status(200).json({ users });
+  });
+
+  public getStudentStatus = asyncHandler(async (_req: Request, res: Response) => {
+    const result = await studentService.getStudentsStatusDetails();
+    res.status(200).json({ result });
+  });
 }
 
 export const studentController = new StudentController();
