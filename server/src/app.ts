@@ -10,6 +10,7 @@ import testRoutes from "./modules/Test/test.routes.js";
 import authRoutes from "./modules/Auth/auth.routes.js";
 import userRoutes from "./modules/User/user.routes.js";
 import studentRoutes from "./modules/Student/student.routes.js";
+import programRoutes from "./modules/Program/program.route.js";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/api/test", testRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/students", studentRoutes);
+app.use("/api/programs", programRoutes);
 
 // --- 404 + Global error handler (always LAST) ---
 app.use(globalErrorHandler);
