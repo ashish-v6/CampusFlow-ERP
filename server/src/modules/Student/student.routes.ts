@@ -1,7 +1,60 @@
 import { Router } from "express";
-import { userControllers } from "../User/user.controller.js";
 import { authorize, authenticate } from "../../middlewares/auth.middlewares.js";
 import { studentSchema } from "./student.schema.js";
 import { validateSchema } from "../../middlewares/validation.middleware.js";
+import { studentController } from "./student.controller.js";
 
 const router = Router();
+
+router.post(
+  "/",
+  authenticate,
+  authorize("admin", "faculty"),
+  validateSchema(studentSchema.studentCreateSchema, "body"),
+  studentController.createStudent,
+);
+
+router.patch(
+  "/:id",
+  authenticate,
+  authorize("admin", "faculty"),
+  validateSchema(studentSchema.studentUpdateSchema, "body"),
+  studentController.updateStudent,
+);
+
+router.get(
+  "/me",
+  authenticate,
+  authorize("student"),
+  studentController.getMyStudentProfile,
+);
+
+router.get(
+  "/eligible-users",
+  authenticate,
+  authorize("admin", "faculty"),
+  studentController.getEligibleUsers,
+);
+
+router.get(
+  "/status",
+  authenticate,
+  authorize("admin", "faculty"),
+  studentController.getStudentStatus,
+);
+
+router.get(
+  "/:id",
+  authenticate,
+  authorize("admin", "faculty", "student"),
+  studentController.getStudentById,
+);
+
+router.get(
+  "/",
+  authenticate,
+  authorize("admin", "faculty"),
+  validateSchema(studentSchema.studentQuerySchema, "query"),
+  studentController.findStudents,
+);
+export default router;

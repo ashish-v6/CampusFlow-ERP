@@ -6,7 +6,8 @@ import AccountSecurityCard from "../components/AccountSecurityCard";
 import { useAuth } from "../../../context/Auth/useAuth";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
+import { GraduationCap } from "lucide-react";
 import { getProfile } from "../services/profile.services";
 import { User } from "../profile.types";
 import LoadingState from "../../../components/LoadingState";
@@ -80,6 +81,27 @@ export default function ProfilePage(): React.JSX.Element {
         <div className="lg:col-span-1 space-y-6">
           <ProfileSummaryCard user={user} />
           <AccountOverviewCard user={user} />
+
+          {/* Academic Student Profile Card for Students */}
+          {user.role?.toUpperCase() === "STUDENT" && (
+            <div className="bg-card border border-border rounded-2xl p-5 space-y-3 shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                <h3 className="text-sm font-bold text-foreground">Academic Profile</h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                View your institutional student ID, admission date, enrolled program, and official records.
+              </p>
+              <Link
+                to="/students/me"
+                className="inline-flex items-center justify-center w-full px-4 py-2 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary text-xs font-semibold border border-primary/20 transition-all cursor-pointer"
+              >
+                Open Student Profile &rarr;
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Forms & Settings */}

@@ -46,7 +46,14 @@ export default function MainLayout(): React.JSX.Element {
       path: "/users",
       icon: Users,
       isActive: currentPath.startsWith("/users"),
-      adminOnly: true,
+      roles: ["ADMIN"],
+    },
+    {
+      label: "Students",
+      path: "/students",
+      icon: GraduationCap,
+      isActive: currentPath.startsWith("/students"),
+      roles: ["ADMIN", "FACULTY"],
     },
     {
       label: "Profile",
@@ -55,6 +62,12 @@ export default function MainLayout(): React.JSX.Element {
       isActive: currentPath.startsWith("/profile"),
     },
   ];
+
+  const isItemVisible = (item: (typeof navItems)[0]) => {
+    if (!item.roles) return true;
+    const userRole = auth.user?.role?.toUpperCase() || "";
+    return item.roles.includes(userRole);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans selection:bg-primary selection:text-primary-foreground relative transition-colors duration-200">
@@ -80,7 +93,7 @@ export default function MainLayout(): React.JSX.Element {
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-2 text-sm font-medium">
             {navItems
-              .filter((item) => !item.adminOnly || auth.user?.role === "ADMIN")
+              .filter(isItemVisible)
               .map((item) => {
                 const Icon = item.icon;
                 return (
@@ -142,7 +155,7 @@ export default function MainLayout(): React.JSX.Element {
         {mobileMenuOpen && (
           <div className="md:hidden border-b border-border bg-background/95 backdrop-blur-lg px-4 pt-3 pb-4 space-y-2 animate-in slide-in-from-top-2">
             {navItems
-              .filter((item) => !item.adminOnly || auth.user?.role === "ADMIN")
+              .filter(isItemVisible)
               .map((item) => {
                 const Icon = item.icon;
                 return (

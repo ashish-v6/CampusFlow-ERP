@@ -4,13 +4,11 @@ import { authenticate, authorize } from "../../middlewares/auth.middlewares.js";
 
 const router = Router();
 
+import type { User } from "../../middlewares/auth.middlewares.js";
+
 declare module "express" {
   export interface Request {
-    user?: {
-      id: string;
-      email: string;
-      role: string;
-    };
+    user?: User;
   }
 }
 
