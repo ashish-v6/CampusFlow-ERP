@@ -42,6 +42,16 @@ class FacultyService {
       department: { connect: { id: dto.departmentId } },
     });
   }
+
+  public async getFacultyById(id : string){
+    const faculty = await this.facultyRepository.findByAnyId({id});
+
+    if(!faculty){
+        throw createHttpError(404,"Not Faculty Record Found");
+    }
+
+    return faculty;
+  }
 }
 
 export const facultyService = new FacultyService(new FacultyRepository());

@@ -14,4 +14,12 @@ router.post(
   facultyController.createFaculty,
 );
 
+router.get(
+    "/:id",
+    // authenticate,
+    // authorize("admin","faculty"),
+    validateSchema(facultySchema.getFacultyByIdSchema,"params"),
+    facultyController.getFacultyById
+)
+
 export default router;

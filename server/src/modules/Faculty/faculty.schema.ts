@@ -9,6 +9,9 @@ class FacultySchema {
     joiningDate: z.coerce.date(),
     phone: z.string().regex(/^\d{10}$/),
   });
+  public getFacultyByIdSchema = z.object({
+    id : z.uuid(),
+  })
 }
 
 export const facultySchema = new FacultySchema();

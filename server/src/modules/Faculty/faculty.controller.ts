@@ -11,6 +11,13 @@ class FacultyController {
 
     res.status(201).json({ ...result });
   });
+  public getFacultyById = asyncHandler(async(req : Request, res : Response) => {
+    const id = req.params.id as string;
+
+    const result = await facultyService.getFacultyById(id);
+
+    res.status(200).json({...result})
+  })
 }
 
 export const facultyController = new FacultyController();

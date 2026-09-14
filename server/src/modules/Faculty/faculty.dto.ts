@@ -6,3 +6,7 @@ export interface CreateFacultyDTO {
   joiningDate: Date;
   phone: string;
 }
+
+export interface GetFacultyByIdDTO{
+    id : string;
+}
