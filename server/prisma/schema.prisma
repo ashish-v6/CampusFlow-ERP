@@ -37,6 +37,7 @@ model User {
   verificationTokens VerificationToken[]
   sessions           Session[]
   student            Student?
+  faculty            Faculty?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -102,6 +103,7 @@ model Department {
   code      String           @unique
   status    DepartmentStatus @default(ACTIVE)
   programs  Program[]
+  faculties Faculty[]
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 }
@@ -119,6 +121,26 @@ model Program {
   department   Department    @relation(fields: [departmentId], references: [id])
   students     Student[]
   status       ProgramStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+enum FacultyStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Faculty {
+  id           String        @id @default(uuid())
+  facultyId    String        @unique
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id])
+  designation  String
+  joiningDate  DateTime
+  phone        String
+  status       FacultyStatus @default(ACTIVE)
+  departmentId String
+  department   Department    @relation(fields: [departmentId], references: [id])
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
