@@ -15,19 +15,27 @@ router.post(
 );
 
 router.get(
-    "/:id",
-    authenticate,
-    authorize("admin","faculty"),
-    validateSchema(facultySchema.getFacultyByIdSchema,"params"),
-    facultyController.getFacultyById
-)
+  "/:id",
+  authenticate,
+  authorize("admin", "faculty"),
+  validateSchema(facultySchema.getFacultyByIdSchema, "params"),
+  facultyController.getFacultyById,
+);
 
 router.get(
-    "/",
-    // authenticate,
-    // authorize("admin"),
-    validateSchema(facultySchema.getFacultiesSchema, "query"),
-    facultyController.getFaculties
-)
+  "/",
+  authenticate,
+  authorize("admin"),
+  validateSchema(facultySchema.getFacultiesSchema, "query"),
+  facultyController.getFaculties,
+);
+
+router.patch(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  validateSchema(facultySchema.FacultyUpdateShcema, "body"),
+  facultyController.updateFaculty,
+);
 
 export default router;

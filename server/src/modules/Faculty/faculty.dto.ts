@@ -1,8 +1,4 @@
-import type {
-  DepartmentStatus,
-  FacultyStatus,
-  Roles,
-} from "../../generated/prisma/enums.js";
+import type { DepartmentStatus, FacultyStatus, Roles } from "../../generated/prisma/enums.js";
 
 export interface CreateFacultyDTO {
   userId: string;
@@ -44,5 +40,13 @@ export interface FacultiesQueryDto {
   limit: number;
   search?: string;
   departmentId?: string;
+  status?: FacultyStatus;
+}
+
+export interface FacultyUpdateDto {
+  departmentId?: string;
+  designation?: string;
+  joiningDate?: Date;
+  phone?: string;
   status?: FacultyStatus;
 }

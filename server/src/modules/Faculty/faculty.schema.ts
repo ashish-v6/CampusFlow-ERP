@@ -20,6 +20,20 @@ class FacultySchema {
     departmentId: z.uuid().optional(),
     status: z.enum(FacultyStatus).optional(),
   });
+  public FacultyUpdateShcema = z
+    .object({
+      departmentId: z.uuid().optional(),
+      designation: z.string().trim().max(30).min(1).optional(),
+      joiningDate: z.coerce.date().optional(),
+      phone: z
+        .string()
+        .regex(/^\d{10}$/)
+        .optional(),
+      status: z.enum(FacultyStatus).optional(),
+    })
+    .refine((data) => Object.keys(data).length > 0, {
+      message: "At least one field is required",
+    });
 }
 
 export const facultySchema = new FacultySchema();

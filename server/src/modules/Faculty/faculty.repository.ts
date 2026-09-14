@@ -1,6 +1,7 @@
 import type { Faculty } from "../../generated/prisma/client.js";
 import type {
   FacultyCreateInput,
+  FacultyUpdateInput,
   FacultyWhereInput,
   FacultyWhereUniqueInput,
 } from "../../generated/prisma/models.js";
@@ -11,9 +12,7 @@ export class FacultyRepository {
   public async create(data: FacultyCreateInput): Promise<Faculty> {
     return prisma.faculty.create({ data });
   }
-  public async findByAnyId(
-    where: FacultyWhereUniqueInput,
-  ): Promise<FacultyResponseDTO | null> {
+  public async findByAnyId(where: FacultyWhereUniqueInput): Promise<FacultyResponseDTO | null> {
     return prisma.faculty.findUnique({
       where,
       select: {
@@ -43,7 +42,11 @@ export class FacultyRepository {
       },
     });
   }
-  public async findMany(skip: number, take: number, where: FacultyWhereInput) {
+  public async findMany(
+    skip: number,
+    take: number,
+    where: FacultyWhereInput,
+  ): Promise<{ faculties: FacultyResponseDTO[]; total: number }> {
     const [faculties, total] = await prisma.$transaction([
       prisma.faculty.findMany({
         where,
@@ -74,13 +77,19 @@ export class FacultyRepository {
             },
           },
         },
-        orderBy : {
-            createdAt : "desc"
-        }
+        orderBy: {
+          createdAt: "desc",
+        },
       }),
       prisma.faculty.count({ where }),
     ]);
-    return {faculties, total}
+    return { faculties, total };
+  }
+  public async update(id: string, data: FacultyUpdateInput): Promise<Faculty> {
+    return prisma.faculty.update({
+      where: { id },
+      data,
+    });
   }
 }
 

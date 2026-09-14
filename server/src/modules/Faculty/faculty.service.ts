@@ -1,7 +1,7 @@
 import createHttpError from "http-errors";
 import { departmentRepository } from "../Department/department.repository.js";
 import { userRepository } from "../User/user.repository.js";
-import type { FacultyWhereInput } from "../../generated/prisma/models.js";
+import type { FacultyUpdateInput, FacultyWhereInput } from "../../generated/prisma/models.js";
 import * as dtos from "./faculty.dto.js";
 import { FacultyRepository } from "./faculty.repository.js";
 
@@ -116,6 +116,30 @@ class FacultyService {
         hasPreviousPage: page > 1,
       },
     };
+  }
+  public async updateFaculty(id: string, dto: dtos.FacultyUpdateDto) {
+    if (!(await this.facultyRepository.findByAnyId({ id }))) {
+      throw createHttpError(404, "Faculty not found");
+    }
+    const data: FacultyUpdateInput = {};
+    if (dto.departmentId !== undefined) {
+      data.department = { connect: { id: dto.departmentId } };
+    }
+    if (dto.designation !== undefined) {
+      data.designation = dto.designation;
+    }
+    if (dto.joiningDate !== undefined) {
+      data.joiningDate = dto.joiningDate;
+    }
+    if (dto.phone !== undefined) {
+      data.phone = dto.phone;
+    }
+    if (dto.status !== undefined) {
+      data.status = dto.status;
+    }
+    const faculty = await this.facultyRepository.update(id, data);
+
+    return faculty;
   }
 }
 
