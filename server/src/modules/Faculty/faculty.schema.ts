@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { FacultyStatus } from "../../generated/prisma/enums.js";
 
 class FacultySchema {
   public createFacultySchema = z.object({
@@ -10,8 +11,15 @@ class FacultySchema {
     phone: z.string().regex(/^\d{10}$/),
   });
   public getFacultyByIdSchema = z.object({
-    id : z.uuid(),
-  })
+    id: z.uuid(),
+  });
+  public getFacultiesSchema = z.object({
+    page: z.coerce.number().int().positive().default(1),
+    limit: z.coerce.number().int().positive().max(10).default(10),
+    search: z.string().trim().min(1).max(30).optional(),
+    departmentId: z.uuid().optional(),
+    status: z.enum(FacultyStatus).optional(),
+  });
 }
 
 export const facultySchema = new FacultySchema();

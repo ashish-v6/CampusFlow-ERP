@@ -1,6 +1,7 @@
 import createHttpError from "http-errors";
 import { departmentRepository } from "../Department/department.repository.js";
 import { userRepository } from "../User/user.repository.js";
+import type { FacultyWhereInput } from "../../generated/prisma/models.js";
 import * as dtos from "./faculty.dto.js";
 import { FacultyRepository } from "./faculty.repository.js";
 
@@ -43,14 +44,78 @@ class FacultyService {
     });
   }
 
-  public async getFacultyById(id : string){
-    const faculty = await this.facultyRepository.findByAnyId({id});
+  public async getFacultyById(id: string) {
+    const faculty = await this.facultyRepository.findByAnyId({ id });
 
-    if(!faculty){
-        throw createHttpError(404,"Not Faculty Record Found");
+    if (!faculty) {
+      throw createHttpError(404, "Not Faculty Record Found");
     }
 
     return faculty;
+  }
+
+  public async getFaculties(query: dtos.FacultiesQueryDto) {
+    //pagination
+    const { page = 1, limit = 10, status, departmentId, search } = query;
+    const skip = (page - 1) * limit;
+
+    //filters
+    const where: FacultyWhereInput = {};
+    if (status) {
+      where.status = status;
+    }
+    console.log(status);
+    if (departmentId) {
+      where.departmentId = departmentId;
+    }
+    if (search) {
+      where.OR = [
+        {
+          facultyId: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          user: {
+            firstName: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          user: {
+            lastName: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          user: {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+      ];
+    }
+    const { faculties, total } = await this.facultyRepository.findMany(skip, limit, where);
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      faculties,
+      pagination: {
+        total,
+        totalPages,
+        limit,
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
   }
 }
 

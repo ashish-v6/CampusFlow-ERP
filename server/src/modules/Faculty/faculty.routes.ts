@@ -16,10 +16,18 @@ router.post(
 
 router.get(
     "/:id",
-    // authenticate,
-    // authorize("admin","faculty"),
+    authenticate,
+    authorize("admin","faculty"),
     validateSchema(facultySchema.getFacultyByIdSchema,"params"),
     facultyController.getFacultyById
+)
+
+router.get(
+    "/",
+    // authenticate,
+    // authorize("admin"),
+    validateSchema(facultySchema.getFacultiesSchema, "query"),
+    facultyController.getFaculties
 )
 
 export default router;

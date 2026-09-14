@@ -18,6 +18,13 @@ class FacultyController {
 
     res.status(200).json({...result})
   })
+  public getFaculties = asyncHandler(async (req : Request, res : Response) => {
+    const query  = req.validated?.query as  dtos.FacultiesQueryDto;
+
+    const result = await facultyService.getFaculties(query);
+
+    res.status(200).json(result);
+  })
 }
 
 export const facultyController = new FacultyController();
