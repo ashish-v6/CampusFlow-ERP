@@ -15,6 +15,20 @@ router.post(
 );
 
 router.get(
+  "/eligible-users",
+  authenticate,
+  authorize("admin"),
+  facultyController.getEligibleUsers,
+);
+
+router.get(
+  "/status",
+  authenticate,
+  authorize("admin", "faculty"),
+  facultyController.getFacultyStatus,
+);
+
+router.get(
   "/:id",
   authenticate,
   authorize("admin", "faculty"),

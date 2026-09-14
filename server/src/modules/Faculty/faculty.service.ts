@@ -141,6 +141,14 @@ class FacultyService {
 
     return faculty;
   }
+
+  public async getEligibleUsers() {
+    return userRepository.findEligibleFacultyUsers();
+  }
+
+  public async getFacultyStatus() {
+    return this.facultyRepository.findFacultyStats();
+  }
 }
 
 export const facultyService = new FacultyService(new FacultyRepository());

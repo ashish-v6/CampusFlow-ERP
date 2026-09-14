@@ -37,6 +37,14 @@ class FacultyController {
 
     res.status(200).json({ ...result });
   });
+  public getEligibleUsers = asyncHandler(async (_req: Request, res: Response) => {
+    const users = await facultyService.getEligibleUsers();
+    res.status(200).json({ users });
+  });
+  public getFacultyStatus = asyncHandler(async (_req: Request, res: Response) => {
+    const stats = await facultyService.getFacultyStatus();
+    res.status(200).json(stats);
+  });
 }
 
 export const facultyController = new FacultyController();

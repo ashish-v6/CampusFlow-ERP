@@ -91,6 +91,15 @@ export class FacultyRepository {
       data,
     });
   }
+  public async findFacultyStats(): Promise<{ total: number; active: number; inActive: number; departments: number }> {
+    const [total, active, inActive, departments] = await prisma.$transaction([
+      prisma.faculty.count(),
+      prisma.faculty.count({ where: { status: "ACTIVE" } }),
+      prisma.faculty.count({ where: { status: "INACTIVE" } }),
+      prisma.department.count({ where: { status: "ACTIVE" } }),
+    ]);
+    return { total, active, inActive, departments };
+  }
 }
 
 export const facultyRepository = new FacultyRepository();
