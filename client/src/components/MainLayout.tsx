@@ -10,6 +10,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  Briefcase,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { logoutUser } from "../features/auth/services/auth.services";
@@ -54,6 +55,13 @@ export default function MainLayout(): React.JSX.Element {
       icon: GraduationCap,
       isActive: currentPath.startsWith("/students"),
       roles: ["ADMIN", "FACULTY"],
+    },
+    {
+      label: "Faculty",
+      path: "/faculty",
+      icon: Briefcase,
+      isActive: currentPath.startsWith("/faculty"),
+      roles: ["ADMIN"],
     },
     {
       label: "Profile",
