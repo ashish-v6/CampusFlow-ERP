@@ -79,6 +79,25 @@ export class UserRepository {
       },
     });
   }
+
+  public async findEligibleFacultyUsers(): Promise<Array<{ id: string; firstName: string; lastName: string; email: string }>> {
+    return prisma.user.findMany({
+      where: {
+        role: "FACULTY",
+        status: "ACTIVE",
+        faculty: null,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+      orderBy: {
+        firstName: "asc",
+      },
+    });
+  }
 }
 
 export const userRepository = new UserRepository();
