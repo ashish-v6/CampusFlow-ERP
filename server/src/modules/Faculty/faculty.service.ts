@@ -26,7 +26,7 @@ class FacultyService {
       throw createHttpError(409, "Faculty ID is already in use");
     }
 
-    const department = await departmentRepository.findById(dto.departmentId);
+    const department = await departmentRepository.findUnique({id : dto.departmentId});
     if (!department) {
       throw createHttpError(404, "Department Not Found");
     }
