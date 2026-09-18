@@ -15,7 +15,10 @@ interface DepartmentApiResponse {
 
 export const getDepartments = async (): Promise<Department[]> => {
   try {
-    const response = await api.get<DepartmentApiResponse | Department[]>("/api/departments");
+    const params = {
+      status : "ACTIVE"
+    }
+    const response = await api.get<DepartmentApiResponse | Department[]>("/api/departments",{params});
     if (Array.isArray(response.data)) {
       return response.data;
     }

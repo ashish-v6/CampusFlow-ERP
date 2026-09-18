@@ -1,18 +1,40 @@
-import type { Request, Response } from "express";
 import { Router } from "express";
-import { departmentRepository } from "./department.repository.js";
-import { asyncHandler } from "../../utils/asyncHandler.js";
+import { departmentController } from "./department.controller.js";
+import { authenticate, authorize } from "../../middlewares/auth.middlewares.js";
+import { validateSchema } from "../../middlewares/validation.middleware.js";
+import { departmentSchema } from "./department.schema.js";
 
-class DepartmentController {
-  public getDepartments = asyncHandler(async (_req: Request, res: Response) => {
-    const departments = await departmentRepository.findManyActive();
-    res.status(200).json(departments);
-  });
-}
-
-const departmentController = new DepartmentController();
 const router = Router();
 
-router.get("/", departmentController.getDepartments);
+router.post(
+  "/",
+  authenticate,
+  authorize("admin"),
+  validateSchema(departmentSchema.createDepartmentSchema, "body"),
+  departmentController.createDepartment,
+);
+
+router.get(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  departmentController.getDepartmentById,
+);
+
+router.get(
+  "/",
+    authenticate,
+    authorize("admin"),
+  validateSchema(departmentSchema.departmentQuerySchema, "query"),
+  departmentController.getDepartments,
+);
+
+router.patch(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  validateSchema(departmentSchema.updateDepartmentSchema, "body"),
+  departmentController.updateDepartment,
+);
 
 export default router;

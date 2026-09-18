@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
+import jwt from "jsonwebtoken";
 import authUtils from "../modules/Auth/auth.utils.js";
 
 export interface User {
@@ -30,14 +31,24 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
       return next(createHttpError(401, "Token not found"));
     }
 
-    const decoded = authUtils.verifyAccessToken(token);
+    try {
+      const decoded = authUtils.verifyAccessToken(token);
 
-    if (!decoded) {
-      return next(createHttpError(401, "Invalid Token"));
+      if (!decoded) {
+        return next(createHttpError(401, "Invalid Token"));
+      }
+
+      req.user = decoded as User;
+      next();
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        return next(createHttpError(401, "Token expired"));
+      }
+      if (err instanceof jwt.JsonWebTokenError) {
+        return next(createHttpError(401, "Invalid Token"));
+      }
+      return next(createHttpError(401, "Authentication failed"));
     }
-
-    req.user = decoded as User;
-    next();
   } catch (error) {
     next(error);
   }

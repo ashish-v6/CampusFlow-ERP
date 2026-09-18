@@ -11,6 +11,7 @@ import {
   X,
   ChevronRight,
   Briefcase,
+  Building2,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { logoutUser } from "../features/auth/services/auth.services";
@@ -61,6 +62,13 @@ export default function MainLayout(): React.JSX.Element {
       path: "/faculty",
       icon: Briefcase,
       isActive: currentPath.startsWith("/faculty"),
+      roles: ["ADMIN"],
+    },
+    {
+      label: "Departments",
+      path: "/departments",
+      icon: Building2,
+      isActive: currentPath.startsWith("/departments"),
       roles: ["ADMIN"],
     },
     {
