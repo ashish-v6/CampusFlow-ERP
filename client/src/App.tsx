@@ -29,6 +29,10 @@ import StudentDetailsPage from "./features/students/pages/StudentDetailsPage";
 import FacultyManagementPage from "./features/faculty/pages/FacultyManagementPage";
 import FacultyDetailsPage from "./features/faculty/pages/FacultyDetailsPage";
 
+// Department Feature Pages
+import DepartmentManagementPage from "./features/departments/pages/DepartmentManagementPage";
+import DepartmentDetailsPage from "./features/departments/pages/DepartmentDetailsPage";
+
 import { Toaster } from "react-hot-toast";
 import AccessDeniedPage from "./components/AccessDeniedPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -86,6 +90,13 @@ export default function App(): React.JSX.Element {
             {/* Faculty Details: Accessible by ADMIN and FACULTY */}
             <Route element={<ProtectedRoute allowedRoles={["ADMIN", "FACULTY"]} />}>
               <Route path="/faculty/:id" element={<FacultyDetailsPage />} />
+            </Route>
+
+            {/* Department Feature Routes */}
+            {/* Administrative Directory & Details: Accessible by ADMIN */}
+            <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+              <Route path="/departments" element={<DepartmentManagementPage />} />
+              <Route path="/departments/:id" element={<DepartmentDetailsPage />} />
             </Route>
 
             {/* {Forbidden Route} */}
