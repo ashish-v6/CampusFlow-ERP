@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Briefcase,
   Building2,
+  CalendarCheck,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { logoutUser } from "../features/auth/services/auth.services";
@@ -70,6 +71,13 @@ export default function MainLayout(): React.JSX.Element {
       icon: Building2,
       isActive: currentPath.startsWith("/departments"),
       roles: ["ADMIN"],
+    },
+    {
+      label: "Attendance",
+      path: "/attendance",
+      icon: CalendarCheck,
+      isActive: currentPath.startsWith("/attendance"),
+      roles: ["ADMIN", "FACULTY", "STUDENT"],
     },
     {
       label: "Profile",

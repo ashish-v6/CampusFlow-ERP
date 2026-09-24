@@ -33,6 +33,10 @@ import FacultyDetailsPage from "./features/faculty/pages/FacultyDetailsPage";
 import DepartmentManagementPage from "./features/departments/pages/DepartmentManagementPage";
 import DepartmentDetailsPage from "./features/departments/pages/DepartmentDetailsPage";
 
+// Attendance Feature Pages
+import AttendanceManagementPage from "./features/attendance/pages/AttendanceManagementPage";
+import StudentAttendancePage from "./features/attendance/pages/StudentAttendancePage";
+
 import { Toaster } from "react-hot-toast";
 import AccessDeniedPage from "./components/AccessDeniedPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -97,6 +101,13 @@ export default function App(): React.JSX.Element {
             <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
               <Route path="/departments" element={<DepartmentManagementPage />} />
               <Route path="/departments/:id" element={<DepartmentDetailsPage />} />
+            </Route>
+
+            {/* Attendance Feature Routes */}
+            {/* Directory & Management: Accessible by ADMIN, FACULTY, and STUDENT */}
+            <Route element={<ProtectedRoute allowedRoles={["ADMIN", "FACULTY", "STUDENT"]} />}>
+              <Route path="/attendance" element={<AttendanceManagementPage />} />
+              <Route path="/attendance/student/:studentId" element={<StudentAttendancePage />} />
             </Route>
 
             {/* {Forbidden Route} */}
