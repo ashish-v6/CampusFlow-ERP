@@ -1,78 +1,119 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Phone, MapPin, User as UserIcon } from "lucide-react";
 import { changeProfile } from "../services/profile.services";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
+import { User, UpdateProfilePayload } from "../profile.types";
 
 interface PersonalInfoFormProps {
-  user: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: string;
-  };
+  user: User;
+  onUpdate?: (updatedUser: User) => void;
 }
 
-interface Names {
+interface FormState {
   firstName: string;
   lastName: string;
+  phone: string;
+  address: string;
 }
-interface formError {
+
+interface FormErrors {
   firstName?: string;
   lastName?: string;
+  phone?: string;
+  address?: string;
 }
 
-// PATCH /api/users/me
-// UI component for updating authenticated user's basic profile details (firstName, lastName).
-// Email and role are displayed as read-only information.
-export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React.JSX.Element {
-  const name = { firstName: user.firstName, lastName: user.lastName };
-  const [names, setNames] = useState<Names>(name);
-  const [formError, setFormError] = useState<formError>({});
-  const [disabled, setDisabled] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setNames((oldNames) => {
-      return {
-        ...oldNames,
-        [e.target.name]: e.target.value,
-      };
-    });
-    setFormError((oldErrors) => {
-      return {
-        ...oldErrors,
-        [e.target.name]: "",
-      };
-    });
-    setDisabled(false);
+export default function PersonalInfoForm({
+  user,
+  onUpdate,
+}: PersonalInfoFormProps): React.JSX.Element {
+  const initialValues: FormState = {
+    firstName: user.firstName || "",
+    lastName: user.lastName || "",
+    phone: user.phone || "",
+    address: user.address || "",
   };
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-    const errors: formError = {};
+  const [formData, setFormData] = useState<FormState>(initialValues);
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [disabled, setDisabled] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
-    if (!names.firstName.trim()) {
+  const isStudent = user.role?.toUpperCase() === "STUDENT";
+  const isFaculty = user.role?.toUpperCase() === "FACULTY";
+
+  useEffect(() => {
+    setFormData({
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      phone: user.phone || "",
+      address: user.address || "",
+    });
+  }, [user]);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setFormErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  };
+
+  useEffect(() => {
+    const isUnchanged =
+      formData.firstName === (user.firstName || "") &&
+      formData.lastName === (user.lastName || "") &&
+      formData.phone === (user.phone || "") &&
+      formData.address === (user.address || "");
+
+    setDisabled(isUnchanged);
+  }, [formData, user]);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+    const errors: FormErrors = {};
+
+    if (!formData.firstName.trim()) {
       errors.firstName = "First name is required";
     }
-    if (!names.lastName.trim()) {
+    if (!formData.lastName.trim()) {
       errors.lastName = "Last name is required";
     }
 
     if (Object.keys(errors).length > 0) {
-      setFormError(errors);
+      setFormErrors(errors);
       return;
     }
 
     try {
       setLoading(true);
-      const result = await changeProfile(names);
-      toast.success("Profile Updated");
+      const payload: UpdateProfilePayload = {
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+      };
+
+      if (formData.phone.trim()) {
+        payload.phone = formData.phone.trim();
+      }
+      if (isStudent && formData.address.trim()) {
+        payload.address = formData.address.trim();
+      }
+
+      const result = await changeProfile(payload);
+      toast.success("Profile updated successfully!");
+      if (onUpdate && result.user) {
+        onUpdate(result.user);
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message ?? "Something went wrong");
+        toast.error(error.response?.data?.message || "Failed to update profile");
       } else {
-        toast.error("Something unexpected happend");
+        toast.error("An unexpected error occurred");
       }
     } finally {
       setLoading(false);
@@ -80,28 +121,22 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
   };
 
   const handleCancel = (): void => {
-    setNames({ firstName: user.firstName, lastName: user.lastName });
-    setFormError({});
+    setFormData(initialValues);
+    setFormErrors({});
   };
-
-  useEffect(() => {
-    if (names.firstName === name.firstName && names.lastName === name.lastName) {
-      setDisabled(true);
-    } else {
-      setDisabled(false);
-    }
-  }, [names, loading]);
 
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
       <div className="p-5 sm:p-6 border-b border-border">
         <h2 className="text-lg font-bold text-foreground">Personal Information</h2>
-        <p className="text-sm text-muted-foreground mt-1">Update your basic profile information.</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Update your permitted profile information and contact details.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="p-5 sm:p-6 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-          {/* First Name (Editable) */}
+          {/* First Name */}
           <div className="space-y-2">
             <label
               htmlFor="firstName"
@@ -113,21 +148,21 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
               type="text"
               id="firstName"
               name="firstName"
-              value={names.firstName}
-              onChange={handleNameChange}
+              value={formData.firstName}
+              onChange={handleChange}
               placeholder="Enter first name"
               className={`w-full bg-background border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${
-                formError.firstName
+                formErrors.firstName
                   ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                   : "border-border focus:ring-primary/50 focus:border-primary"
               }`}
             />
-            {formError.firstName && (
-              <p className="text-red-400 text-xs mt-1 font-medium">{formError.firstName}</p>
+            {formErrors.firstName && (
+              <p className="text-red-400 text-xs mt-1 font-medium">{formErrors.firstName}</p>
             )}
           </div>
 
-          {/* Last Name (Editable) */}
+          {/* Last Name */}
           <div className="space-y-2">
             <label
               htmlFor="lastName"
@@ -139,19 +174,72 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
               type="text"
               id="lastName"
               name="lastName"
-              value={names.lastName}
-              onChange={handleNameChange}
+              value={formData.lastName}
+              onChange={handleChange}
               placeholder="Enter last name"
               className={`w-full bg-background border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${
-                formError.lastName
+                formErrors.lastName
                   ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                   : "border-border focus:ring-primary/50 focus:border-primary"
               }`}
             />
-            {formError.lastName && (
-              <p className="text-red-400 text-xs mt-1 font-medium">{formError.lastName}</p>
+            {formErrors.lastName && (
+              <p className="text-red-400 text-xs mt-1 font-medium">{formErrors.lastName}</p>
             )}
           </div>
+
+          {/* Phone Number */}
+          <div className="space-y-2">
+            <label
+              htmlFor="phone"
+              className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+            >
+              Phone Number
+            </label>
+            <div className="relative">
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="+1 (555) 000-0000"
+                className={`w-full bg-background border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${
+                  formErrors.phone
+                    ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
+                    : "border-border focus:ring-primary/50 focus:border-primary"
+                }`}
+              />
+              <Phone className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+            {formErrors.phone && (
+              <p className="text-red-400 text-xs mt-1 font-medium">{formErrors.phone}</p>
+            )}
+          </div>
+
+          {/* Address (If Student or available) */}
+          {isStudent && (
+            <div className="space-y-2">
+              <label
+                htmlFor="address"
+                className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+              >
+                Residential Address
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="Street, City, Postal Code"
+                  className="w-full bg-background border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground"
+                />
+                <MapPin className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+            </div>
+          )}
 
           {/* Email (Read-only) */}
           <div className="space-y-2">
@@ -165,7 +253,7 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
               <input
                 type="email"
                 id="email"
-                defaultValue={user.email}
+                value={user.email}
                 disabled
                 className="w-full bg-accent/30 border border-border rounded-xl px-4 py-2.5 text-sm text-muted-foreground cursor-not-allowed transition-all"
               />
@@ -173,7 +261,7 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
                 <CheckCircle2 className="w-4 h-4" />
               </div>
             </div>
-            <p className="text-[11px] text-muted-foreground">Email address cannot be changed.</p>
+            <p className="text-[11px] text-muted-foreground">Email address cannot be modified.</p>
           </div>
 
           {/* Role (Read-only) */}
@@ -187,12 +275,12 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
             <input
               type="text"
               id="role"
-              defaultValue={user.role}
+              value={user.role}
               disabled
-              className="w-full bg-accent/30 border border-border rounded-xl px-4 py-2.5 text-sm text-muted-foreground cursor-not-allowed transition-all"
+              className="w-full bg-accent/30 border border-border rounded-xl px-4 py-2.5 text-sm text-muted-foreground cursor-not-allowed transition-all capitalize"
             />
             <p className="text-[11px] text-muted-foreground">
-              Contact support to change your role.
+              Institutional permissions are tied to your assigned role.
             </p>
           </div>
         </div>
@@ -202,14 +290,15 @@ export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React
           <button
             type="submit"
             disabled={disabled || loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl shadow-sm shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background cursor-pointer disabled:bg-blue-600/80 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl shadow-sm shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Updating..." : "Save Changes"}
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            className="w-full sm:w-auto px-6 py-2.5 bg-transparent hover:bg-accent text-foreground text-sm font-medium rounded-xl border border-transparent hover:border-border transition-all focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background cursor-pointer "
+            disabled={disabled || loading}
+            className="w-full sm:w-auto px-6 py-2.5 bg-transparent hover:bg-accent text-foreground text-sm font-medium rounded-xl border border-transparent hover:border-border transition-all cursor-pointer disabled:opacity-50"
           >
             Cancel
           </button>

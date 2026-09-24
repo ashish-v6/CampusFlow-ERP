@@ -1,20 +1,11 @@
 import React from "react";
-import { Mail, User, CheckCircle2, Activity } from "lucide-react";
+import { Mail, User as UserIcon, CheckCircle2, Activity } from "lucide-react";
+import { User } from "../profile.types";
 
 interface ProfileSummaryCardProps {
-  user: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: string;
-    status: string;
-    verified: boolean;
-    initials: string;
-  };
+  user: User;
 }
 
-// GET /api/users/me
-// Displays the authenticated user's profile summary (read-only initials avatar, name, email, role, status).
 export default function ProfileSummaryCard({ user }: ProfileSummaryCardProps): React.JSX.Element {
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col items-center text-center space-y-4">
@@ -37,7 +28,7 @@ export default function ProfileSummaryCard({ user }: ProfileSummaryCardProps): R
       {/* Badges */}
       <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-wider uppercase">
-          <User className="w-3 h-3" />
+          <UserIcon className="w-3 h-3" />
           {user.role}
         </span>
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold tracking-wider uppercase">

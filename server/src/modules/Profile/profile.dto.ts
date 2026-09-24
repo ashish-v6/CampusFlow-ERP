@@ -1,11 +1,15 @@
-export interface StudentProfileInfo {
+/**
+ * CampusFlow Profile Module — Data Transfer Objects
+ */
+
+export interface StudentProfileDto {
   id: string;
   studentId: string;
-  admissionDate: string;
-  dateOfBirth?: string | null;
-  gender?: string | null;
-  phone?: string | null;
-  address?: string | null;
+  admissionDate: Date;
+  dateOfBirth: Date | null;
+  gender: string | null;
+  phone: string | null;
+  address: string | null;
   status: string;
   program: {
     id: string;
@@ -19,11 +23,11 @@ export interface StudentProfileInfo {
   };
 }
 
-export interface FacultyProfileInfo {
+export interface FacultyProfileDto {
   id: string;
   facultyId: string;
   designation: string;
-  joiningDate: string;
+  joiningDate: Date;
   phone: string;
   status: string;
   department: {
@@ -33,32 +37,32 @@ export interface FacultyProfileInfo {
   };
 }
 
-export interface User {
+export interface UserProfileResponseDto {
   id: string;
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
   role: string;
   status: string;
-  isVerified?: boolean;
+  isVerified: boolean;
   verified: boolean;
-  createdAt: string;
-  updatedAt: string;
   initials: string;
-  phone?: string | null;
-  address?: string | null;
-  student?: StudentProfileInfo | null;
-  faculty?: FacultyProfileInfo | null;
+  phone: string | null;
+  address: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  student?: StudentProfileDto | null;
+  faculty?: FacultyProfileDto | null;
 }
 
-export interface UpdateProfilePayload {
+export interface UpdateProfileDto {
   firstName?: string;
   lastName?: string;
   phone?: string;
   address?: string;
 }
 
-export interface UpdatePasswordPayload {
+export interface ChangePasswordDto {
   currentPassword: string;
   newPassword: string;
 }

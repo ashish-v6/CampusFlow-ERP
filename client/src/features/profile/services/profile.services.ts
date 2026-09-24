@@ -1,19 +1,40 @@
-import api from "../../../api/axios.js";
+import api from "../../../api/axios";
+import {
+  UpdatePasswordPayload,
+  UpdateProfilePayload,
+  User,
+} from "../profile.types";
 
-interface updateUserPassword {
-  currentPassword: string;
-  newPassword: string;
-}
+/**
+ * Fetches authenticated user's own profile.
+ * Backend: GET /api/profile
+ */
+export const getProfile = async (): Promise<{ user: User }> => {
+  const res = await api.get<{ user: User }>("/api/profile");
+  return res.data;
+};
 
-export const getProfile = async () => {
-  const res = api.get("/api/users/me");
-  return (await res).data;
+/**
+ * Updates permitted personal profile fields (firstName, lastName, phone, address).
+ * Backend: PATCH /api/profile
+ */
+export const changeProfile = async (
+  data: UpdateProfilePayload,
+): Promise<{ user: User; message: string }> => {
+  const res = await api.patch<{ user: User; message: string }>("/api/profile", data);
+  return res.data;
 };
-export const changeProfile = async (data: unknown) => {
-  const res = api.patch("/api/users/me", data);
-  return (await res).data;
-};
-export const changePassword = async (data: updateUserPassword) => {
-  const res = await api.patch("/api/users/change-password", data);
+
+/**
+ * Updates user password with secure verification.
+ * Backend: PATCH /api/profile/change-password
+ */
+export const changePassword = async (
+  data: UpdatePasswordPayload,
+): Promise<{ success: boolean; message: string }> => {
+  const res = await api.patch<{ success: boolean; message: string }>(
+    "/api/profile/change-password",
+    data,
+  );
   return res.data;
 };
