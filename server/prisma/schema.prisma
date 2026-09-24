@@ -88,6 +88,7 @@ model Student {
   gender        Gender?
   phone         String?
   address       String?
+  attendances   Attendance[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }
@@ -141,6 +142,32 @@ model Faculty {
   status       FacultyStatus @default(ACTIVE)
   departmentId String
   department   Department    @relation(fields: [departmentId], references: [id])
+  attendances  Attendance[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  studentId String
+  student   Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  facultyId String?
+  faculty   Faculty?         @relation(fields: [facultyId], references: [id], onDelete: SetNull)
+  date      DateTime         @db.Date
+  status    AttendanceStatus @default(PRESENT)
+  remarks   String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([studentId, date])
+  @@index([studentId])
+  @@index([facultyId])
+  @@index([date])
+}
+
