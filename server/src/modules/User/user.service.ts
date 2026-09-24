@@ -2,53 +2,21 @@ import { UserRepository } from "./user.repository.js";
 import * as dtos from "./user.dto.js";
 import createHttpError from "http-errors";
 import * as utils from "./user.utils.js";
+import { profileService } from "../Profile/profile.service.js";
 
 class UserServices {
   constructor(private readonly userRepository: UserRepository) {}
 
   public async getCurrentUser(id: string) {
-    const user = await this.userRepository.findUserById(id);
-    if (!user) {
-      throw createHttpError(404, "Invalid Request");
-    }
-    const safeUser = {
-      ...user,
-      password: "",
-      verified: user.isVerified,
-      initials: `${user.firstName[0]}${user.lastName[0]}`,
-    };
-    return safeUser;
+    return profileService.getOwnProfile(id);
   }
 
   public async updateUserProfile(id: string, dto: dtos.updateUserProfileDto) {
-    const existingUser = await this.userRepository.findUserById(id);
-    if (!existingUser) {
-      throw createHttpError(404, "Invalid Request");
-    }
-    const updateUser = await this.userRepository.updateUserProfile(id, dto);
-    const safeUser = {
-      ...updateUser,
-      password: "",
-      createdAt: "",
-      role: "",
-    };
-    return safeUser;
+    return profileService.updateOwnProfile(id, dto);
   }
 
   public async updateUserPassword(id: string, dto: dtos.updateUserPasswordDto) {
-    const existingUser = await this.userRepository.findUserById(id);
-    if (!existingUser) {
-      throw createHttpError(404, "Invalid Request");
-    }
-
-    const checkPassword = await utils.verifyPassword(existingUser.password, dto.currentPassword);
-    if (!checkPassword) {
-      throw createHttpError(401, "Invalid password");
-    }
-    const password = await utils.hashPassword(dto.newPassword);
-    await this.userRepository.updateUserPassword(id, password);
-
-    return;
+    return profileService.changePassword(id, dto);
   }
 
   public async getAllUsers(dto: dtos.getAllUsersDto) {

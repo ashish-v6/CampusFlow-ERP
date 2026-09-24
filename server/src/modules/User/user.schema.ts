@@ -7,18 +7,19 @@ class UserSchema {
       firstName: z
         .string()
         .trim()
-        .min(3, "firstName must be of 3 characters")
-        .max(10, "Too Long Name")
+        .min(1, "First name cannot be empty")
+        .max(50, "First name must be at most 50 characters")
         .optional(),
       lastName: z
         .string()
         .trim()
-        .min(3, "LastName must be of 3 characters")
-        .max(10, "Too Long Name")
+        .min(1, "Last name cannot be empty")
+        .max(50, "Last name must be at most 50 characters")
         .optional(),
-      phone: z.string().trim().min(1, "Value cannot be empty").optional(),
-      avatar: z.string().trim().min(1, "Value cannot be empty").optional(),
+      phone: z.string().trim().min(5, "Invalid phone number").max(20).optional(),
+      address: z.string().trim().min(1).max(255).optional(),
     })
+    .strict()
     .refine((data) => Object.keys(data).length > 0, {
       message: "At least one field is required",
     });

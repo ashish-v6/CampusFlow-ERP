@@ -8,6 +8,7 @@ export interface updateUserProfileDto {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  address?: string;
   avatar?: string;
 }
 

@@ -39,7 +39,7 @@ class StudentSchema {
       .int()
       .positive()
       .min(1, "limit is required")
-      .max(10, "Only 10 record can be fetched")
+      .max(100, "Maximum 100 records can be fetched")
       .default(10),
     status : z.enum(StudentStatus).optional(),
     programId : z.uuid().optional(),
