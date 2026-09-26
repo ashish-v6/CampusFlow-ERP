@@ -42,6 +42,25 @@ export interface UserPagination {
   limit: number;
 }
 
+export interface UserQueryDto {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: string;
+  status?: string;
+}
+
+export interface CreateUserPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: "ADMIN" | "FACULTY" | "STUDENT";
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
+  phone?: string;
+  address?: string;
+}
+
 export interface Params {
   page: string;
   limit: string;

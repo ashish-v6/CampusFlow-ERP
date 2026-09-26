@@ -99,10 +99,14 @@ export default function AttendanceMarkingModal({
         },
       })
       .then((res) => {
-        const studentList = res.data.students || [];
-        // Filter by selected department if needed
+        const studentList: StudentForMarking[] = res.data.students || [];
         const filtered = selectedDept
-          ? studentList.filter((s) => s.program?.departmentId === selectedDept)
+          ? studentList.filter(
+              (s) =>
+                s.program?.departmentId === selectedDept ||
+                (s.program as { departmentId?: string; department?: { id?: string } })?.department
+                  ?.id === selectedDept,
+            )
           : studentList;
 
         setStudents(filtered);
@@ -263,7 +267,7 @@ export default function AttendanceMarkingModal({
 
         {/* Modal Controls Bar */}
         <div className="p-4 sm:px-6 bg-muted/20 border-b border-border space-y-3 shrink-0">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end">
             {/* Date Selector */}
             <div className="space-y-1">
               <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -298,7 +302,7 @@ export default function AttendanceMarkingModal({
             </div>
 
             {/* Search Filter */}
-            <div className="space-y-1 sm:col-span-2 md:col-span-1">
+            <div className="space-y-1">
               <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Filter Students
               </label>
@@ -312,6 +316,22 @@ export default function AttendanceMarkingModal({
                   className="w-full pl-8 pr-3 py-1.5 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
                 />
               </div>
+            </div>
+
+            {/* Reset Button */}
+            <div>
+              <button
+                type="button"
+                onClick={() => {
+                  setDate(todayStr);
+                  setSelectedDept("");
+                  setSearchFilter("");
+                }}
+                disabled={date === todayStr && selectedDept === "" && searchFilter === ""}
+                className="w-full px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground bg-accent/50 hover:bg-accent border border-border rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Reset Filters
+              </button>
             </div>
           </div>
 

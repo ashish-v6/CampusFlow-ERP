@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Users as UsersIcon } from "lucide-react";
 import { fetchUsers, getUsersStatus } from "../service/users.service";
 import LoadingState from "../../../components/LoadingState";
@@ -9,40 +9,80 @@ import UserStatsCards from "../components/UserStatsCards";
 import UserTableToolbar from "../components/UserTableToolbar";
 import UserTable from "../components/UserTable";
 import UserPagination from "../components/UserPagination";
+import CreateUserModal from "../components/CreateUserModal";
 
-// GET /api/users
-// Admin-only paginated list of user accounts with search, role filtering, and status filtering.
 export default function UserManagementPage(): React.JSX.Element {
-  // Static visual states
   const [users, setUsers] = useState<Array<Users> | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isEmpty, setIsEmpty] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
   const [userDetails, setUserDetails] = useState<UserStats | null>(null);
   const [paginationDetails, setPaginationDetails] = useState<Pagination | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [roleFilter, setRoleFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const getAllUsers = async (): Promise<void> => {
+  const loadData = useCallback(async (isInitial = false): Promise<void> => {
+    if (isInitial) {
+      setLoading(true);
+    } else {
+      setTableLoading(true);
+    }
+
     try {
-      const data = await fetchUsers({ page: currentPage, limit: 10 });
-      const details = await getUsersStatus();
-      setUsers(data.users);
-      setPaginationDetails(data.pagination);
+      const [data, details] = await Promise.all([
+        fetchUsers({
+          page: currentPage,
+          limit: 10,
+          search: searchQuery.trim() || undefined,
+          role: roleFilter || undefined,
+          status: statusFilter || undefined,
+        }),
+        getUsersStatus(),
+      ]);
+
+      setUsers(data.users || []);
+      setPaginationDetails(data.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 });
       setUserDetails(details.result);
-      setIsEmpty(false);
     } catch (e) {
-      console.log(e);
+      console.error("Error fetching users:", e);
+      setUsers([]);
     } finally {
       setLoading(false);
+      setTableLoading(false);
     }
-  };
-
-  const handleRefreshUser = async (): Promise<void> => {
-    await getAllUsers();
-  };
+  }, [currentPage, searchQuery, roleFilter, statusFilter]);
 
   useEffect(() => {
-    getAllUsers();
-  }, [currentPage]);
+    loadData(users === null);
+  }, [loadData]);
+
+  const handleRefreshUser = async (): Promise<void> => {
+    await loadData();
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleRoleChange = (role: string) => {
+    setRoleFilter(role);
+    setCurrentPage(1);
+  };
+
+  const handleStatusChange = (status: string) => {
+    setStatusFilter(status);
+    setCurrentPage(1);
+  };
+
+  const handleResetFilters = () => {
+    setSearchQuery("");
+    setRoleFilter("");
+    setStatusFilter("");
+    setCurrentPage(1);
+  };
 
   if (loading) {
     return (
@@ -53,30 +93,43 @@ export default function UserManagementPage(): React.JSX.Element {
     );
   }
 
-  if (!users || !userDetails || !paginationDetails) {
+  if (!userDetails && !users) {
     return (
       <ErrorState
         title="No Users Found"
         message="Unable to retrieve user management details."
-        onRetry={getAllUsers}
+        onRetry={() => loadData(true)}
       />
     );
   }
 
+  const isEmpty = !tableLoading && (!users || users.length === 0);
+
   return (
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8 animate-in fade-in duration-500">
       {/* 1. PAGE HEADER */}
-      <UserManagementHeader onRefresh={handleRefreshUser} />
+      <UserManagementHeader
+        onRefresh={handleRefreshUser}
+        onAddUser={() => setIsCreateModalOpen(true)}
+      />
 
       {/* 2. SUMMARY STATS */}
-      <UserStatsCards userDetails={userDetails} />
+      {userDetails && <UserStatsCards userDetails={userDetails} />}
 
       <div className="bg-card border border-border rounded-2xl shadow-sm flex flex-col">
         {/* 3. USER LIST TOOLBAR */}
-        <UserTableToolbar />
+        <UserTableToolbar
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          roleFilter={roleFilter}
+          onRoleChange={handleRoleChange}
+          statusFilter={statusFilter}
+          onStatusChange={handleStatusChange}
+          onResetFilters={handleResetFilters}
+        />
 
         {/* Loading State */}
-        {loading && (
+        {tableLoading && (
           <div className="p-5 space-y-4 animate-pulse">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="flex items-center gap-4 py-3 border-b border-border/50">
@@ -94,7 +147,7 @@ export default function UserManagementPage(): React.JSX.Element {
         )}
 
         {/* Empty State */}
-        {isEmpty && !loading && (
+        {isEmpty && (
           <div className="py-24 flex flex-col items-center justify-center text-center px-4">
             <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center text-muted-foreground mb-4">
               <UsersIcon className="w-8 h-8" />
@@ -107,15 +160,24 @@ export default function UserManagementPage(): React.JSX.Element {
         )}
 
         {/* 4. USER TABLE */}
-        {!loading && !isEmpty && <UserTable users={users} />}
+        {!tableLoading && !isEmpty && users && <UserTable users={users} />}
 
         {/* 5. PAGINATION UI */}
-        <UserPagination
-          paginationDetails={paginationDetails}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
+        {paginationDetails && (
+          <UserPagination
+            paginationDetails={paginationDetails}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        )}
       </div>
+
+      {/* CREATE USER MODAL */}
+      <CreateUserModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={handleRefreshUser}
+      />
     </div>
   );
 }

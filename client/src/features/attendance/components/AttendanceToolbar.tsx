@@ -70,6 +70,7 @@ export default function AttendanceToolbar({
           </div>
           <input
             type="date"
+            max={getTodayDateString()}
             value={selectedDate}
             onChange={(e) => onDateChange(e.target.value)}
             className="w-full sm:w-40 pl-9 pr-3 py-2 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"

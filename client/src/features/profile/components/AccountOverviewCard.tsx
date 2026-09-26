@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity, BadgeCheck, Shield, Calendar, Phone } from "lucide-react";
+import { Activity, BadgeCheck, Shield, Calendar, Phone, MapPin } from "lucide-react";
 import { User } from "../profile.types";
 
 interface AccountOverviewCardProps {
@@ -53,6 +53,18 @@ export default function AccountOverviewCard({ user }: AccountOverviewCardProps):
               <span>Phone</span>
             </div>
             <span className="font-medium text-foreground">{user.phone}</span>
+          </div>
+        )}
+
+        {user.address && (
+          <div className="flex items-center justify-between text-sm pb-3 border-b border-border/50">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <MapPin className="w-4 h-4 shrink-0" />
+              <span>Address</span>
+            </div>
+            <span className="font-medium text-foreground text-right max-w-[180px] truncate" title={user.address}>
+              {user.address}
+            </span>
           </div>
         )}
 

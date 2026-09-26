@@ -34,6 +34,7 @@ export default function DashboardHeader({
   canFilterDepartment = true,
 }: DashboardHeaderProps): React.JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
+  const today = new Date().toISOString().split("T")[0];
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -111,6 +112,7 @@ export default function DashboardHeader({
               <input
                 type="date"
                 value={startDate}
+                max={endDate && endDate < today ? endDate : today}
                 onChange={(e) => onStartDateChange(e.target.value)}
                 className="px-2.5 py-1.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground text-xs cursor-pointer"
                 title="Start Date"
@@ -123,6 +125,8 @@ export default function DashboardHeader({
               <input
                 type="date"
                 value={endDate}
+                min={startDate || undefined}
+                max={today}
                 onChange={(e) => onEndDateChange(e.target.value)}
                 className="px-2.5 py-1.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground text-xs cursor-pointer"
                 title="End Date"

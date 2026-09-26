@@ -120,7 +120,7 @@ export default function EditAttendanceModal({
                 <User className="w-4 h-4 text-primary" />
                 <span className="font-semibold text-foreground text-sm">{studentFullName}</span>
               </div>
-              <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-background border border-border">
+              <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/20 shadow-xs">
                 {record.student?.studentId || "—"}
               </span>
             </div>

@@ -3,10 +3,12 @@ import { Plus, RefreshCw } from "lucide-react";
 
 interface UserManagementHeaderProps {
   onRefresh: () => Promise<void> | void;
+  onAddUser?: () => void;
 }
 
 export default function UserManagementHeader({
   onRefresh,
+  onAddUser,
 }: UserManagementHeaderProps): React.JSX.Element {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -20,15 +22,15 @@ export default function UserManagementHeader({
         <button
           type="button"
           onClick={onRefresh}
-          className="p-2.5 text-muted-foreground hover:text-foreground bg-card border border-border rounded-xl shadow-sm hover:border-muted-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+          className="p-2.5 text-muted-foreground hover:text-foreground bg-card border border-border rounded-xl shadow-sm hover:border-muted-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background cursor-pointer"
           aria-label="Refresh user list"
         >
           <RefreshCw className="w-4 h-4" />
         </button>
-        {/* UI placeholder button - User creation is handled via Auth signup / backend onboarding */}
         <button
           type="button"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl shadow-sm shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+          onClick={onAddUser}
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl shadow-sm shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           Add User

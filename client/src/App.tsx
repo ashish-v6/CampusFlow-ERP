@@ -12,7 +12,6 @@ import DashboardPage from "./features/dashboard/pages/DashboardPage";
 
 // Profile Feature Pages
 import ProfilePage from "./features/profile/pages/ProfilePage";
-import EditProfilePage from "./features/profile/pages/EditProfilePage";
 import ChangePasswordPage from "./features/profile/pages/ChangePasswordPage";
 
 // Users Feature Pages
@@ -63,7 +62,6 @@ export default function App(): React.JSX.Element {
             {/* Profile Feature Routes */}
 
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/profile/edit" element={<EditProfilePage />} />
             <Route path="/profile/change-password" element={<ChangePasswordPage />} />
 
             {/* Users Feature Routes */}

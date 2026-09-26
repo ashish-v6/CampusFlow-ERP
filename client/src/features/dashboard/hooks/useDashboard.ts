@@ -83,6 +83,32 @@ export const useDashboard = (): UseDashboardReturn => {
     fetchData();
   }, [fetchData]);
 
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  const handleSetStartDate = (date: string) => {
+    if (!date) {
+      setStartDate("");
+      return;
+    }
+    const validDate = date > todayStr ? todayStr : date;
+    setStartDate(validDate);
+    if (endDate && validDate > endDate) {
+      setEndDate(validDate);
+    }
+  };
+
+  const handleSetEndDate = (date: string) => {
+    if (!date) {
+      setEndDate("");
+      return;
+    }
+    const validDate = date > todayStr ? todayStr : date;
+    setEndDate(validDate);
+    if (startDate && validDate < startDate) {
+      setStartDate(validDate);
+    }
+  };
+
   const resetFilters = () => {
     setDepartmentFilter("");
     setStartDate("");
@@ -98,8 +124,8 @@ export const useDashboard = (): UseDashboardReturn => {
     startDate,
     endDate,
     setDepartmentFilter,
-    setStartDate,
-    setEndDate,
+    setStartDate: handleSetStartDate,
+    setEndDate: handleSetEndDate,
     refreshDashboard: fetchData,
     resetFilters,
   };

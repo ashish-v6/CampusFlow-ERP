@@ -100,7 +100,7 @@ export default function PersonalInfoForm({
       if (formData.phone.trim()) {
         payload.phone = formData.phone.trim();
       }
-      if (isStudent && formData.address.trim()) {
+      if (formData.address.trim()) {
         payload.address = formData.address.trim();
       }
 
@@ -217,29 +217,27 @@ export default function PersonalInfoForm({
             )}
           </div>
 
-          {/* Address (If Student or available) */}
-          {isStudent && (
-            <div className="space-y-2">
-              <label
-                htmlFor="address"
-                className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
-              >
-                Residential Address
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Street, City, Postal Code"
-                  className="w-full bg-background border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground"
-                />
-                <MapPin className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
+          {/* Residential Address (Available for all roles) */}
+          <div className="space-y-2">
+            <label
+              htmlFor="address"
+              className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
+            >
+              Residential Address
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Street, City, Postal Code"
+                className="w-full bg-background border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground"
+              />
+              <MapPin className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
-          )}
+          </div>
 
           {/* Email (Read-only) */}
           <div className="space-y-2">
