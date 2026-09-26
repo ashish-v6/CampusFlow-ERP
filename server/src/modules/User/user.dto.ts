@@ -1,4 +1,15 @@
-import type { UserStatus } from "../../generated/prisma/enums.js";
+import type { Roles, UserStatus } from "../../generated/prisma/enums.js";
+
+export interface CreateUserDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: Roles;
+  status: UserStatus;
+  phone?: string;
+  address?: string;
+}
 
 export interface CureentUserDto {
   id?: string | undefined;
@@ -20,6 +31,9 @@ export interface updateUserPasswordDto {
 export interface getAllUsersDto {
   page: number;
   limit: number;
+  search?: string;
+  role?: Roles;
+  status?: UserStatus;
 }
 export interface getUserByIdDto {
   id: string;

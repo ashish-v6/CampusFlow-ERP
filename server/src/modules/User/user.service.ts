@@ -4,8 +4,32 @@ import createHttpError from "http-errors";
 import * as utils from "./user.utils.js";
 import { profileService } from "../Profile/profile.service.js";
 
+import type { Prisma } from "../../generated/prisma/client.js";
+
 class UserServices {
   constructor(private readonly userRepository: UserRepository) {}
+
+  public async createUser(dto: dtos.CreateUserDto) {
+    const existing = await this.userRepository.findByEmail(dto.email.toLowerCase().trim());
+    if (existing) {
+      throw createHttpError(409, "A user with this email address already exists");
+    }
+
+    const hashedPassword = await utils.hashPassword(dto.password);
+    const user = await this.userRepository.createUser({
+      firstName: dto.firstName.trim(),
+      lastName: dto.lastName.trim(),
+      email: dto.email.toLowerCase().trim(),
+      password: hashedPassword,
+      role: dto.role,
+      status: dto.status,
+      ...(dto.address ? { address: dto.address.trim() } : {}),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...safeUser } = user;
+    return safeUser;
+  }
 
   public async getCurrentUser(id: string) {
     return profileService.getOwnProfile(id);
@@ -20,20 +44,39 @@ class UserServices {
   }
 
   public async getAllUsers(dto: dtos.getAllUsersDto) {
-    const skip = (dto.page - 1) * dto.limit;
-    const result = await this.userRepository.findUsers(skip, dto.limit);
-    const totalPages = Math.ceil(result.total / dto.limit);
+    const page = dto.page || 1;
+    const limit = dto.limit || 10;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.UserWhereInput = {};
+
+    if (dto.role) {
+      where.role = dto.role;
+    }
+
+    if (dto.status) {
+      where.status = dto.status;
+    }
+
+    if (dto.search && dto.search.trim()) {
+      const term = dto.search.trim();
+      where.OR = [
+        { firstName: { contains: term, mode: "insensitive" } },
+        { lastName: { contains: term, mode: "insensitive" } },
+        { email: { contains: term, mode: "insensitive" } },
+      ];
+    }
+
+    const result = await this.userRepository.findUsers(skip, limit, where);
+    const totalPages = Math.ceil(result.total / limit) || 1;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const safeUsers = result.users.map(({ password, ...user }) => user);
 
-    if (!safeUsers.length) {
-      throw createHttpError(404, "User not found");
-    }
     return {
       users: safeUsers,
       pagination: {
-        page: dto.page,
-        limit: dto.limit,
+        page,
+        limit,
         total: result.total,
         totalPages,
       },

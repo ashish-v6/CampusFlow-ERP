@@ -1,7 +1,43 @@
 import { z } from "zod";
-import { UserStatus } from "../../generated/prisma/enums.js";
+import { Roles, UserStatus } from "../../generated/prisma/enums.js";
 
 class UserSchema {
+  public createUserSchema = z.object({
+    firstName: z
+      .string()
+      .trim()
+      .min(2, "First name must be at least 2 characters")
+      .max(50, "First name must be at most 50 characters"),
+    lastName: z
+      .string()
+      .trim()
+      .min(2, "Last name must be at least 2 characters")
+      .max(50, "Last name must be at most 50 characters"),
+    email: z.string().trim().email("Invalid email address").toLowerCase(),
+    password: z
+      .string()
+      .trim()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+    role: z.enum(Roles).default("STUDENT"),
+    status: z.enum(UserStatus).default("ACTIVE"),
+    phone: z
+      .string()
+      .trim()
+      .regex(/^\d{10}$/, "Phone number must be exactly 10 digits")
+      .optional()
+      .or(z.literal("")),
+    address: z
+      .string()
+      .trim()
+      .max(255, "Address must be at most 255 characters")
+      .optional()
+      .or(z.literal("")),
+  });
+
   public updateUserProfileSchema = z
     .object({
       firstName: z
@@ -25,7 +61,7 @@ class UserSchema {
     });
 
   public updatePasswordSchema = z.object({
-    currentPassword: z.string().trim().min(1, "Current Password is requried"),
+    currentPassword: z.string().trim().min(1, "Current Password is required"),
     newPassword: z
       .string()
       .trim()
@@ -37,12 +73,17 @@ class UserSchema {
   });
 
   public getAllUsersQuerySchema = z.object({
-    page: z.coerce.number().int().min(1, "Page number is required"),
+    page: z.coerce.number().int().positive().default(1),
     limit: z.coerce
       .number()
       .int()
+      .positive()
       .min(1, "limit is required")
-      .max(10, "Only 10 record can be fetched"),
+      .max(100, "Maximum 100 records can be fetched")
+      .default(10),
+    search: z.string().trim().optional(),
+    role: z.enum(Roles).optional(),
+    status: z.enum(UserStatus).optional(),
   });
 
   public veifyIdParamsSchema = z.object({

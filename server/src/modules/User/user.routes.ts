@@ -22,6 +22,30 @@ router.patch(
   userControllers.updateUserPassword,
 );
 
+router.post(
+  "/",
+  authenticate,
+  authorize("admin"),
+  validateSchema(userSchema.createUserSchema, "body"),
+  userControllers.createUser,
+);
+
+router.post(
+  "/users",
+  authenticate,
+  authorize("admin"),
+  validateSchema(userSchema.createUserSchema, "body"),
+  userControllers.createUser,
+);
+
+router.get(
+  "/",
+  authenticate,
+  authorize("admin"),
+  validateSchema(userSchema.getAllUsersQuerySchema, "query"),
+  userControllers.getAllUsers,
+);
+
 router.get(
   "/users",
   authenticate,

@@ -16,7 +16,7 @@ export class ProfileService {
     const faculty = user.faculty;
 
     const phone = student?.phone || faculty?.phone || null;
-    const address = student?.address || null;
+    const address = user.address || student?.address || null;
     const initials = `${user.firstName[0] || ""}${user.lastName[0] || ""}`.toUpperCase() || "CF";
 
     return {
@@ -98,9 +98,10 @@ export class ProfileService {
     }
 
     // 1. Update basic user details on User entity
-    const userUpdate: { firstName?: string; lastName?: string } = {};
+    const userUpdate: { firstName?: string; lastName?: string; address?: string } = {};
     if (dto.firstName) userUpdate.firstName = dto.firstName.trim();
     if (dto.lastName) userUpdate.lastName = dto.lastName.trim();
+    if (dto.address !== undefined) userUpdate.address = dto.address.trim();
 
     if (Object.keys(userUpdate).length > 0) {
       await profileRepository.updateUserBasicInfo(userId, userUpdate);

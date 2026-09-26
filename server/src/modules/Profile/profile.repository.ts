@@ -31,13 +31,14 @@ export class ProfileRepository {
    */
   public async updateUserBasicInfo(
     userId: string,
-    data: { firstName?: string; lastName?: string },
+    data: { firstName?: string; lastName?: string; address?: string },
   ) {
     return prisma.user.update({
       where: { id: userId },
       data: {
         ...(data.firstName && { firstName: data.firstName }),
         ...(data.lastName && { lastName: data.lastName }),
+        ...(data.address !== undefined && { address: data.address }),
       },
     });
   }

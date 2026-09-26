@@ -43,6 +43,7 @@ class StudentSchema {
       .default(10),
     status : z.enum(StudentStatus).optional(),
     programId : z.uuid().optional(),
+    departmentId : z.uuid().optional(),
     search : z.string().trim().min(1).max(20).optional(),
   });
 }
