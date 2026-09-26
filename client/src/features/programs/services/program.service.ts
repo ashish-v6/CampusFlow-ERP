@@ -48,7 +48,7 @@ export const updateProgram = async (
   return res.data;
 };
 
-export const getProgramStats = async (): Promise<{ result: ProgramStats }> => {
+export const getProgramStats = async (): Promise<ProgramStats> => {
   const res = await api.get<{ result: ProgramStats }>("/api/programs/stats");
-  return res.data;
+  return res.data.result;
 };
