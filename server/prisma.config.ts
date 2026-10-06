@@ -3,7 +3,7 @@
 import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
 
-const dbUrl = process.env.CLOUD_DATABASE_URL || process.env.DATABASE_URL || "";
+const dbUrl = process.env.DATABASE_URL || process.env.CLOUD_DATABASE_URL || "";
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
