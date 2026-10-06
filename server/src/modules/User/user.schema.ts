@@ -26,8 +26,7 @@ class UserSchema {
     status: z.enum(UserStatus).default("ACTIVE"),
     phone: z
       .string()
-      .trim()
-      .regex(/^\d{10}$/, "Phone number must be exactly 10 digits")
+      .regex(/^(?:\+91[\s\-]?)?\d{10}$/, "Phone number must be 10 digits (optional +91 prefix)")
       .optional()
       .or(z.literal("")),
     address: z

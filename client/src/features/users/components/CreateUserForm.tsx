@@ -100,10 +100,16 @@ export default function CreateUserForm({
       errors.password = "Password must contain at least one special character";
     }
 
-    // Phone: optional, 10 digits
+    // Phone: optional, 10 digits with optional +91 prefix
     if (formData.phone && formData.phone.trim()) {
-      if (!/^\d{10}$/.test(formData.phone.trim())) {
-        errors.phone = "Phone number must be exactly 10 digits";
+      const trimmedPhone = formData.phone.trim();
+      const digitsOnly = trimmedPhone.replace(/\D/g, "");
+      const isValid =
+        /^(?:\+91[\s\-]?)?\d{10}$/.test(trimmedPhone) ||
+        digitsOnly.length === 10 ||
+        (digitsOnly.length === 12 && digitsOnly.startsWith("91"));
+      if (!isValid) {
+        errors.phone = "Phone number must be 10 digits (e.g. +91 9876543210 or 9876543210)";
       }
     }
 
@@ -314,7 +320,8 @@ export default function CreateUserForm({
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          placeholder="10-digit mobile number"
+          placeholder="+91 9876543210"
+          maxLength={15}
           className={`w-full px-3 py-2 text-sm bg-background border rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground text-foreground ${
             fieldErrors.phone
               ? "border-red-500/80 focus:ring-red-500/40"
