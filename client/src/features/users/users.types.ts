@@ -6,6 +6,8 @@ export interface Users {
   role: string;
   status: string;
   isVerified: boolean;
+  phone?: string | null;
+  address?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,6 +20,8 @@ export interface UserDetails {
   role: string;
   status: string;
   isVerified: boolean;
+  phone?: string | null;
+  address?: string | null;
   createdAt: Date;
   updatedAt: Date;
   initials: string;

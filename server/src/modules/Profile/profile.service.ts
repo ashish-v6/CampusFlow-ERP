@@ -15,7 +15,7 @@ export class ProfileService {
     const student = user.student;
     const faculty = user.faculty;
 
-    const phone = student?.phone || faculty?.phone || null;
+    const phone = user.phone || student?.phone || faculty?.phone || null;
     const address = user.address || student?.address || null;
     const initials = `${user.firstName[0] || ""}${user.lastName[0] || ""}`.toUpperCase() || "CF";
 
@@ -97,11 +97,14 @@ export class ProfileService {
       throw createHttpError(404, "User profile not found");
     }
 
-    // 1. Update basic user details on User entity
-    const userUpdate: { firstName?: string; lastName?: string; address?: string } = {};
+    // 1. Update basic user details on User entity (including phone for Admin / all roles)
+    const userUpdate: { firstName?: string; lastName?: string; address?: string; phone?: string | null } = {};
     if (dto.firstName) userUpdate.firstName = dto.firstName.trim();
     if (dto.lastName) userUpdate.lastName = dto.lastName.trim();
     if (dto.address !== undefined) userUpdate.address = dto.address.trim();
+    if (dto.phone !== undefined) {
+      userUpdate.phone = dto.phone.trim() ? dto.phone.trim() : null;
+    }
 
     if (Object.keys(userUpdate).length > 0) {
       await profileRepository.updateUserBasicInfo(userId, userUpdate);

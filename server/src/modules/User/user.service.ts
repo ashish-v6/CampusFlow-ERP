@@ -23,6 +23,7 @@ class UserServices {
       password: hashedPassword,
       role: dto.role,
       status: dto.status,
+      ...(dto.phone ? { phone: dto.phone.trim() } : {}),
       ...(dto.address ? { address: dto.address.trim() } : {}),
     });
 

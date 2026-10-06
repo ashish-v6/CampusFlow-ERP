@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-import { Edit3, Eye, Building2, User } from "lucide-react";
+import { Edit3, Eye, Building2 } from "lucide-react";
 import { AttendanceRecord } from "../types/attendance.types";
 import {
   getAttendanceStatusStyles,
@@ -25,7 +25,7 @@ export default function AttendanceTable({
 }: AttendanceTableProps): React.JSX.Element {
   return (
     <div className="overflow-x-auto w-full">
-      <table className="w-full text-left border-collapse min-w-[850px]">
+      <table className="w-full text-left border-collapse min-w-[650px]">
         <thead>
           <tr className="border-b border-border bg-muted/20 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             <th className="px-5 py-3.5 font-medium">Student</th>
@@ -33,8 +33,6 @@ export default function AttendanceTable({
             <th className="px-5 py-3.5 font-medium">Program</th>
             <th className="px-5 py-3.5 font-medium">Date</th>
             <th className="px-5 py-3.5 font-medium">Status</th>
-            <th className="px-5 py-3.5 font-medium">Marked By</th>
-            <th className="px-5 py-3.5 font-medium">Remarks</th>
             <th className="px-5 py-3.5 font-medium text-right">Actions</th>
           </tr>
         </thead>
@@ -47,11 +45,6 @@ export default function AttendanceTable({
               `${studentUser?.firstName || ""} ${studentUser?.lastName || ""}`.trim() ||
               "Student";
 
-            const facultyUser = rec.faculty?.user;
-            const markerName = facultyUser
-              ? `${facultyUser.firstName} ${facultyUser.lastName}`
-              : "Admin / System";
-
             return (
               <tr key={rec.id} className="hover:bg-muted/30 transition-colors group">
                 {/* Student Name + Initials Avatar */}
@@ -63,13 +56,8 @@ export default function AttendanceTable({
                     <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20">
                       {initials}
                     </div>
-                    <div>
-                      <div className="font-semibold text-foreground group-hover/std:text-primary transition-colors">
-                        {studentFullName}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {studentUser?.email || "No email"}
-                      </div>
+                    <div className="font-semibold text-foreground group-hover/std:text-primary transition-colors">
+                      {studentFullName}
                     </div>
                   </Link>
                 </td>
@@ -112,19 +100,6 @@ export default function AttendanceTable({
                     <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
                     {statusStyle.label}
                   </span>
-                </td>
-
-                {/* Marked By */}
-                <td className="px-5 py-4 text-muted-foreground text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
-                    <span>{markerName}</span>
-                  </div>
-                </td>
-
-                {/* Remarks */}
-                <td className="px-5 py-4 text-muted-foreground text-xs max-w-xs truncate">
-                  {rec.remarks || "—"}
                 </td>
 
                 {/* Actions */}

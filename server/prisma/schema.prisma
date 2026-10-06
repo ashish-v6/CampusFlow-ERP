@@ -34,6 +34,7 @@ model User {
   role               Roles               @default(STUDENT)
   status             UserStatus          @default(ACTIVE)
   isVerified         Boolean             @default(false)
+  phone              String?
   address            String?
   verificationTokens VerificationToken[]
   sessions           Session[]

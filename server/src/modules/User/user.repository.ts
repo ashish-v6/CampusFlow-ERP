@@ -23,6 +23,7 @@ export class UserRepository {
     password: string;
     role: Roles;
     status: UserStatus;
+    phone?: string;
     address?: string;
   }): Promise<User> {
     return prisma.user.create({
@@ -33,6 +34,7 @@ export class UserRepository {
         password: data.password,
         role: data.role,
         status: data.status,
+        ...(data.phone ? { phone: data.phone } : {}),
         ...(data.address ? { address: data.address } : {}),
         isVerified: true,
       },

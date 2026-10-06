@@ -46,27 +46,26 @@ export default function AccountOverviewCard({ user }: AccountOverviewCardProps):
           <span className="font-medium text-foreground capitalize">{user.role}</span>
         </div>
 
-        {user.phone && (
-          <div className="flex items-center justify-between text-sm pb-3 border-b border-border/50">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Phone className="w-4 h-4" />
-              <span>Phone</span>
-            </div>
-            <span className="font-medium text-foreground">{user.phone}</span>
+        <div className="flex items-center justify-between text-sm pb-3 border-b border-border/50">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Phone className="w-4 h-4" />
+            <span>Phone</span>
           </div>
-        )}
+          <span className="font-medium text-foreground">{user.phone || "Not provided"}</span>
+        </div>
 
-        {user.address && (
-          <div className="flex items-center justify-between text-sm pb-3 border-b border-border/50">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="w-4 h-4 shrink-0" />
-              <span>Address</span>
-            </div>
-            <span className="font-medium text-foreground text-right max-w-[180px] truncate" title={user.address}>
-              {user.address}
-            </span>
+        <div className="flex items-center justify-between text-sm pb-3 border-b border-border/50">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <MapPin className="w-4 h-4 shrink-0" />
+            <span>Address</span>
           </div>
-        )}
+          <span
+            className="font-medium text-foreground text-right max-w-[180px] truncate"
+            title={user.address || "Not provided"}
+          >
+            {user.address || "Not provided"}
+          </span>
+        </div>
 
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">

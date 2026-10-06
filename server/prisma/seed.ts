@@ -81,6 +81,7 @@ async function main() {
       role: Roles.ADMIN,
       status: UserStatus.ACTIVE,
       isVerified: true,
+      phone: "+91 9876543210",
       address: "Admin Block A, Suite 101, CampusFlow University",
     },
   });
@@ -93,6 +94,7 @@ async function main() {
       role: Roles.ADMIN,
       status: UserStatus.ACTIVE,
       isVerified: true,
+      phone: "+91 9876500001",
       address: "Central IT Operations, Tech Wing 404",
     },
     {
@@ -102,6 +104,7 @@ async function main() {
       role: Roles.ADMIN,
       status: UserStatus.ACTIVE,
       isVerified: true,
+      phone: "+91 9876500002",
       address: "Registrar Office, Administrative Complex",
     },
     {
@@ -111,6 +114,7 @@ async function main() {
       role: Roles.ADMIN,
       status: UserStatus.ACTIVE,
       isVerified: true,
+      phone: "+91 9876500003",
       address: "Deanery of Academic Affairs, North Campus",
     },
     {
@@ -120,6 +124,7 @@ async function main() {
       role: Roles.ADMIN,
       status: UserStatus.ACTIVE,
       isVerified: true,
+      phone: "+91 9876500004",
       address: "Examination Controller Wing, South Tower",
     },
   ];
@@ -134,6 +139,7 @@ async function main() {
         role: admin.role,
         status: admin.status,
         isVerified: admin.isVerified,
+        phone: admin.phone,
         address: admin.address,
       },
     });
@@ -702,7 +708,7 @@ async function main() {
   // --------------------------------------------------------------------------
   // 8. SEED ATTENDANCE RECORDS (Massive attendance history)
   // --------------------------------------------------------------------------
-  console.log("📋 Seeding realistic Attendance history over past 20 instructional days...");
+  console.log("📋 Seeding realistic Attendance history from today to the past 2 months (current year)...");
 
   // Query actual committed students and faculty directly from database
   const dbStudents = await prisma.student.findMany({
@@ -721,20 +727,27 @@ async function main() {
     },
   });
 
-  // Generate 20 instructional dates (Monday-Friday) ending on a recent date
+  // Generate instructional dates (Monday-Friday) from today back to 2 months ago (current year)
   const attendanceDates: Date[] = [];
-  const baseDate = new Date("2024-10-04T00:00:00.000Z"); // fixed reference date for reproducible seed
-  let dayOffset = 0;
+  const today = new Date();
+  const twoMonthsAgo = new Date(today);
+  twoMonthsAgo.setMonth(today.getMonth() - 2);
 
-  while (attendanceDates.length < 20) {
-    const candidate = new Date(baseDate);
-    candidate.setDate(baseDate.getDate() - dayOffset);
-    const dayOfWeek = candidate.getUTCDay(); // 0 is Sunday, 6 is Saturday
+  const currDate = new Date(today);
+  while (currDate >= twoMonthsAgo) {
+    const dayOfWeek = currDate.getDay(); // 0 is Sunday, 6 is Saturday
     if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-      attendanceDates.push(candidate);
+      // Normalize to UTC midnight for @db.Date column
+      const normalizedDate = new Date(
+        Date.UTC(currDate.getFullYear(), currDate.getMonth(), currDate.getDate())
+      );
+      attendanceDates.push(normalizedDate);
     }
-    dayOffset++;
+    currDate.setDate(currDate.getDate() - 1);
   }
+
+  // Sort ascending (chronological order)
+  attendanceDates.sort((a, b) => a.getTime() - b.getTime());
 
   // Pre-index faculties by deptCode for quick assignment
   const facultyByDept: Record<string, typeof dbFaculties> = {};

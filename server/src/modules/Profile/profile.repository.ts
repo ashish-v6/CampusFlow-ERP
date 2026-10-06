@@ -27,11 +27,11 @@ export class ProfileRepository {
   }
 
   /**
-   * Update User table basic details (firstName, lastName)
+   * Update User table basic details (firstName, lastName, address, phone)
    */
   public async updateUserBasicInfo(
     userId: string,
-    data: { firstName?: string; lastName?: string; address?: string },
+    data: { firstName?: string; lastName?: string; address?: string; phone?: string | null },
   ) {
     return prisma.user.update({
       where: { id: userId },
@@ -39,6 +39,7 @@ export class ProfileRepository {
         ...(data.firstName && { firstName: data.firstName }),
         ...(data.lastName && { lastName: data.lastName }),
         ...(data.address !== undefined && { address: data.address }),
+        ...(data.phone !== undefined && { phone: data.phone }),
       },
     });
   }

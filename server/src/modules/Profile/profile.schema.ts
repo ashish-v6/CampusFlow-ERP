@@ -22,16 +22,15 @@ export class ProfileSchema {
       phone: z
         .string()
         .trim()
-        .min(5, "Phone number must be at least 5 digits")
-        .max(20, "Phone number must be at most 20 characters")
-        .regex(/^[+0-9\s\-()]+$/, "Invalid phone number format")
-        .optional(),
+        .regex(/^(?:\+91[\s\-]?)?\d{10}$/, "Phone number must be 10 digits (optional +91 prefix)")
+        .optional()
+        .or(z.literal("")),
       address: z
         .string()
         .trim()
-        .min(1, "Address cannot be empty")
         .max(255, "Address must be at most 255 characters")
-        .optional(),
+        .optional()
+        .or(z.literal("")),
     })
     .strict()
     .refine((data) => Object.keys(data).length > 0, {

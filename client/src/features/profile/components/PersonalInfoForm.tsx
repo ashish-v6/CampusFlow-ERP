@@ -4,6 +4,7 @@ import { changeProfile } from "../services/profile.services";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { User, UpdateProfilePayload } from "../profile.types";
+import { formatPhoneWithPrefix } from "../../students/validation/student.validation";
 
 interface PersonalInfoFormProps {
   user: User;
@@ -85,6 +86,19 @@ export default function PersonalInfoForm({
       errors.lastName = "Last name is required";
     }
 
+    if (formData.phone.trim()) {
+      const trimmedPhone = formData.phone.trim();
+      const digitsOnly = trimmedPhone.replace(/\D/g, "");
+      const isValid =
+        /^(?:\+91[\s\-]?)?\d{10}$/.test(trimmedPhone) ||
+        digitsOnly.length === 10 ||
+        (digitsOnly.length === 12 && digitsOnly.startsWith("91"));
+
+      if (!isValid) {
+        errors.phone = "Phone number must be 10 digits (e.g. +91 9876543210 or 9876543210)";
+      }
+    }
+
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
@@ -98,10 +112,15 @@ export default function PersonalInfoForm({
       };
 
       if (formData.phone.trim()) {
-        payload.phone = formData.phone.trim();
+        payload.phone = formatPhoneWithPrefix(formData.phone.trim());
+      } else if (formData.phone === "" && user.phone) {
+        payload.phone = "";
       }
+
       if (formData.address.trim()) {
         payload.address = formData.address.trim();
+      } else if (formData.address === "" && user.address) {
+        payload.address = "";
       }
 
       const result = await changeProfile(payload);
@@ -203,7 +222,8 @@ export default function PersonalInfoForm({
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="+1 (555) 000-0000"
+                maxLength={15}
+                placeholder="+91 9876543210"
                 className={`w-full bg-background border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${
                   formErrors.phone
                     ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
