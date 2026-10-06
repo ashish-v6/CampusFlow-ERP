@@ -20,6 +20,7 @@ const getEnv = (key: string): string => {
 const _config = {
   port: getEnv("PORT"),
   databaseUrl: getEnv("DATABASE_URL"),
+  cloudDatabaseUrl: getEnv("CLOUD_DATABASE_URL"),
   environment: getEnv("NODE_ENV"),
   baseUrl: getEnv("BASE_URL"),
   accessKey: getEnv("ACCESS_SECERT_KEY"),
