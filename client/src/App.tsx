@@ -34,6 +34,7 @@ import DepartmentDetailsPage from "./features/departments/pages/DepartmentDetail
 
 // Program Feature Pages
 import ProgramManagementPage from "./features/programs/pages/ProgramManagementPage";
+import ProgramDetailsPage from "./features/programs/pages/ProgramDetailsPage";
 
 // Attendance Feature Pages
 import AttendanceManagementPage from "./features/attendance/pages/AttendanceManagementPage";
@@ -110,9 +111,10 @@ export default function App(): React.JSX.Element {
             </Route>
 
             {/* Program Feature Routes */}
-            {/* Directory: Accessible by ADMIN, FACULTY, and STUDENT */}
+            {/* Directory & Details: Accessible by ADMIN, FACULTY, and STUDENT */}
             <Route element={<ProtectedRoute allowedRoles={["ADMIN", "FACULTY", "STUDENT"]} />}>
               <Route path="/programs" element={<ProgramManagementPage />} />
+              <Route path="/programs/:id" element={<ProgramDetailsPage />} />
             </Route>
 
             {/* Attendance Feature Routes */}

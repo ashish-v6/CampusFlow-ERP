@@ -13,6 +13,26 @@ export class ProgramRepository {
             code: true,
           },
         },
+        students: {
+          select: {
+            id: true,
+            studentId: true,
+            status: true,
+            admissionDate: true,
+            phone: true,
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
         _count: {
           select: {
             students: true,

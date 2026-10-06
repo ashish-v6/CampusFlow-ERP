@@ -4,6 +4,20 @@
 
 export type ProgramStatus = "ACTIVE" | "INACTIVE";
 
+export interface ProgramStudentSummary {
+  id: string;
+  studentId: string;
+  status: string;
+  admissionDate: string;
+  phone?: string | null;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}
+
 export interface Program {
   id: string;
   name: string;
@@ -17,6 +31,7 @@ export interface Program {
     name: string;
     code: string;
   };
+  students?: ProgramStudentSummary[];
   _count?: {
     students: number;
   };

@@ -1,5 +1,6 @@
 import React from "react";
-import { BookOpen, Edit3, Building2, Users } from "lucide-react";
+import { Link } from "react-router";
+import { BookOpen, Edit3, Building2, Users, Eye } from "lucide-react";
 import { Program } from "../types/program.types";
 import {
   getProgramStatusStyles,
@@ -9,6 +10,7 @@ import {
 interface ProgramTableProps {
   programs: Program[];
   onEditProgram?: (program: Program) => void;
+  onViewStudents?: (program: Program) => void;
   canEdit?: boolean;
 }
 
@@ -19,6 +21,7 @@ interface ProgramTableProps {
 export default function ProgramTable({
   programs,
   onEditProgram,
+  onViewStudents,
   canEdit = true,
 }: ProgramTableProps): React.JSX.Element {
   return (
@@ -31,29 +34,33 @@ export default function ProgramTable({
             <th className="px-5 py-3.5 font-medium">Department</th>
             <th className="px-5 py-3.5 font-medium">Students</th>
             <th className="px-5 py-3.5 font-medium">Status</th>
-            {canEdit && <th className="px-5 py-3.5 font-medium text-right">Actions</th>}
+            <th className="px-5 py-3.5 font-medium text-right">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border/50 text-sm">
           {programs.map((prog) => {
             const statusStyle = getProgramStatusStyles(prog.status);
             const initials = getProgramInitials(prog.name);
+            const studentCount = prog._count?.students ?? 0;
 
             return (
               <tr key={prog.id} className="hover:bg-muted/30 transition-colors group">
                 {/* Program Name + Initials Avatar */}
                 <td className="px-5 py-4">
-                  <div className="flex items-center gap-3">
+                  <Link
+                    to={`/programs/${prog.id}`}
+                    className="flex items-center gap-3 group/prog"
+                  >
                     <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20">
                       {initials}
                     </div>
                     <div>
-                      <div className="font-semibold text-foreground flex items-center gap-2">
+                      <div className="font-semibold text-foreground group-hover/prog:text-primary transition-colors flex items-center gap-2">
                         <BookOpen className="w-4 h-4 text-primary/70 shrink-0" />
                         {prog.name}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </td>
 
                 {/* Program Code */}
@@ -76,12 +83,28 @@ export default function ProgramTable({
                   </div>
                 </td>
 
-                {/* Students Count */}
+                {/* Students Count (Clickable to view students) */}
                 <td className="px-5 py-4">
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Users className="w-3.5 h-3.5" />
-                    <span>{prog._count?.students ?? 0} students</span>
-                  </div>
+                  {onViewStudents ? (
+                    <button
+                      type="button"
+                      onClick={() => onViewStudents(prog)}
+                      className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-accent/60 hover:bg-accent border border-border text-foreground hover:text-primary transition-colors cursor-pointer"
+                      title="View enrolled students"
+                    >
+                      <Users className="w-3.5 h-3.5 text-primary" />
+                      <span className="font-semibold">{studentCount}</span>
+                      <span>students</span>
+                    </button>
+                  ) : (
+                    <Link
+                      to={`/programs/${prog.id}`}
+                      className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <Users className="w-3.5 h-3.5" />
+                      <span>{studentCount} students</span>
+                    </Link>
+                  )}
                 </td>
 
                 {/* Status Badge */}
@@ -94,22 +117,31 @@ export default function ProgramTable({
                   </span>
                 </td>
 
-                {/* Actions: Edit */}
-                {canEdit && (
-                  <td className="px-5 py-4 text-right">
-                    {onEditProgram && (
+                {/* Actions: View Details & Edit */}
+                <td className="px-5 py-4 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Link
+                      to={`/programs/${prog.id}`}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors cursor-pointer"
+                      title="View program details & enrolled students"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>View</span>
+                    </Link>
+
+                    {canEdit && onEditProgram && (
                       <button
                         type="button"
                         onClick={() => onEditProgram(prog)}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/10 rounded-lg transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-primary/10 rounded-lg transition-colors cursor-pointer"
                         title="Edit program"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
-                        Edit
+                        <span>Edit</span>
                       </button>
                     )}
-                  </td>
-                )}
+                  </div>
+                </td>
               </tr>
             );
           })}

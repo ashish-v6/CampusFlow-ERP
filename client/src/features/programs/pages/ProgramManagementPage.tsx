@@ -11,6 +11,7 @@ import ProgramTable from "../components/ProgramTable";
 import ProgramPagination from "../components/ProgramPagination";
 import CreateProgramModal from "../components/CreateProgramModal";
 import UpdateProgramModal from "../components/UpdateProgramModal";
+import ProgramStudentsModal from "../components/ProgramStudentsModal";
 import { Program } from "../types/program.types";
 
 /**
@@ -22,6 +23,7 @@ export default function ProgramManagementPage(): React.JSX.Element {
   const { user } = useAuth();
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [editingProgram, setEditingProgram] = useState<Program | null>(null);
+  const [studentsModalProgram, setStudentsModalProgram] = useState<Program | null>(null);
 
   const {
     programs,
@@ -151,6 +153,7 @@ export default function ProgramManagementPage(): React.JSX.Element {
           <ProgramTable
             programs={programs}
             onEditProgram={(prog) => setEditingProgram(prog)}
+            onViewStudents={(prog) => setStudentsModalProgram(prog)}
             canEdit={canManage}
           />
         )}
@@ -181,6 +184,15 @@ export default function ProgramManagementPage(): React.JSX.Element {
           onSuccess={refreshPrograms}
           program={editingProgram}
           departments={departments}
+        />
+      )}
+
+      {/* View Enrolled Students Modal Dialog */}
+      {studentsModalProgram && (
+        <ProgramStudentsModal
+          isOpen={!!studentsModalProgram}
+          onClose={() => setStudentsModalProgram(null)}
+          program={studentsModalProgram}
         />
       )}
     </div>

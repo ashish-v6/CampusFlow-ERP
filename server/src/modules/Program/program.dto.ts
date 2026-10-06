@@ -22,6 +22,20 @@ export interface ProgramQueryDto {
   status?: ProgramStatus;
 }
 
+export interface ProgramStudentSummaryDto {
+  id: string;
+  studentId: string;
+  status: string;
+  admissionDate: Date;
+  phone?: string | null;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}
+
 export interface ProgramResponseDto {
   id: string;
   name: string;
@@ -35,6 +49,7 @@ export interface ProgramResponseDto {
     name: string;
     code: string;
   };
+  students?: ProgramStudentSummaryDto[];
   _count?: {
     students: number;
   };
