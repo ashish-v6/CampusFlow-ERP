@@ -1,18 +1,21 @@
 import React from "react";
 import { Link } from "react-router";
 import { ArrowLeft, ShieldCheck, FileText, Lock, AlertTriangle, HelpCircle } from "lucide-react";
+import { useAuth } from "../../../context/Auth/useAuth";
 
 export default function TermsPage(): React.JSX.Element {
+  const { user } = useAuth();
+
   return (
     <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8 animate-in fade-in duration-500">
       {/* Top Navigation / Breadcrumb */}
       <div>
         <Link
-          to="/dashboard"
+          to={user ? "/dashboard" : "/login"}
           className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors group mb-4"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span>Back to Dashboard</span>
+          <span>{user ? "Back to Dashboard" : "Back to Sign In"}</span>
         </Link>
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20 shrink-0">

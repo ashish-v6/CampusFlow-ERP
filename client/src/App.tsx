@@ -45,6 +45,12 @@ import TermsPage from "./features/legal/pages/TermsPage";
 import PrivacyPolicyPage from "./features/legal/pages/PrivacyPolicyPage";
 import SupportPage from "./features/legal/pages/SupportPage";
 
+// Public Pages & Adaptive Layout
+import HomePage from "./features/public/pages/HomePage";
+import AboutPage from "./features/public/pages/AboutPage";
+import ContactPage from "./features/public/pages/ContactPage";
+import AdaptiveLayout from "./components/AdaptiveLayout";
+
 import { Toaster } from "react-hot-toast";
 import AccessDeniedPage from "./components/AccessDeniedPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -55,12 +61,22 @@ export default function App(): React.JSX.Element {
       <Routes>
         {/* Auth Routes inside AuthLayout */}
         <Route path="/" element={<AuthLayout />}>
-          <Route index element={<Navigate to="/login" replace />} />
+          <Route index element={<Navigate to="/home" replace />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignUpPage />} />
           <Route path="verify-otp" element={<VerifyOtpPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
+        </Route>
+
+        {/* Public & Adaptive Routes (accessible both logged in via MainLayout and logged out via AuthLayout) */}
+        <Route element={<AdaptiveLayout />}>
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/support" element={<SupportPage />} />
         </Route>
 
         {/* Authenticated Application Routes inside MainLayout (Header & Footer) */}
@@ -123,11 +139,6 @@ export default function App(): React.JSX.Element {
               <Route path="/attendance" element={<AttendanceManagementPage />} />
               <Route path="/attendance/student/:studentId" element={<StudentAttendancePage />} />
             </Route>
-
-            {/* Legal & Support Routes */}
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/privacy" element={<PrivacyPolicyPage />} />
-            <Route path="/support" element={<SupportPage />} />
 
             {/* {Forbidden Route} */}
             <Route path="/403" element={<AccessDeniedPage />} />

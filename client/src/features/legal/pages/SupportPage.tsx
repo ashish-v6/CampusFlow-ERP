@@ -2,6 +2,7 @@ import React, { useState, FormEvent } from "react";
 import { Link } from "react-router";
 import { ArrowLeft, LifeBuoy, Mail, Phone, MessageSquare, Send, CheckCircle2, ChevronDown } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuth } from "../../../context/Auth/useAuth";
 
 interface FAQItem {
   question: string;
@@ -32,6 +33,7 @@ const FAQS: FAQItem[] = [
 ];
 
 export default function SupportPage(): React.JSX.Element {
+  const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [formData, setFormData] = useState({
     name: "",
@@ -63,11 +65,11 @@ export default function SupportPage(): React.JSX.Element {
       {/* Top Navigation */}
       <div>
         <Link
-          to="/dashboard"
+          to={user ? "/dashboard" : "/login"}
           className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors group mb-4"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span>Back to Dashboard</span>
+          <span>{user ? "Back to Dashboard" : "Back to Sign In"}</span>
         </Link>
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20 shrink-0">

@@ -18,13 +18,31 @@ export default function AuthLayout(): React.JSX.Element {
         </Link>
       );
     }
+    if (currentPath === "/login") {
+      return (
+        <Link
+          to="/signup"
+          className="text-xs sm:text-sm font-medium text-muted-foreground border border-border hover:border-muted-foreground hover:text-foreground bg-accent/50 hover:bg-accent px-4 py-2 rounded-xl transition-all duration-200"
+        >
+          Create Account
+        </Link>
+      );
+    }
     return (
-      <Link
-        to="/signup"
-        className="text-xs sm:text-sm font-medium text-muted-foreground border border-border hover:border-muted-foreground hover:text-foreground bg-accent/50 hover:bg-accent px-4 py-2 rounded-xl transition-all duration-200"
-      >
-        Create Account
-      </Link>
+      <div className="flex items-center gap-2">
+        <Link
+          to="/login"
+          className="text-xs sm:text-sm font-medium text-muted-foreground border border-border hover:border-muted-foreground hover:text-foreground bg-accent/50 hover:bg-accent px-3.5 py-2 rounded-xl transition-all duration-200"
+        >
+          Sign In
+        </Link>
+        <Link
+          to="/signup"
+          className="hidden sm:inline-flex text-xs sm:text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 px-3.5 py-2 rounded-xl transition-all duration-200 shadow-sm shadow-primary/20"
+        >
+          Register
+        </Link>
+      </div>
     );
   };
 
@@ -37,8 +55,8 @@ export default function AuthLayout(): React.JSX.Element {
       <header className="w-full h-16 shrink-0 border-b border-border/80 bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
           {/* Left: CampusFlow Logo */}
-          <Link to="/login" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-indigo-600 flex items-center justify-center shadow-md shadow-primary/20 border border-primary/20">
+          <Link to="/home" className="flex items-center gap-3 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-indigo-600 flex items-center justify-center shadow-md shadow-primary/20 border border-primary/20 group-hover:scale-105 transition-transform">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div className="flex items-baseline gap-1.5">
@@ -52,15 +70,30 @@ export default function AuthLayout(): React.JSX.Element {
           {/* Right: Navigation Links & Action Button */}
           <nav className="flex items-center gap-4 sm:gap-6">
             <div className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-              <a href="#home" className="hover:text-foreground transition-colors duration-200">
+              <Link
+                to="/home"
+                className={`transition-colors duration-200 ${
+                  currentPath === "/home" ? "text-primary font-semibold" : "hover:text-foreground"
+                }`}
+              >
                 Home
-              </a>
-              <a href="#about" className="hover:text-foreground transition-colors duration-200">
+              </Link>
+              <Link
+                to="/about"
+                className={`transition-colors duration-200 ${
+                  currentPath === "/about" ? "text-primary font-semibold" : "hover:text-foreground"
+                }`}
+              >
                 About
-              </a>
-              <a href="#contact" className="hover:text-foreground transition-colors duration-200">
+              </Link>
+              <Link
+                to="/contact"
+                className={`transition-colors duration-200 ${
+                  currentPath === "/contact" ? "text-primary font-semibold" : "hover:text-foreground"
+                }`}
+              >
                 Contact
-              </a>
+              </Link>
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
@@ -82,13 +115,23 @@ export default function AuthLayout(): React.JSX.Element {
             &copy; {new Date().getFullYear()} CampusFlow ERP Systems Inc. All rights reserved.
           </div>
           <div className="flex items-center gap-4 text-muted-foreground">
-            <a href="#privacy" className="hover:text-foreground transition-colors">
+            <Link
+              to="/privacy"
+              className={`transition-colors ${
+                currentPath === "/privacy" ? "text-primary font-semibold" : "hover:text-foreground"
+              }`}
+            >
               Privacy Policy
-            </a>
+            </Link>
             <span>&bull;</span>
-            <a href="#terms" className="hover:text-foreground transition-colors">
+            <Link
+              to="/terms"
+              className={`transition-colors ${
+                currentPath === "/terms" ? "text-primary font-semibold" : "hover:text-foreground"
+              }`}
+            >
               Terms of Service
-            </a>
+            </Link>
           </div>
         </div>
       </footer>
