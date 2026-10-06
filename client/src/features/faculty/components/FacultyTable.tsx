@@ -5,7 +5,6 @@ import { Faculty } from "../types/faculty.types";
 import {
   getFacultyStatusStyles,
   getFacultyInitials,
-  formatDisplayDate,
 } from "../utils/facultyBadgeStyles";
 
 interface FacultyTableProps {
@@ -19,7 +18,7 @@ interface FacultyTableProps {
 export default function FacultyTable({ faculties }: FacultyTableProps): React.JSX.Element {
   return (
     <div className="overflow-x-auto w-full">
-      <table className="w-full text-left border-collapse min-w-[850px]">
+      <table className="w-full text-left border-collapse min-w-[750px]">
         <thead>
           <tr className="border-b border-border bg-muted/20 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             <th className="px-5 py-3.5 font-medium">Faculty</th>
@@ -27,7 +26,6 @@ export default function FacultyTable({ faculties }: FacultyTableProps): React.JS
             <th className="px-5 py-3.5 font-medium">Email</th>
             <th className="px-5 py-3.5 font-medium">Department</th>
             <th className="px-5 py-3.5 font-medium">Designation</th>
-            <th className="px-5 py-3.5 font-medium">Phone</th>
             <th className="px-5 py-3.5 font-medium">Status</th>
             <th className="px-5 py-3.5 font-medium text-right">Actions</th>
           </tr>
@@ -48,13 +46,8 @@ export default function FacultyTable({ faculties }: FacultyTableProps): React.JS
                     <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20">
                       {initials}
                     </div>
-                    <div>
-                      <div className="font-semibold text-foreground group-hover/faculty:text-primary transition-colors">
-                        {fullName}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        Joined: {formatDisplayDate(faculty.joiningDate)}
-                      </div>
+                    <div className="font-semibold text-foreground group-hover/faculty:text-primary transition-colors">
+                      {fullName}
                     </div>
                   </Link>
                 </td>
@@ -92,11 +85,6 @@ export default function FacultyTable({ faculties }: FacultyTableProps): React.JS
                 {/* Designation */}
                 <td className="px-5 py-4 text-foreground font-medium">
                   {faculty.designation}
-                </td>
-
-                {/* Phone */}
-                <td className="px-5 py-4 text-muted-foreground">
-                  {faculty.phone || "—"}
                 </td>
 
                 {/* Status Badge */}

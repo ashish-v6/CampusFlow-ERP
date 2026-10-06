@@ -364,10 +364,13 @@ export default function SignUpPage(): React.JSX.Element {
           <div className="absolute inset-0 bg-transparent dark:bg-black/50 transition-colors duration-300" />
 
           {/* Bottom Gradient for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent dark:from-black dark:via-black/60 dark:to-primary/30 transition-colors duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/70 to-transparent dark:from-black dark:via-black/60 dark:to-primary/30 transition-colors duration-300" />
 
-          {/* Side Edge Blend Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent w-1/2 dark:from-black dark:via-transparent transition-colors duration-300" />
+          {/* Left Side Shadow: Light shadow in light mode, Dark shadow in dark mode */}
+          <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-white via-white/40 to-transparent dark:from-black dark:via-black/60 dark:to-transparent pointer-events-none transition-colors duration-300" />
+
+          {/* Left Edge Inset Shadow: Light shadow in light mode, Dark shadow in dark mode */}
+          <div className="absolute inset-0 pointer-events-none shadow-[inset_28px_0_35px_-8px_rgba(255,255,255,0.95),inset_8px_0_15px_-4px_rgba(0,0,0,0.03)] dark:shadow-[inset_28px_0_40px_-4px_rgba(0,0,0,0.95)] transition-shadow duration-300" />
         </div>
 
         {/* Clean Hero Caption */}

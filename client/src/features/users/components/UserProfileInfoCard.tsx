@@ -41,6 +41,22 @@ export default function UserProfileInfoCard({ user }: UserProfileInfoCardProps):
           </div>
           <div>
             <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+              Phone Number
+            </dt>
+            <dd className="text-sm font-medium text-foreground">
+              {user.phone || "Not provided"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+              Address
+            </dt>
+            <dd className="text-sm font-medium text-foreground">
+              {user.address || "Not provided"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
               Account Status
             </dt>
             <dd className="text-sm font-medium text-foreground">{user.status}</dd>

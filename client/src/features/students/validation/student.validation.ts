@@ -83,21 +83,27 @@ export const validateCreateStudent = (data: StudentCreateDto): ValidationResult 
     errors.gender = "Invalid gender selection";
   }
 
-  // 8. Phone (optional, exactly 10 digits)
+  // 8. Phone (optional, 10 digits with optional '+91 ' prefix)
   if (data.phone && data.phone.trim()) {
     const trimmedPhone = data.phone.trim();
-    if (!/^\d{10}$/.test(trimmedPhone)) {
-      errors.phone = "Phone number must be exactly 10 digits";
+    const digitsOnly = trimmedPhone.replace(/\D/g, "");
+    const isValid =
+      /^(?:\+91[\s\-]?)?\d{10}$/.test(trimmedPhone) ||
+      digitsOnly.length === 10 ||
+      (digitsOnly.length === 12 && digitsOnly.startsWith("91"));
+
+    if (!isValid) {
+      errors.phone = "Phone number must be 10 digits (e.g. +91 9876543210 or 9876543210)";
     }
   }
 
-  // 9. Address (optional, min 8, max 40 chars)
+  // 9. Address (optional, min 3, max 255 chars)
   if (data.address && data.address.trim()) {
     const trimmedAddress = data.address.trim();
-    if (trimmedAddress.length < 8) {
-      errors.address = "Address must be at least 8 characters";
-    } else if (trimmedAddress.length > 40) {
-      errors.address = "Address cannot exceed 40 characters";
+    if (trimmedAddress.length < 3) {
+      errors.address = "Address must be at least 3 characters";
+    } else if (trimmedAddress.length > 255) {
+      errors.address = "Address cannot exceed 255 characters";
     }
   }
 
@@ -140,21 +146,27 @@ export const validateUpdateStudent = (
     errors.gender = "Invalid gender selection";
   }
 
-  // Phone (optional, exactly 10 digits)
+  // Phone (optional, 10 digits with optional '+91 ' prefix)
   if (data.phone && data.phone.trim()) {
     const trimmedPhone = data.phone.trim();
-    if (!/^\d{10}$/.test(trimmedPhone)) {
-      errors.phone = "Phone number must be exactly 10 digits";
+    const digitsOnly = trimmedPhone.replace(/\D/g, "");
+    const isValid =
+      /^(?:\+91[\s\-]?)?\d{10}$/.test(trimmedPhone) ||
+      digitsOnly.length === 10 ||
+      (digitsOnly.length === 12 && digitsOnly.startsWith("91"));
+
+    if (!isValid) {
+      errors.phone = "Phone number must be 10 digits (e.g. +91 9876543210 or 9876543210)";
     }
   }
 
-  // Address (optional, min 8, max 40 chars)
+  // Address (optional, min 3, max 255 chars)
   if (data.address && data.address.trim()) {
     const trimmedAddress = data.address.trim();
-    if (trimmedAddress.length < 8) {
-      errors.address = "Address must be at least 8 characters";
-    } else if (trimmedAddress.length > 40) {
-      errors.address = "Address cannot exceed 40 characters";
+    if (trimmedAddress.length < 3) {
+      errors.address = "Address must be at least 3 characters";
+    } else if (trimmedAddress.length > 255) {
+      errors.address = "Address cannot exceed 255 characters";
     }
   }
 
@@ -167,4 +179,25 @@ export const validateUpdateStudent = (
     isValid: Object.keys(errors).length === 0,
     errors,
   };
+};
+
+/**
+ * Normalizes phone number to have '+91 ' prefix followed by 10 digits.
+ * e.g., "9876543210" -> "+91 9876543210"
+ * e.g., "+919876543210" -> "+91 9876543210"
+ * e.g., "+91 9876543210" -> "+91 9876543210"
+ */
+export const formatPhoneWithPrefix = (phone?: string | null): string => {
+  if (!phone) return "";
+  const trimmed = phone.trim();
+  if (!trimmed) return "";
+  const digitsOnly = trimmed.replace(/\D/g, "");
+  const tenDigits =
+    digitsOnly.length === 12 && digitsOnly.startsWith("91")
+      ? digitsOnly.slice(2)
+      : digitsOnly.slice(-10);
+  if (tenDigits.length === 10) {
+    return `+91 ${tenDigits}`;
+  }
+  return trimmed;
 };

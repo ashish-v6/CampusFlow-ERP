@@ -6,6 +6,8 @@ export interface Users {
   role: string;
   status: string;
   isVerified: boolean;
+  phone?: string | null;
+  address?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,6 +20,8 @@ export interface UserDetails {
   role: string;
   status: string;
   isVerified: boolean;
+  phone?: string | null;
+  address?: string | null;
   createdAt: Date;
   updatedAt: Date;
   initials: string;
@@ -40,6 +44,25 @@ export interface Pagination {
 export interface UserPagination {
   page: number;
   limit: number;
+}
+
+export interface UserQueryDto {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: string;
+  status?: string;
+}
+
+export interface CreateUserPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: "ADMIN" | "FACULTY" | "STUDENT";
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
+  phone?: string;
+  address?: string;
 }
 
 export interface Params {

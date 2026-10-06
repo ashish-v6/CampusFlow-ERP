@@ -113,6 +113,14 @@ export class StudentRepository {
               id: true,
               name: true,
               code: true,
+              departmentId: true,
+              department: {
+                select: {
+                  id: true,
+                  name: true,
+                  code: true,
+                },
+              },
             },
           },
         },

@@ -1,17 +1,11 @@
 import React from "react";
-import { Activity, BadgeCheck, Shield, Calendar } from "lucide-react";
+import { Activity, BadgeCheck, Shield, Calendar, Phone, MapPin } from "lucide-react";
+import { User } from "../profile.types";
 
 interface AccountOverviewCardProps {
-  user: {
-    status: string;
-    verified: boolean;
-    role: string;
-    createdAt: Date;
-  };
+  user: User;
 }
 
-// GET /api/users/me
-// Read-only account overview displaying user status, email verification, role, and member creation date.
 export default function AccountOverviewCard({ user }: AccountOverviewCardProps): React.JSX.Element {
   return (
     <div className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4">
@@ -34,7 +28,11 @@ export default function AccountOverviewCard({ user }: AccountOverviewCardProps):
             <span>Email</span>
           </div>
           <span
-            className={`font-medium ${user.verified ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}
+            className={`font-medium ${
+              user.verified
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-amber-600 dark:text-amber-400"
+            }`}
           >
             {user.verified ? "Verified" : "Unverified"}
           </span>
@@ -46,6 +44,27 @@ export default function AccountOverviewCard({ user }: AccountOverviewCardProps):
             <span>Role</span>
           </div>
           <span className="font-medium text-foreground capitalize">{user.role}</span>
+        </div>
+
+        <div className="flex items-center justify-between text-sm pb-3 border-b border-border/50">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Phone className="w-4 h-4" />
+            <span>Phone</span>
+          </div>
+          <span className="font-medium text-foreground">{user.phone || "Not provided"}</span>
+        </div>
+
+        <div className="flex items-center justify-between text-sm pb-3 border-b border-border/50">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <MapPin className="w-4 h-4 shrink-0" />
+            <span>Address</span>
+          </div>
+          <span
+            className="font-medium text-foreground text-right max-w-[180px] truncate"
+            title={user.address || "Not provided"}
+          >
+            {user.address || "Not provided"}
+          </span>
         </div>
 
         <div className="flex items-center justify-between text-sm">

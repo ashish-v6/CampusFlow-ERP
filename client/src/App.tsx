@@ -12,7 +12,6 @@ import DashboardPage from "./features/dashboard/pages/DashboardPage";
 
 // Profile Feature Pages
 import ProfilePage from "./features/profile/pages/ProfilePage";
-import EditProfilePage from "./features/profile/pages/EditProfilePage";
 import ChangePasswordPage from "./features/profile/pages/ChangePasswordPage";
 
 // Users Feature Pages
@@ -33,6 +32,25 @@ import FacultyDetailsPage from "./features/faculty/pages/FacultyDetailsPage";
 import DepartmentManagementPage from "./features/departments/pages/DepartmentManagementPage";
 import DepartmentDetailsPage from "./features/departments/pages/DepartmentDetailsPage";
 
+// Program Feature Pages
+import ProgramManagementPage from "./features/programs/pages/ProgramManagementPage";
+import ProgramDetailsPage from "./features/programs/pages/ProgramDetailsPage";
+
+// Attendance Feature Pages
+import AttendanceManagementPage from "./features/attendance/pages/AttendanceManagementPage";
+import StudentAttendancePage from "./features/attendance/pages/StudentAttendancePage";
+
+// Legal & Support Pages
+import TermsPage from "./features/legal/pages/TermsPage";
+import PrivacyPolicyPage from "./features/legal/pages/PrivacyPolicyPage";
+import SupportPage from "./features/legal/pages/SupportPage";
+
+// Public Pages & Adaptive Layout
+import HomePage from "./features/public/pages/HomePage";
+import AboutPage from "./features/public/pages/AboutPage";
+import ContactPage from "./features/public/pages/ContactPage";
+import AdaptiveLayout from "./components/AdaptiveLayout";
+
 import { Toaster } from "react-hot-toast";
 import AccessDeniedPage from "./components/AccessDeniedPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -43,12 +61,22 @@ export default function App(): React.JSX.Element {
       <Routes>
         {/* Auth Routes inside AuthLayout */}
         <Route path="/" element={<AuthLayout />}>
-          <Route index element={<Navigate to="/login" replace />} />
+          <Route index element={<Navigate to="/home" replace />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignUpPage />} />
           <Route path="verify-otp" element={<VerifyOtpPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
+        </Route>
+
+        {/* Public & Adaptive Routes (accessible both logged in via MainLayout and logged out via AuthLayout) */}
+        <Route element={<AdaptiveLayout />}>
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/support" element={<SupportPage />} />
         </Route>
 
         {/* Authenticated Application Routes inside MainLayout (Header & Footer) */}
@@ -59,7 +87,6 @@ export default function App(): React.JSX.Element {
             {/* Profile Feature Routes */}
 
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/profile/edit" element={<EditProfilePage />} />
             <Route path="/profile/change-password" element={<ChangePasswordPage />} />
 
             {/* Users Feature Routes */}
@@ -97,6 +124,20 @@ export default function App(): React.JSX.Element {
             <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
               <Route path="/departments" element={<DepartmentManagementPage />} />
               <Route path="/departments/:id" element={<DepartmentDetailsPage />} />
+            </Route>
+
+            {/* Program Feature Routes */}
+            {/* Directory & Details: Accessible by ADMIN, FACULTY, and STUDENT */}
+            <Route element={<ProtectedRoute allowedRoles={["ADMIN", "FACULTY", "STUDENT"]} />}>
+              <Route path="/programs" element={<ProgramManagementPage />} />
+              <Route path="/programs/:id" element={<ProgramDetailsPage />} />
+            </Route>
+
+            {/* Attendance Feature Routes */}
+            {/* Directory & Management: Accessible by ADMIN, FACULTY, and STUDENT */}
+            <Route element={<ProtectedRoute allowedRoles={["ADMIN", "FACULTY", "STUDENT"]} />}>
+              <Route path="/attendance" element={<AttendanceManagementPage />} />
+              <Route path="/attendance/student/:studentId" element={<StudentAttendancePage />} />
             </Route>
 
             {/* {Forbidden Route} */}

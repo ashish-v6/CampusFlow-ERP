@@ -360,8 +360,8 @@ export default function CreateStudentForm({
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              placeholder="10-digit mobile number"
-              maxLength={10}
+              placeholder="+91 9876543210"
+              maxLength={15}
               className={`w-full bg-background border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all ${fieldErrors.phone
                 ? "border-red-500/80 focus:ring-red-500/40"
                 : "border-border focus:ring-primary/50"
@@ -373,7 +373,7 @@ export default function CreateStudentForm({
           )}
         </div>
 
-        {/* Address (Optional, 8-40 chars) */}
+        {/* Address (Optional, up to 255 chars) */}
         <div className="space-y-1.5">
           <label
             htmlFor="address"
@@ -392,7 +392,7 @@ export default function CreateStudentForm({
               value={formData.address}
               onChange={handleChange}
               placeholder="e.g. 12 Campus Lane, Block B"
-              maxLength={40}
+              maxLength={255}
               className={`w-full bg-background border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all ${fieldErrors.address
                 ? "border-red-500/80 focus:ring-red-500/40"
                 : "border-border focus:ring-primary/50"
@@ -402,7 +402,7 @@ export default function CreateStudentForm({
           {fieldErrors.address && (
             <p className="text-red-500 text-xs font-medium">{fieldErrors.address}</p>
           )}
-          <p className="text-[11px] text-muted-foreground">8 to 40 characters if provided.</p>
+          <p className="text-[11px] text-muted-foreground">Up to 255 characters if provided.</p>
         </div>
       </div>
 

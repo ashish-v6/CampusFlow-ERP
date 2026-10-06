@@ -1,23 +1,49 @@
-import type { Request, Response } from "express";
 import { Router } from "express";
-import prisma from "../../utils/prisma.js";
-import { asyncHandler } from "../../utils/asyncHandler.js";
+import { programController } from "./program.controller.js";
+import { authenticate, authorize } from "../../middlewares/auth.middlewares.js";
+import { validateSchema } from "../../middlewares/validation.middleware.js";
+import { programSchema } from "./program.schema.js";
 
-class ProgramController {
-  public getPrograms = asyncHandler(async (_req: Request, res: Response) => {
-    const programs = await prisma.program.findMany({
-      orderBy: {
-        name: "asc",
-      },
-    });
-
-    res.status(200).json(programs);
-  });
-}
-
-const programController = new ProgramController();
 const router = Router();
 
-router.get("/", programController.getPrograms);
+router.post(
+  "/",
+  authenticate,
+  authorize("admin"),
+  validateSchema(programSchema.createProgramSchema, "body"),
+  programController.createProgram,
+);
+
+router.get(
+  "/stats",
+  authenticate,
+  authorize("admin", "faculty"),
+  programController.getProgramStats,
+);
+
+router.get(
+  "/",
+  authenticate,
+  authorize("admin", "faculty", "student"),
+  validateSchema(programSchema.programQuerySchema, "query"),
+  programController.getPrograms,
+);
+
+router.get(
+  "/:id",
+  authenticate,
+  authorize("admin", "faculty", "student"),
+  validateSchema(programSchema.programIdParamSchema, "params"),
+  programController.getProgramById,
+);
+
+router.patch(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  validateSchema(programSchema.programIdParamSchema, "params"),
+  validateSchema(programSchema.updateProgramSchema, "body"),
+  programController.updateProgram,
+);
 
 export default router;

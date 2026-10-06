@@ -2,7 +2,7 @@ import { StudentRepository } from "./student.repository.js";
 import { userRepository } from "../User/user.repository.js";
 import * as dtos from "./student.dto.js";
 import createHttpError from "http-errors";
-import { programRepository } from "../Program/program.repositroy.js";
+import { programRepository } from "../Program/program.repository.js";
 import type { User } from "../../middlewares/auth.middlewares.js";
 import type {
   StudentCreateInput,
@@ -165,6 +165,9 @@ class StudentService {
     }
     if (query.programId !== undefined) {
       where.programId = query.programId;
+    }
+    if (query.departmentId !== undefined) {
+      where.program = { departmentId: query.departmentId };
     }
     if (query.search !== undefined) {
       where.OR = [

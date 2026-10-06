@@ -311,8 +311,8 @@ export default function UpdateStudentForm({
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              placeholder="10-digit mobile number"
-              maxLength={10}
+              placeholder="+91 9876543210"
+              maxLength={15}
               className={`w-full bg-background border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all ${
                 fieldErrors.phone
                   ? "border-red-500/80 focus:ring-red-500/40"
@@ -344,7 +344,7 @@ export default function UpdateStudentForm({
               value={formData.address}
               onChange={handleChange}
               placeholder="e.g. 12 Campus Lane, Block B"
-              maxLength={40}
+              maxLength={255}
               className={`w-full bg-background border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all ${
                 fieldErrors.address
                   ? "border-red-500/80 focus:ring-red-500/40"
@@ -355,7 +355,7 @@ export default function UpdateStudentForm({
           {fieldErrors.address && (
             <p className="text-red-500 text-xs font-medium">{fieldErrors.address}</p>
           )}
-          <p className="text-[11px] text-muted-foreground">8 to 40 characters if provided.</p>
+          <p className="text-[11px] text-muted-foreground">Up to 255 characters if provided.</p>
         </div>
       </div>
 

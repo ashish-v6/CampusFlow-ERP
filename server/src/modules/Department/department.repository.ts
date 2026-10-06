@@ -30,6 +30,22 @@ export class DepartmentRepository {
         name: true,
         code: true,
         status: true,
+        programs: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            status: true,
+            _count: {
+              select: {
+                students: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
       },
     });
   }

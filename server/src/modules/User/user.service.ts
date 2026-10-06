@@ -2,70 +2,82 @@ import { UserRepository } from "./user.repository.js";
 import * as dtos from "./user.dto.js";
 import createHttpError from "http-errors";
 import * as utils from "./user.utils.js";
+import { profileService } from "../Profile/profile.service.js";
+
+import type { Prisma } from "../../generated/prisma/client.js";
 
 class UserServices {
   constructor(private readonly userRepository: UserRepository) {}
 
-  public async getCurrentUser(id: string) {
-    const user = await this.userRepository.findUserById(id);
-    if (!user) {
-      throw createHttpError(404, "Invalid Request");
+  public async createUser(dto: dtos.CreateUserDto) {
+    const existing = await this.userRepository.findByEmail(dto.email.toLowerCase().trim());
+    if (existing) {
+      throw createHttpError(409, "A user with this email address already exists");
     }
-    const safeUser = {
-      ...user,
-      password: "",
-      verified: user.isVerified,
-      initials: `${user.firstName[0]}${user.lastName[0]}`,
-    };
+
+    const hashedPassword = await utils.hashPassword(dto.password);
+    const user = await this.userRepository.createUser({
+      firstName: dto.firstName.trim(),
+      lastName: dto.lastName.trim(),
+      email: dto.email.toLowerCase().trim(),
+      password: hashedPassword,
+      role: dto.role,
+      status: dto.status,
+      ...(dto.phone ? { phone: dto.phone.trim() } : {}),
+      ...(dto.address ? { address: dto.address.trim() } : {}),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...safeUser } = user;
     return safeUser;
+  }
+
+  public async getCurrentUser(id: string) {
+    return profileService.getOwnProfile(id);
   }
 
   public async updateUserProfile(id: string, dto: dtos.updateUserProfileDto) {
-    const existingUser = await this.userRepository.findUserById(id);
-    if (!existingUser) {
-      throw createHttpError(404, "Invalid Request");
-    }
-    const updateUser = await this.userRepository.updateUserProfile(id, dto);
-    const safeUser = {
-      ...updateUser,
-      password: "",
-      createdAt: "",
-      role: "",
-    };
-    return safeUser;
+    return profileService.updateOwnProfile(id, dto);
   }
 
   public async updateUserPassword(id: string, dto: dtos.updateUserPasswordDto) {
-    const existingUser = await this.userRepository.findUserById(id);
-    if (!existingUser) {
-      throw createHttpError(404, "Invalid Request");
-    }
-
-    const checkPassword = await utils.verifyPassword(existingUser.password, dto.currentPassword);
-    if (!checkPassword) {
-      throw createHttpError(401, "Invalid password");
-    }
-    const password = await utils.hashPassword(dto.newPassword);
-    await this.userRepository.updateUserPassword(id, password);
-
-    return;
+    return profileService.changePassword(id, dto);
   }
 
   public async getAllUsers(dto: dtos.getAllUsersDto) {
-    const skip = (dto.page - 1) * dto.limit;
-    const result = await this.userRepository.findUsers(skip, dto.limit);
-    const totalPages = Math.ceil(result.total / dto.limit);
+    const page = dto.page || 1;
+    const limit = dto.limit || 10;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.UserWhereInput = {};
+
+    if (dto.role) {
+      where.role = dto.role;
+    }
+
+    if (dto.status) {
+      where.status = dto.status;
+    }
+
+    if (dto.search && dto.search.trim()) {
+      const term = dto.search.trim();
+      where.OR = [
+        { firstName: { contains: term, mode: "insensitive" } },
+        { lastName: { contains: term, mode: "insensitive" } },
+        { email: { contains: term, mode: "insensitive" } },
+      ];
+    }
+
+    const result = await this.userRepository.findUsers(skip, limit, where);
+    const totalPages = Math.ceil(result.total / limit) || 1;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const safeUsers = result.users.map(({ password, ...user }) => user);
 
-    if (!safeUsers.length) {
-      throw createHttpError(404, "User not found");
-    }
     return {
       users: safeUsers,
       pagination: {
-        page: dto.page,
-        limit: dto.limit,
+        page,
+        limit,
         total: result.total,
         totalPages,
       },

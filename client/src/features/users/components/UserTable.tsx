@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-import { CheckCircle2, XCircle, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Users } from "../users.types";
 
 interface UserTableProps {
@@ -10,15 +10,13 @@ interface UserTableProps {
 export default function UserTable({ users }: UserTableProps): React.JSX.Element {
   return (
     <div className="overflow-x-auto w-full">
-      <table className="w-full text-left border-collapse min-w-[800px]">
+      <table className="w-full text-left border-collapse min-w-[650px]">
         <thead>
           <tr className="border-b border-border bg-muted/20 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             <th className="px-5 py-3.5 font-medium">User</th>
             <th className="px-5 py-3.5 font-medium">Email</th>
             <th className="px-5 py-3.5 font-medium">Role</th>
             <th className="px-5 py-3.5 font-medium">Status</th>
-            <th className="px-5 py-3.5 font-medium">Email Verification</th>
-            <th className="px-5 py-3.5 font-medium">Joined</th>
             <th className="px-5 py-3.5 font-medium text-right">Actions</th>
           </tr>
         </thead>
@@ -72,24 +70,6 @@ export default function UserTable({ users }: UserTableProps): React.JSX.Element 
                   />
                   {user.status}
                 </span>
-              </td>
-              <td className="px-5 py-4">
-                <div className="flex items-center gap-1.5 text-xs font-medium">
-                  {user.isVerified ? (
-                    <>
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                      <span className="text-foreground">Verified</span>
-                    </>
-                  ) : (
-                    <>
-                      <XCircle className="w-3.5 h-3.5 text-amber-500" />
-                      <span className="text-muted-foreground">UnVerified</span>
-                    </>
-                  )}
-                </div>
-              </td>
-              <td className="px-5 py-4 text-muted-foreground text-sm">
-                {new Date(user.createdAt).toDateString()}
               </td>
               <td className="px-5 py-4 text-right">
                 <Link

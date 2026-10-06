@@ -42,6 +42,12 @@ export interface StudentResponseDto {
     id: string;
     name: string;
     code: string;
+    departmentId?: string;
+    department?: {
+      id: string;
+      name: string;
+      code: string;
+    };
   };
 }
 
@@ -51,4 +57,5 @@ export interface StudentQueryDto {
   search?: string;
   status?: StudentStatus;
   programId?: string;
+  departmentId?: string;
 }

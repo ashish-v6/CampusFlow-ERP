@@ -5,6 +5,16 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import type { UserStatus } from "../../generated/prisma/enums.js";
 
 class UserControllers {
+  public createUser = asyncHandler(async (req: Request, res: Response) => {
+    const dto: dtos.CreateUserDto = req.body;
+    const user = await userServices.createUser(dto);
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      user,
+    });
+  });
+
   public getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
     const id: string | null = req.user?.userId as string;
     const user = await userServices.getCurrentUser(id);

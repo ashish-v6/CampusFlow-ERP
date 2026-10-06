@@ -13,6 +13,9 @@ import studentRoutes from "./modules/Student/student.routes.js";
 import programRoutes from "./modules/Program/program.route.js";
 import facultyRoutes from "./modules/Faculty/faculty.routes.js";
 import departmentRoutes from "./modules/Department/department.route.js";
+import attendanceRoutes from "./modules/Attendance/attendance.routes.js";
+import dashboardRoutes from "./modules/Dashboard/dashboard.routes.js";
+import profileRoutes from "./modules/Profile/profile.routes.js";
 
 const app = express();
 
@@ -37,6 +40,9 @@ app.use("/api/students", studentRoutes);
 app.use("/api/programs", programRoutes);
 app.use("/api/faculties", facultyRoutes);
 app.use("/api/departments", departmentRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/profile", profileRoutes);
 
 // --- 404 + Global error handler (always LAST) ---
 app.use(globalErrorHandler);
