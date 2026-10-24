@@ -14,7 +14,6 @@ import {
   StudentStats,
   StudentUpdateDto,
 } from "../types/student.types";
-import { formatPhoneWithPrefix } from "../validation/student.validation";
 
 /**
  * Fetches paginated students matching optional search, status, and program filters.
@@ -91,7 +90,7 @@ export const createStudent = async (
     payload.gender = data.gender;
   }
   if (data.phone && data.phone.trim()) {
-    payload.phone = formatPhoneWithPrefix(data.phone);
+    payload.phone = data.phone.trim();
   }
   if (data.address && data.address.trim()) {
     payload.address = data.address.trim();
@@ -114,8 +113,8 @@ export const updateStudent = async (
   if (data.programId) payload.programId = data.programId;
   if (data.dateOfBirth !== undefined) payload.dateOfBirth = data.dateOfBirth || null;
   if (data.gender !== undefined) payload.gender = data.gender || null;
-  if (data.phone !== undefined) payload.phone = data.phone ? formatPhoneWithPrefix(data.phone) : null;
-  if (data.address !== undefined) payload.address = data.address ? data.address.trim() : null;
+  if (data.phone !== undefined) payload.phone = data.phone || null;
+  if (data.address !== undefined) payload.address = data.address || null;
   if (data.status) payload.status = data.status;
 
   const response = await api.patch<Student>(`/api/students/${id}`, payload);

@@ -1,138 +1,78 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { CheckCircle2, Phone, MapPin, User as UserIcon } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { changeProfile } from "../services/profile.services";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
-import { User, UpdateProfilePayload } from "../profile.types";
-import { formatPhoneWithPrefix } from "../../students/validation/student.validation";
 
 interface PersonalInfoFormProps {
-  user: User;
-  onUpdate?: (updatedUser: User) => void;
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+  };
 }
 
-interface FormState {
+interface Names {
   firstName: string;
   lastName: string;
-  phone: string;
-  address: string;
 }
-
-interface FormErrors {
+interface formError {
   firstName?: string;
   lastName?: string;
-  phone?: string;
-  address?: string;
 }
 
-export default function PersonalInfoForm({
-  user,
-  onUpdate,
-}: PersonalInfoFormProps): React.JSX.Element {
-  const initialValues: FormState = {
-    firstName: user.firstName || "",
-    lastName: user.lastName || "",
-    phone: user.phone || "",
-    address: user.address || "",
-  };
-
-  const [formData, setFormData] = useState<FormState>(initialValues);
-  const [formErrors, setFormErrors] = useState<FormErrors>({});
-  const [disabled, setDisabled] = useState<boolean>(true);
+// PATCH /api/users/me
+// UI component for updating authenticated user's basic profile details (firstName, lastName).
+// Email and role are displayed as read-only information.
+export default function PersonalInfoForm({ user }: PersonalInfoFormProps): React.JSX.Element {
+  const name = { firstName: user.firstName, lastName: user.lastName };
+  const [names, setNames] = useState<Names>(name);
+  const [formError, setFormError] = useState<formError>({});
+  const [disabled, setDisabled] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const isStudent = user.role?.toUpperCase() === "STUDENT";
-  const isFaculty = user.role?.toUpperCase() === "FACULTY";
-
-  useEffect(() => {
-    setFormData({
-      firstName: user.firstName || "",
-      lastName: user.lastName || "",
-      phone: user.phone || "",
-      address: user.address || "",
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setNames((oldNames) => {
+      return {
+        ...oldNames,
+        [e.target.name]: e.target.value,
+      };
     });
-  }, [user]);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setFormErrors((prev) => ({
-      ...prev,
-      [name]: "",
-    }));
+    setFormError((oldErrors) => {
+      return {
+        ...oldErrors,
+        [e.target.name]: "",
+      };
+    });
+    setDisabled(false);
   };
 
-  useEffect(() => {
-    const isUnchanged =
-      formData.firstName === (user.firstName || "") &&
-      formData.lastName === (user.lastName || "") &&
-      formData.phone === (user.phone || "") &&
-      formData.address === (user.address || "");
-
-    setDisabled(isUnchanged);
-  }, [formData, user]);
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    const errors: FormErrors = {};
+    const errors: formError = {};
 
-    if (!formData.firstName.trim()) {
+    if (!names.firstName.trim()) {
       errors.firstName = "First name is required";
     }
-    if (!formData.lastName.trim()) {
+    if (!names.lastName.trim()) {
       errors.lastName = "Last name is required";
     }
 
-    if (formData.phone.trim()) {
-      const trimmedPhone = formData.phone.trim();
-      const digitsOnly = trimmedPhone.replace(/\D/g, "");
-      const isValid =
-        /^(?:\+91[\s\-]?)?\d{10}$/.test(trimmedPhone) ||
-        digitsOnly.length === 10 ||
-        (digitsOnly.length === 12 && digitsOnly.startsWith("91"));
-
-      if (!isValid) {
-        errors.phone = "Phone number must be 10 digits (e.g. +91 9876543210 or 9876543210)";
-      }
-    }
-
     if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
+      setFormError(errors);
       return;
     }
 
     try {
       setLoading(true);
-      const payload: UpdateProfilePayload = {
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-      };
-
-      if (formData.phone.trim()) {
-        payload.phone = formatPhoneWithPrefix(formData.phone.trim());
-      } else if (formData.phone === "" && user.phone) {
-        payload.phone = "";
-      }
-
-      if (formData.address.trim()) {
-        payload.address = formData.address.trim();
-      } else if (formData.address === "" && user.address) {
-        payload.address = "";
-      }
-
-      const result = await changeProfile(payload);
-      toast.success("Profile updated successfully!");
-      if (onUpdate && result.user) {
-        onUpdate(result.user);
-      }
+      const result = await changeProfile(names);
+      toast.success("Profile Updated");
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || "Failed to update profile");
+        toast.error(error.response?.data.message ?? "Something went wrong");
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error("Something unexpected happend");
       }
     } finally {
       setLoading(false);
@@ -140,22 +80,28 @@ export default function PersonalInfoForm({
   };
 
   const handleCancel = (): void => {
-    setFormData(initialValues);
-    setFormErrors({});
+    setNames({ firstName: user.firstName, lastName: user.lastName });
+    setFormError({});
   };
+
+  useEffect(() => {
+    if (names.firstName === name.firstName && names.lastName === name.lastName) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [names, loading]);
 
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
       <div className="p-5 sm:p-6 border-b border-border">
         <h2 className="text-lg font-bold text-foreground">Personal Information</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Update your permitted profile information and contact details.
-        </p>
+        <p className="text-sm text-muted-foreground mt-1">Update your basic profile information.</p>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="p-5 sm:p-6 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-          {/* First Name */}
+          {/* First Name (Editable) */}
           <div className="space-y-2">
             <label
               htmlFor="firstName"
@@ -167,21 +113,21 @@ export default function PersonalInfoForm({
               type="text"
               id="firstName"
               name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
+              value={names.firstName}
+              onChange={handleNameChange}
               placeholder="Enter first name"
               className={`w-full bg-background border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${
-                formErrors.firstName
+                formError.firstName
                   ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                   : "border-border focus:ring-primary/50 focus:border-primary"
               }`}
             />
-            {formErrors.firstName && (
-              <p className="text-red-400 text-xs mt-1 font-medium">{formErrors.firstName}</p>
+            {formError.firstName && (
+              <p className="text-red-400 text-xs mt-1 font-medium">{formError.firstName}</p>
             )}
           </div>
 
-          {/* Last Name */}
+          {/* Last Name (Editable) */}
           <div className="space-y-2">
             <label
               htmlFor="lastName"
@@ -193,70 +139,18 @@ export default function PersonalInfoForm({
               type="text"
               id="lastName"
               name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
+              value={names.lastName}
+              onChange={handleNameChange}
               placeholder="Enter last name"
               className={`w-full bg-background border rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${
-                formErrors.lastName
+                formError.lastName
                   ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
                   : "border-border focus:ring-primary/50 focus:border-primary"
               }`}
             />
-            {formErrors.lastName && (
-              <p className="text-red-400 text-xs mt-1 font-medium">{formErrors.lastName}</p>
+            {formError.lastName && (
+              <p className="text-red-400 text-xs mt-1 font-medium">{formError.lastName}</p>
             )}
-          </div>
-
-          {/* Phone Number */}
-          <div className="space-y-2">
-            <label
-              htmlFor="phone"
-              className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
-            >
-              Phone Number
-            </label>
-            <div className="relative">
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                maxLength={15}
-                placeholder="+91 9876543210"
-                className={`w-full bg-background border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 transition-all placeholder:text-muted-foreground ${
-                  formErrors.phone
-                    ? "border-red-500/80 focus:ring-red-500/40 focus:border-red-500"
-                    : "border-border focus:ring-primary/50 focus:border-primary"
-                }`}
-              />
-              <Phone className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
-            {formErrors.phone && (
-              <p className="text-red-400 text-xs mt-1 font-medium">{formErrors.phone}</p>
-            )}
-          </div>
-
-          {/* Residential Address (Available for all roles) */}
-          <div className="space-y-2">
-            <label
-              htmlFor="address"
-              className="block text-xs font-semibold uppercase tracking-wider text-foreground/80"
-            >
-              Residential Address
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="Street, City, Postal Code"
-                className="w-full bg-background border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground"
-              />
-              <MapPin className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
           </div>
 
           {/* Email (Read-only) */}
@@ -271,7 +165,7 @@ export default function PersonalInfoForm({
               <input
                 type="email"
                 id="email"
-                value={user.email}
+                defaultValue={user.email}
                 disabled
                 className="w-full bg-accent/30 border border-border rounded-xl px-4 py-2.5 text-sm text-muted-foreground cursor-not-allowed transition-all"
               />
@@ -279,7 +173,7 @@ export default function PersonalInfoForm({
                 <CheckCircle2 className="w-4 h-4" />
               </div>
             </div>
-            <p className="text-[11px] text-muted-foreground">Email address cannot be modified.</p>
+            <p className="text-[11px] text-muted-foreground">Email address cannot be changed.</p>
           </div>
 
           {/* Role (Read-only) */}
@@ -293,12 +187,12 @@ export default function PersonalInfoForm({
             <input
               type="text"
               id="role"
-              value={user.role}
+              defaultValue={user.role}
               disabled
-              className="w-full bg-accent/30 border border-border rounded-xl px-4 py-2.5 text-sm text-muted-foreground cursor-not-allowed transition-all capitalize"
+              className="w-full bg-accent/30 border border-border rounded-xl px-4 py-2.5 text-sm text-muted-foreground cursor-not-allowed transition-all"
             />
             <p className="text-[11px] text-muted-foreground">
-              Institutional permissions are tied to your assigned role.
+              Contact support to change your role.
             </p>
           </div>
         </div>
@@ -308,15 +202,14 @@ export default function PersonalInfoForm({
           <button
             type="submit"
             disabled={disabled || loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl shadow-sm shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl shadow-sm shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background cursor-pointer disabled:bg-blue-600/80 disabled:cursor-not-allowed"
           >
             {loading ? "Updating..." : "Save Changes"}
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            disabled={disabled || loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-transparent hover:bg-accent text-foreground text-sm font-medium rounded-xl border border-transparent hover:border-border transition-all cursor-pointer disabled:opacity-50"
+            className="w-full sm:w-auto px-6 py-2.5 bg-transparent hover:bg-accent text-foreground text-sm font-medium rounded-xl border border-transparent hover:border-border transition-all focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background cursor-pointer "
           >
             Cancel
           </button>

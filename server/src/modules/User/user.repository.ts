@@ -1,5 +1,4 @@
-import type { Prisma, User, UserStatus } from "../../generated/prisma/client.js";
-import type { Roles } from "../../generated/prisma/enums.js";
+import type { User, UserStatus } from "../../generated/prisma/client.js";
 import prisma from "../../utils/prisma.js";
 import * as dtos from "./user.dto.js";
 
@@ -7,37 +6,6 @@ export class UserRepository {
   public async findUserById(id: string): Promise<User | null> {
     return prisma.user.findUnique({
       where: { id },
-    });
-  }
-
-  public async findByEmail(email: string): Promise<User | null> {
-    return prisma.user.findUnique({
-      where: { email },
-    });
-  }
-
-  public async createUser(data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    role: Roles;
-    status: UserStatus;
-    phone?: string;
-    address?: string;
-  }): Promise<User> {
-    return prisma.user.create({
-      data: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        password: data.password,
-        role: data.role,
-        status: data.status,
-        ...(data.phone ? { phone: data.phone } : {}),
-        ...(data.address ? { address: data.address } : {}),
-        isVerified: true,
-      },
     });
   }
 
@@ -55,21 +23,16 @@ export class UserRepository {
     });
   }
 
-  public async findUsers(
-    skip: number,
-    limit: number,
-    where: Prisma.UserWhereInput = {},
-  ): Promise<{ users: User[]; total: number }> {
+  public async findUsers(skip: number, limit: number): Promise<{ users: User[]; total: number }> {
     const [users, total] = await Promise.all([
       prisma.user.findMany({
-        where,
         skip,
         take: limit,
         orderBy: {
           createdAt: "desc",
         },
       }),
-      prisma.user.count({ where }),
+      prisma.user.count(),
     ]);
     return { users, total };
   }

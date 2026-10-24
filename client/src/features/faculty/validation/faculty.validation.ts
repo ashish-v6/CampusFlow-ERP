@@ -63,18 +63,12 @@ export const validateCreateFaculty = (data: FacultyCreateDto): ValidationResult 
     errors.joiningDate = "Joining date cannot be in the future.";
   }
 
-  // 6. Phone: Required, 10 digits with optional +91 prefix
+  // 6. Phone: Required, exactly 10 digits
   const trimmedPhone = data.phone ? data.phone.trim() : "";
-  const digitsOnly = trimmedPhone.replace(/\D/g, "");
-  const isValidPhone =
-    /^(?:\+91[\s\-]?)?\d{10}$/.test(trimmedPhone) ||
-    digitsOnly.length === 10 ||
-    (digitsOnly.length === 12 && digitsOnly.startsWith("91"));
-
   if (!trimmedPhone) {
     errors.phone = "Phone number is required";
-  } else if (!isValidPhone) {
-    errors.phone = "Phone number must be 10 digits (e.g. +91 9876543210 or 9876543210)";
+  } else if (!/^\d{10}$/.test(trimmedPhone)) {
+    errors.phone = "Phone number must be exactly 10 digits";
   }
 
   return {
@@ -120,16 +114,11 @@ export const validateUpdateFaculty = (data: FacultyUpdateDto): ValidationResult 
     }
   }
 
-  // Phone: if provided, 10 digits with optional +91 prefix
+  // Phone: if provided, exactly 10 digits
   if (data.phone !== undefined && data.phone.trim()) {
     const trimmedPhone = data.phone.trim();
-    const digitsOnly = trimmedPhone.replace(/\D/g, "");
-    const isValidPhone =
-      /^(?:\+91[\s\-]?)?\d{10}$/.test(trimmedPhone) ||
-      digitsOnly.length === 10 ||
-      (digitsOnly.length === 12 && digitsOnly.startsWith("91"));
-    if (!isValidPhone) {
-      errors.phone = "Phone number must be 10 digits (e.g. +91 9876543210 or 9876543210)";
+    if (!/^\d{10}$/.test(trimmedPhone)) {
+      errors.phone = "Phone number must be exactly 10 digits";
     }
   }
 

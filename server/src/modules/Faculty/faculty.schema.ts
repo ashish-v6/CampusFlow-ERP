@@ -16,10 +16,7 @@ class FacultySchema {
     joiningDate: z.coerce.date().refine(isNotFutureDate, {
       message: "Joining date cannot be in the future",
     }),
-    phone: z
-      .string()
-      .trim()
-      .regex(/^(?:\+91[\s\-]?)?\d{10}$/, "Phone number must be 10 digits (optional +91 prefix)"),
+    phone: z.string().regex(/^\d{10}$/),
   });
   public getFacultyByIdSchema = z.object({
     id: z.uuid(),
@@ -43,8 +40,7 @@ class FacultySchema {
         .optional(),
       phone: z
         .string()
-        .trim()
-        .regex(/^(?:\+91[\s\-]?)?\d{10}$/, "Phone number must be 10 digits (optional +91 prefix)")
+        .regex(/^\d{10}$/)
         .optional(),
       status: z.enum(FacultyStatus).optional(),
     })

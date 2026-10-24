@@ -10,10 +10,9 @@ class StudentSchema {
     gender: z.enum(Gender).optional(),
     phone: z
       .string()
-      .trim()
-      .regex(/^(?:\+91[\s\-]?)?\d{10}$/, "Phone number must be 10 digits (optional +91 prefix)")
+      .regex(/^\d{10}$/)
       .optional(),
-    address: z.string().trim().min(3).max(255).optional(),
+    address: z.string().trim().min(8).max(40).optional(),
     programId: z.uuid(),
   });
 
@@ -24,10 +23,9 @@ class StudentSchema {
       gender: z.enum(Gender).optional(),
       phone: z
         .string()
-        .trim()
-        .regex(/^(?:\+91[\s\-]?)?\d{10}$/, "Phone number must be 10 digits (optional +91 prefix)")
+        .regex(/^\d{10}$/)
         .optional(),
-      address: z.string().trim().min(3).max(255).optional(),
+      address: z.string().trim().min(8).max(40).optional(),
       status: z.enum(StudentStatus).optional(),
     })
     .refine((data) => Object.keys(data).length > 0, {
@@ -41,11 +39,10 @@ class StudentSchema {
       .int()
       .positive()
       .min(1, "limit is required")
-      .max(100, "Maximum 100 records can be fetched")
+      .max(10, "Only 10 record can be fetched")
       .default(10),
     status : z.enum(StudentStatus).optional(),
     programId : z.uuid().optional(),
-    departmentId : z.uuid().optional(),
     search : z.string().trim().min(1).max(20).optional(),
   });
 }

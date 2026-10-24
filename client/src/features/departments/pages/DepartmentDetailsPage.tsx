@@ -8,8 +8,6 @@ import DepartmentDetailsHeader from "../components/DepartmentDetailsHeader";
 import DepartmentProfileHeaderCard from "../components/DepartmentProfileHeaderCard";
 import DepartmentInfoCard from "../components/DepartmentInfoCard";
 import UpdateDepartmentModal from "../components/UpdateDepartmentModal";
-import DepartmentProgramsListCard from "../components/DepartmentProgramsListCard";
-import CreateProgramModal from "../../programs/components/CreateProgramModal";
 
 /**
  * Department Details & Profile Page.
@@ -22,7 +20,6 @@ export default function DepartmentDetailsPage(): React.JSX.Element {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
-  const [isCreateProgramOpen, setIsCreateProgramOpen] = useState<boolean>(false);
 
   const { department, loading, error, refreshDepartment } = useDepartmentDetails(id);
 
@@ -70,13 +67,6 @@ export default function DepartmentDetailsPage(): React.JSX.Element {
       {/* 3. INFORMATION CARDS */}
       <div className="grid grid-cols-1 gap-6 lg:gap-8">
         <DepartmentInfoCard department={department} />
-
-        {/* 4. ACADEMIC PROGRAMS UNDER THIS DEPARTMENT */}
-        <DepartmentProgramsListCard
-          department={department}
-          onAddProgram={() => setIsCreateProgramOpen(true)}
-          canAddProgram={canEdit}
-        />
       </div>
 
       {/* Update Department Modal Dialog */}
@@ -86,16 +76,6 @@ export default function DepartmentDetailsPage(): React.JSX.Element {
           onClose={() => setIsUpdateOpen(false)}
           onSuccess={refreshDepartment}
           department={department}
-        />
-      )}
-
-      {/* Create Program Modal Dialog */}
-      {canEdit && (
-        <CreateProgramModal
-          isOpen={isCreateProgramOpen}
-          onClose={() => setIsCreateProgramOpen(false)}
-          onSuccess={refreshDepartment}
-          departments={[department]}
         />
       )}
     </div>

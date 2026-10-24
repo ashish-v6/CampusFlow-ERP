@@ -7,16 +7,6 @@
 
 export type DepartmentStatus = "ACTIVE" | "INACTIVE";
 
-export interface DepartmentProgramSummary {
-  id: string;
-  name: string;
-  code: string;
-  status: string;
-  _count?: {
-    students: number;
-  };
-}
-
 /**
  * Main Department entity returned by the backend API.
  */
@@ -25,7 +15,6 @@ export interface Department {
   name: string;
   code: string;
   status: DepartmentStatus;
-  programs?: DepartmentProgramSummary[];
   createdAt?: string;
   updatedAt?: string;
 }

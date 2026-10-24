@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import { Eye, GraduationCap } from "lucide-react";
 import { Student } from "../types/student.types";
-import { getStudentStatusStyles, getStudentInitials } from "../utils/studentBadgeStyles";
+import { getStudentStatusStyles, getStudentInitials, formatDisplayDate } from "../utils/studentBadgeStyles";
 
 interface StudentTableProps {
   students: Student[];
@@ -15,13 +15,14 @@ interface StudentTableProps {
 export default function StudentTable({ students }: StudentTableProps): React.JSX.Element {
   return (
     <div className="overflow-x-auto w-full">
-      <table className="w-full text-left border-collapse min-w-[700px]">
+      <table className="w-full text-left border-collapse min-w-[850px]">
         <thead>
           <tr className="border-b border-border bg-muted/20 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             <th className="px-5 py-3.5 font-medium">Student</th>
             <th className="px-5 py-3.5 font-medium">Student ID</th>
             <th className="px-5 py-3.5 font-medium">Email</th>
             <th className="px-5 py-3.5 font-medium">Program</th>
+            <th className="px-5 py-3.5 font-medium">Phone</th>
             <th className="px-5 py-3.5 font-medium">Status</th>
             <th className="px-5 py-3.5 font-medium text-right">Actions</th>
           </tr>
@@ -40,8 +41,13 @@ export default function StudentTable({ students }: StudentTableProps): React.JSX
                     <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20">
                       {initials}
                     </div>
-                    <div className="font-semibold text-foreground group-hover/student:text-primary transition-colors">
-                      {fullName}
+                    <div>
+                      <div className="font-semibold text-foreground group-hover/student:text-primary transition-colors">
+                        {fullName}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Admitted: {formatDisplayDate(student.admissionDate)}
+                      </div>
                     </div>
                   </Link>
                 </td>
@@ -74,6 +80,11 @@ export default function StudentTable({ students }: StudentTableProps): React.JSX
                       </span>
                     )}
                   </div>
+                </td>
+
+                {/* Phone */}
+                <td className="px-5 py-4 text-muted-foreground">
+                  {student.phone || "—"}
                 </td>
 
                 {/* Status Badge */}

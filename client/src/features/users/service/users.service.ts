@@ -1,13 +1,8 @@
 import api from "../../../api/axios.js";
-import { UserQueryDto, CreateUserPayload } from "../users.types";
+import { UserPagination } from "../users.types";
 
-export const fetchUsers = async (data: UserQueryDto) => {
+export const fetchUsers = async (data: UserPagination) => {
   const res = await api.get("/api/users/users", { params: data });
-  return res.data;
-};
-
-export const createUser = async (data: CreateUserPayload) => {
-  const res = await api.post("/api/users", data);
   return res.data;
 };
 export const getUsersStatus = async () => {

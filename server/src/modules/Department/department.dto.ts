@@ -5,22 +5,11 @@ export interface CreateDepartmentDto {
   code: string;
 }
 
-export interface DepartmentProgramSummaryDto {
-  id: string;
-  name: string;
-  code: string;
-  status: string;
-  _count?: {
-    students: number;
-  };
-}
-
 export interface DepartmentResponseDto {
   id: string;
   name: string;
   code: string;
   status: DepartmentStatus;
-  programs?: DepartmentProgramSummaryDto[];
 }
 
 export interface DepartmentListResponseDto {

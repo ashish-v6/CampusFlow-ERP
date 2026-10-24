@@ -17,14 +17,14 @@ router.post(
 router.get(
   "/:id",
   authenticate,
-  authorize("admin", "faculty"),
+  authorize("admin"),
   departmentController.getDepartmentById,
 );
 
 router.get(
   "/",
-  authenticate,
-  authorize("admin", "faculty"),
+    authenticate,
+    authorize("admin"),
   validateSchema(departmentSchema.departmentQuerySchema, "query"),
   departmentController.getDepartments,
 );
