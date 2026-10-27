@@ -22,7 +22,11 @@ export class AttendanceRepository {
       },
     });
   }
-  public async findMany(skip : number, take : number, where: AttendanceWhereInput): Promise<dtos.AttendanceListResponseDTO> {
+  public async findMany(
+    skip: number,
+    take: number,
+    where: AttendanceWhereInput,
+  ): Promise<dtos.AttendanceListResponseDTO> {
     const [attendances, total] = await prisma.$transaction([
       prisma.attendance.findMany({
         skip,
@@ -54,6 +58,13 @@ export class AttendanceRepository {
       }),
     ]);
     return { attendances, total };
+  }
+  public async findUnique(id: string): Promise<Attendance | null> {
+    return prisma.attendance.findUnique({ where: { id } });
+  }
+
+  public async update(id: string, data: dtos.updateAttendance): Promise<Attendance> {
+    return prisma.attendance.update({ where: { id }, data });
   }
 }
 

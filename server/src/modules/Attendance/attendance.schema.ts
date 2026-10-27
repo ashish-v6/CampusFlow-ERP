@@ -1,32 +1,29 @@
 import { z } from "zod";
 import { AttendanceStatus } from "../../generated/prisma/enums.js";
 
-const queryDate = z.preprocess(
-  (value) => {
-    if (typeof value !== "string") {
-      return value;
-    }
+const queryDate = z.preprocess((value) => {
+  if (typeof value !== "string") {
+    return value;
+  }
 
-    const ddMMyyyy = /^(\d{2})-(\d{2})-(\d{4})$/.exec(value);
-    if (!ddMMyyyy) {
-      return value;
-    }
+  const ddMMyyyy = /^(\d{2})-(\d{2})-(\d{4})$/.exec(value);
+  if (!ddMMyyyy) {
+    return value;
+  }
 
-    const [, day, month, year] = ddMMyyyy;
-    const parsedDate = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+  const [, day, month, year] = ddMMyyyy;
+  const parsedDate = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
 
-    if (
-      parsedDate.getUTCDate() !== Number(day) ||
-      parsedDate.getUTCMonth() !== Number(month) - 1 ||
-      parsedDate.getUTCFullYear() !== Number(year)
-    ) {
-      return new Date(Number.NaN);
-    }
+  if (
+    parsedDate.getUTCDate() !== Number(day) ||
+    parsedDate.getUTCMonth() !== Number(month) - 1 ||
+    parsedDate.getUTCFullYear() !== Number(year)
+  ) {
+    return new Date(Number.NaN);
+  }
 
-    return parsedDate;
-  },
-  z.coerce.date(),
-);
+  return parsedDate;
+}, z.coerce.date());
 
 export class AttendanceSchema {
   public markAttendance = z.object({
@@ -43,6 +40,16 @@ export class AttendanceSchema {
       date: queryDate.optional(),
       fromDate: queryDate.optional(),
       toDate: queryDate.optional(),
+    })
+    .refine((data) => Object.keys(data).length > 0, { message: "At least one field is required" });
+
+  public attendanceById = z.object({
+    id: z.uuid().trim(),
+  });
+  public updateAttendance = z
+    .object({
+      date: z.coerce.date().optional(),
+      status: z.enum(AttendanceStatus).optional(),
     })
     .refine((data) => Object.keys(data).length > 0, { message: "At least one field is required" });
 }

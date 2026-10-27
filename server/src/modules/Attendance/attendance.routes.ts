@@ -6,7 +6,7 @@ import { attendanceSchema } from "./attendance.schema.js";
 
 const router = Router();
 
-router.patch(
+router.post(
   "/",
   validateSchema(attendanceSchema.markAttendance, "body"),
   attendanceController.markAttendance,
@@ -18,7 +18,23 @@ router.get(
   "/",
   validateSchema(attendanceSchema.attendanceQuerySchema, "query"),
   attendanceController.fetchAttendances,
-//   authenticate,
-//   authorize("admin", "faculty"),
+  authenticate,
+  authorize("admin", "faculty"),
+);
+
+router.get(
+  "/:id",
+  validateSchema(attendanceSchema.attendanceById, "params"),
+  attendanceController.fetchById,
+  // authenticate,
+);
+
+router.patch(
+  "/:id",
+  validateSchema(attendanceSchema.attendanceById, "params"),
+  validateSchema(attendanceSchema.updateAttendance, "body"),
+  attendanceController.update,
+  //  authenticate,
+  // authorize("admin", "faculty"),
 );
 export default router;
