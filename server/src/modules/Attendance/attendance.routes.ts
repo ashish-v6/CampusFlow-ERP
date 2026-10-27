@@ -8,33 +8,34 @@ const router = Router();
 
 router.post(
   "/",
-  validateSchema(attendanceSchema.markAttendance, "body"),
-  attendanceController.markAttendance,
   authenticate,
   authorize("admin", "faculty"),
+  validateSchema(attendanceSchema.markAttendance, "body"),
+  attendanceController.markAttendance,
+  
 );
 
 router.get(
   "/",
-  validateSchema(attendanceSchema.attendanceQuerySchema, "query"),
-  attendanceController.fetchAttendances,
   authenticate,
   authorize("admin", "faculty"),
+  validateSchema(attendanceSchema.attendanceQuerySchema, "query"),
+  attendanceController.fetchAttendances,
 );
 
 router.get(
   "/:id",
+  authenticate,
   validateSchema(attendanceSchema.attendanceById, "params"),
   attendanceController.fetchById,
-  // authenticate,
 );
 
 router.patch(
   "/:id",
+  authenticate,
+  authorize("admin", "faculty"),
   validateSchema(attendanceSchema.attendanceById, "params"),
   validateSchema(attendanceSchema.updateAttendance, "body"),
   attendanceController.update,
-  //  authenticate,
-  // authorize("admin", "faculty"),
 );
 export default router;

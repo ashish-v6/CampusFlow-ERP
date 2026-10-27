@@ -67,7 +67,7 @@ export class AttendanceService {
         total,
         totalPages,
         limit,
-        cureentPage: page,
+        currentPage: page,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
       },

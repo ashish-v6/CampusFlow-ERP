@@ -28,7 +28,7 @@ const queryDate = z.preprocess((value) => {
 export class AttendanceSchema {
   public markAttendance = z.object({
     studentId: z.uuid().trim(),
-    date: z.coerce.date(),
+    date: queryDate,
     status: z.enum(AttendanceStatus),
   });
   public attendanceQuerySchema = z
@@ -48,7 +48,7 @@ export class AttendanceSchema {
   });
   public updateAttendance = z
     .object({
-      date: z.coerce.date().optional(),
+      date: queryDate.optional(),
       status: z.enum(AttendanceStatus).optional(),
     })
     .refine((data) => Object.keys(data).length > 0, { message: "At least one field is required" });
