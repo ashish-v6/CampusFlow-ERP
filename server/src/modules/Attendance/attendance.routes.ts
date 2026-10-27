@@ -6,6 +6,10 @@ import { attendanceSchema } from "./attendance.schema.js";
 
 const router = Router();
 
-void attendanceController;
+router.patch(
+    "/",
+    validateSchema(attendanceSchema.markAttendance,"body"),
+    attendanceController.markAttendance
+)
 
 export default router;

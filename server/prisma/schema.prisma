@@ -90,6 +90,7 @@ model Student {
   address       String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  attendances   Attendance[]
 }
 
 enum DepartmentStatus {
@@ -143,4 +144,22 @@ model Faculty {
   department   Department    @relation(fields: [departmentId], references: [id])
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  studentId String
+  student   Student          @relation(fields: [studentId], references: [id])
+  status    AttendanceStatus
+  date      DateTime
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([studentId, date])
 }
