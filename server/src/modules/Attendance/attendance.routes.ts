@@ -12,7 +12,38 @@ router.post(
   authorize("admin", "faculty"),
   validateSchema(attendanceSchema.markAttendance, "body"),
   attendanceController.markAttendance,
-  
+);
+
+router.post(
+  "/bulk",
+  authenticate,
+  authorize("admin", "faculty"),
+  validateSchema(attendanceSchema.bulkMarkAttendance, "body"),
+  attendanceController.markBulkAttendance,
+);
+
+router.get(
+  "/summary",
+  authenticate,
+  authorize("admin", "faculty"),
+  validateSchema(attendanceSchema.attendanceStatsSchema, "query"),
+  attendanceController.fetchSummary,
+);
+
+router.get(
+  "/stats",
+  authenticate,
+  authorize("admin", "faculty"),
+  validateSchema(attendanceSchema.attendanceStatsSchema, "query"),
+  attendanceController.fetchStats,
+);
+
+router.get(
+  "/me",
+  authenticate,
+  authorize("student"),
+  validateSchema(attendanceSchema.attendanceQuerySchema, "query"),
+  attendanceController.fetchMyAttendance,
 );
 
 router.get(
@@ -26,6 +57,7 @@ router.get(
 router.get(
   "/:id",
   authenticate,
+  authorize("admin", "faculty"),
   validateSchema(attendanceSchema.attendanceById, "params"),
   attendanceController.fetchById,
 );
@@ -38,4 +70,5 @@ router.patch(
   validateSchema(attendanceSchema.updateAttendance, "body"),
   attendanceController.update,
 );
+
 export default router;
