@@ -5,6 +5,17 @@ export interface markAttendance {
   date: Date;
   status: AttendanceStatus;
 }
+
+export interface BulkAttendanceItemDto {
+  studentId: string;
+  status: AttendanceStatus;
+}
+
+export interface BulkMarkAttendanceDto {
+  date: Date;
+  records: BulkAttendanceItemDto[];
+}
+
 export interface AttendanceQueryDto {
   page?: number;
   limit?: number;
@@ -35,6 +46,34 @@ export interface AttendanceResponseDTO {
 export interface AttendanceListResponseDTO {
   attendances: AttendanceResponseDTO[];
   total: number;
+}
+
+export interface AttendanceStatsDTO {
+  totalStudents: number;
+  present: number;
+  absent: number;
+  totalMarked: number;
+  percentage: number;
+}
+
+export interface StudentAttendanceSummaryDTO {
+  total: number;
+  present: number;
+  absent: number;
+  percentage: number;
+}
+
+export interface StudentAttendanceResponseDTO {
+  attendances: AttendanceResponseDTO[];
+  pagination: {
+    total: number;
+    totalPages: number;
+    limit: number;
+    currentPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+  summary: StudentAttendanceSummaryDTO;
 }
 
 export interface updateAttendance {
