@@ -11,7 +11,7 @@ export interface DepartmentCountType {
   activeDepartments: number;
 }
 
-export interface TodayAttendancesType {
+export interface OneDayAttendancesType {
   present: number;
   absent: number;
 }
@@ -32,4 +32,25 @@ export interface DashboardOverviewResponseDTO {
       percentage: number;
     };
   };
+}
+
+export interface AttendanceTrendsDto {
+  from: Date;
+  to: Date;
+}
+
+export interface AttendanceTrendRecord {
+  date: Date;
+  status: "PRESENT" | "ABSENT" | "LATE";
+  _count: {
+    _all: number;
+  };
+}
+
+export interface AttendanceTrendResponseDTO {
+  date: string;
+  present: number;
+  absent: number;
+  marked: number;
+  percentage: number;
 }

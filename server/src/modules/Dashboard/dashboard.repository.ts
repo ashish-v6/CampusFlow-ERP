@@ -5,7 +5,8 @@ export interface IDashboardRepository {
   getStudents: () => Promise<types.StudentCountType>;
   getFaculties: () => Promise<types.FacultyCountType>;
   getDepartments: () => Promise<types.DepartmentCountType>;
-  getTodayAttendance: () => Promise<types.TodayAttendancesType>;
+  getOneDayAttendance: (date: Date) => Promise<types.OneDayAttendancesType>;
+  getAttendanceTrend: (from: Date, to: Date) => Promise<types.AttendanceTrendRecord[]>;
 }
 
 export class DashboardRepository implements IDashboardRepository {
@@ -33,14 +34,28 @@ export class DashboardRepository implements IDashboardRepository {
     return { totalDepartments, activeDepartments };
   };
 
-  public getTodayAttendance = async (): Promise<types.TodayAttendancesType> => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  public getOneDayAttendance = async (date: Date): Promise<types.OneDayAttendancesType> => {
     const [present, absent] = await Promise.all([
-      this.prisma.attendance.count({ where: { date: { gte: today }, status: "PRESENT" } }),
-      this.prisma.attendance.count({ where: { date: { gte: today }, status: "ABSENT" } }),
+      this.prisma.attendance.count({ where: { date: { gte: date }, status: "PRESENT" } }),
+      this.prisma.attendance.count({ where: { date: { gte: date }, status: "ABSENT" } }),
     ]);
 
     return { present, absent };
+  };
+
+  public getAttendanceTrend = async (
+    from: Date,
+    to: Date,
+  ): Promise<types.AttendanceTrendRecord[]> => {
+    to.setDate(to.getDate() + 1);
+    const attendanceTrends = await this.prisma.attendance.groupBy({
+      by: ["date", "status"],
+      where: { date: { gte: from, lte: to } },
+      orderBy: { date: "asc" },
+      _count: {
+        _all: true,
+      },
+    });
+    return attendanceTrends;
   };
 }

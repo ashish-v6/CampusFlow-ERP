@@ -4,7 +4,8 @@ import { DashboardRepository } from "./dashboard.repository.js";
 import { DashboardService } from "./dashboard.service.js";
 import { DashboardController } from "./dashboard.controller.js";
 import { authenticate, authorize } from "../../middlewares/auth.middlewares.js";
-
+import { validateSchema } from "../../middlewares/validation.middleware.js";
+import { dashboardSchema } from "./dashboard.schema.js";
 export const createDashboardRouter = (prisma: PrismaClient) => {
   const router = Router();
 
@@ -14,11 +15,14 @@ export const createDashboardRouter = (prisma: PrismaClient) => {
   const controller = new DashboardController(service);
 
   // 2. Mapping routes
+  router.get("/overview", authenticate, authorize("admin", "faculty"), controller.getMetrics);
+
   router.get(
-    "/overview",
+    "/attendance-trends",
     authenticate,
     authorize("admin","faculty"),
-    controller.getMetrics,
+    validateSchema(dashboardSchema.attendanceTrendsQuerySchema, "query"),
+    controller.getAttendanceTrends,
   );
   return router;
 };

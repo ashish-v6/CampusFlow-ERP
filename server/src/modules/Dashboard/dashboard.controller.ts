@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import type { IDashboardService } from "./dashboard.service.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import * as dtos from "./dashboard.dto.js";
 
 export interface IDashboardController {
   getMetrics: () => Promise<void>;
@@ -15,5 +16,11 @@ export class DashboardController {
       message: "Dashboard metrics retrieved successfully",
       ...result,
     });
+  });
+
+  public getAttendanceTrends = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const dto = req.validated?.query as dtos.AttendanceTrendsDto;
+    const data = await this.dashboardService.getAttendanceTrends(dto);
+    res.send(data);
   });
 }
