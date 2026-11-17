@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import createHttpError from "http-errors";
-import type { ZodObject } from "zod";
+import type { ZodType } from "zod";
 
 type Target = "body" | "query" | "params";
 
@@ -12,7 +12,7 @@ declare module "express" {
   }
 }
 
-export function validateSchema(schema: ZodObject, target: Target) {
+export function validateSchema(schema: ZodType, target: Target) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req[target];

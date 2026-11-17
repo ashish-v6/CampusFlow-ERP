@@ -1,3 +1,4 @@
+
 export interface StudentCountType {
   totalStudents: number;
   activeStudents: number;
@@ -53,4 +54,41 @@ export interface AttendanceTrendResponseDTO {
   absent: number;
   marked: number;
   percentage: number;
+}
+
+export interface DepartmentStatsResponseDTO {
+  success: true;
+  data: [
+    {
+      departmentId: string;
+      departmentName: string;
+      totalStudents: number;
+      activeStudents: number;
+      attendance: {
+        present: number;
+        absent: number;
+        late: number;
+        percentage: number;
+      };
+    },
+  ];
+}
+
+export interface DepartmentStatsAttendanceRecord {
+  present : number,
+  absent : number,
+  late : number,
+}
+
+export interface DepartmentStatsRecord {
+  departmentName : string,
+  departmentId : string,
+  totalStudents : number,
+  activeStudents : number,
+  attendance : DepartmentStatsAttendanceRecord,
+}
+
+export interface DepartmentStatsDTO{
+  fromDate : Date,
+  toDate : Date,
 }

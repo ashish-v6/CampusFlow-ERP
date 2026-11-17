@@ -20,9 +20,17 @@ export const createDashboardRouter = (prisma: PrismaClient) => {
   router.get(
     "/attendance-trends",
     authenticate,
-    authorize("admin","faculty"),
+    authorize("admin", "faculty"),
     validateSchema(dashboardSchema.attendanceTrendsQuerySchema, "query"),
     controller.getAttendanceTrends,
+  );
+
+  router.get(
+    "/department-stats",
+    // authenticate,
+    // authorize("admin", "faculty"),
+    validateSchema(dashboardSchema.departmentStatsQuerySchema, "query"),
+    controller.getDepartmentStats,
   );
   return router;
 };

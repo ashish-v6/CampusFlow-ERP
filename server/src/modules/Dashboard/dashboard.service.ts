@@ -1,6 +1,7 @@
 import type { IDashboardRepository } from "./dashboard.repository.js";
 import type { DashboardOverviewResponseDTO } from "./dashboard.dto.js";
 import * as dtos from "./dashboard.dto.js";
+import createHttpError from "http-errors";
 
 const formatDate = (date: Date): string => date.toISOString().slice(0, 10);
 
@@ -9,6 +10,7 @@ export interface IDashboardService {
   getAttendanceTrends: (
     dto: dtos.AttendanceTrendsDto,
   ) => Promise<dtos.AttendanceTrendResponseDTO[]>;
+  getDepartmentStats: (dto: dtos.DepartmentStatsDTO) => Promise<dtos.DepartmentStatsResponseDTO>;
 }
 
 export class DashboardService implements IDashboardService {
@@ -79,5 +81,37 @@ export class DashboardService implements IDashboardService {
         daily.marked > 0 ? Number(((daily.present / daily.marked) * 100).toFixed(2)) : 0;
     }
     return Array.from(dailyStats.values());
+  };
+
+  public getDepartmentStats = async (
+    dto: dtos.DepartmentStatsDTO,
+  ): Promise<dtos.DepartmentStatsResponseDTO> => {
+    const { fromDate, toDate } = dto;
+    fromDate.setUTCHours(0, 0, 0, 0);
+    toDate.setUTCHours(0, 0, 0, 0);
+
+    const result = await this.dashboardRepo.getDepartmentStats(dto.fromDate, dto.toDate);
+
+    if(!result){
+      throw createHttpError(404,"No date found")
+    }
+
+    return {
+      success: true,
+      data: result.map((item) => {
+        const present = item.attendance.present;
+        const absent = item.attendance.absent;
+        const late = item.attendance.late;
+        const total = present + absent + late;
+        const percentage = total > 0 ? Number((((present + late) / total) * 100).toFixed(2)) : 0;
+        return {
+          ...item,
+          attendance: {
+            ...item.attendance,
+            percentage,
+          },
+        };
+      }) as dtos.DepartmentStatsResponseDTO["data"],
+    };
   };
 }

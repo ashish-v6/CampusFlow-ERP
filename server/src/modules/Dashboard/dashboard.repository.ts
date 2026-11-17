@@ -7,6 +7,7 @@ export interface IDashboardRepository {
   getDepartments: () => Promise<types.DepartmentCountType>;
   getOneDayAttendance: (date: Date) => Promise<types.OneDayAttendancesType>;
   getAttendanceTrend: (from: Date, to: Date) => Promise<types.AttendanceTrendRecord[]>;
+  getDepartmentStats: (fromDate: Date, toDate: Date) => Promise<types.DepartmentStatsRecord[]>;
 }
 
 export class DashboardRepository implements IDashboardRepository {
@@ -57,5 +58,88 @@ export class DashboardRepository implements IDashboardRepository {
       },
     });
     return attendanceTrends;
+  };
+
+  public getDepartmentStats = async (
+    fromDate: Date,
+    toDate: Date,
+  ): Promise<types.DepartmentStatsRecord[]> => {
+    const departments = await this.prisma.department.findMany({
+      where: { status: "ACTIVE" },
+      select: {
+        id: true,
+        name: true,
+        programs: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    const studentCounts = await this.prisma.student.groupBy({
+      by: ["programId"],
+      _count: {
+        _all: true,
+      },
+    });
+    const activeStudentCounts = await this.prisma.student.groupBy({
+      by: ["programId"],
+      _count: {
+        _all: true,
+      },
+      where: {
+        status: "ACTIVE",
+      },
+    });
+    const attendance = await this.prisma.attendance.findMany({
+      where: {
+        date: {
+          gte: fromDate,
+          lt: toDate,
+        },
+      },
+      select: {
+        status: true,
+        student: {
+          select: {
+            programId: true,
+            status : true,
+          },
+        },
+      },
+    });
+    const res :types.DepartmentStatsRecord[] = [];
+    for (const department of departments) {
+      let totalStudents = 0;
+      let activeStudents = 0;
+      let present = 0;
+      let absent = 0;
+      let late = 0;
+      for (const program of department.programs) {
+        const studentCount = studentCounts.find((item) => item.programId === program.id);
+        const activeStudentCount = activeStudentCounts.find(
+          (item) => item.programId === program.id,
+        );
+        const attendanceCount = attendance.filter((item) => item.student.programId === program.id);
+        present += attendanceCount.filter((item) => item.status === "PRESENT" && item.student.status === "ACTIVE").length;
+        absent += attendanceCount.filter((item) => item.status === "ABSENT" && item.student.status === "ACTIVE").length;
+        late += attendanceCount.filter((item) => item.status === "LATE" && item.student.status === "ACTIVE").length;
+        totalStudents += studentCount?._count._all ?? 0;
+        activeStudents += activeStudentCount?._count._all ?? 0;
+      }
+
+      res.push({
+        departmentName: department.name,
+        departmentId: department.id,
+        totalStudents,
+        activeStudents,
+        attendance: {
+          present,
+          absent,
+          late,
+        },
+      });
+    }
+    return res;
   };
 }
