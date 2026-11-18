@@ -48,9 +48,6 @@ export class DashboardService implements IDashboardService {
     dto: dtos.AttendanceTrendsDto,
   ): Promise<dtos.AttendanceTrendResponseDTO[]> => {
     const { from, to } = dto;
-    from.setUTCHours(0, 0, 0, 0);
-    to.setUTCHours(0, 0, 0, 0);
-
     const dailyStats = new Map<string, dtos.AttendanceTrendResponseDTO>();
     for (let date = new Date(from); date <= to; date.setDate(date.getDate() + 1)) {
       const dateKey = formatDate(date);

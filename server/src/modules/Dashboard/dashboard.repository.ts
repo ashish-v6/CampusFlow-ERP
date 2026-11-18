@@ -95,7 +95,7 @@ export class DashboardRepository implements IDashboardRepository {
       where: {
         date: {
           gte: fromDate,
-          lt: toDate,
+          lte: toDate,
         },
       },
       select: {
@@ -108,6 +108,7 @@ export class DashboardRepository implements IDashboardRepository {
         },
       },
     });
+    console.log(attendance);
     const res :types.DepartmentStatsRecord[] = [];
     for (const department of departments) {
       let totalStudents = 0;
