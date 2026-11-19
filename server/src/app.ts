@@ -1,4 +1,5 @@
 import express from "express";
+import prisma from "./utils/prisma.js";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -14,6 +15,7 @@ import programRoutes from "./modules/Program/program.route.js";
 import facultyRoutes from "./modules/Faculty/faculty.routes.js";
 import departmentRoutes from "./modules/Department/department.route.js";
 import attendanceRoutes from "./modules/Attendance/attendance.routes.js";
+import { createDashboardRouter } from "./modules/Dashboard/dashboard.routes.js";
 
 const app = express();
 
@@ -39,6 +41,7 @@ app.use("/api/programs", programRoutes);
 app.use("/api/faculties", facultyRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/dashboard", createDashboardRouter(prisma));
 
 // --- 404 + Global error handler (always LAST) ---
 app.use(globalErrorHandler);
